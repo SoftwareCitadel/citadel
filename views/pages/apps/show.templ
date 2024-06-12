@@ -1,0 +1,42 @@
+package appsPages
+
+import (
+	"citadel/views/layouts"
+	"citadel/app/models"
+	"citadel/views/ui"
+)
+
+templ ShowPage(app models.Application) {
+	@layouts.DashboardLayout(layouts.DashboardLayoutProps{Class: "!p-0"}) {
+		@breadcrumbs(app)
+		@tabs(app)
+		<main class="px-12">
+			@ui.Card(ui.CardProps{
+				Title: "Application Overview",
+			}) {
+				<dl class="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2">
+					<div class="sm:col-span-1">
+						<dt class="text-sm font-semibold text-white">Link to your application</dt>
+						<dd class="mt-1 text-sm text-blue-100">
+							<a
+								class="font-medium text-yellow-300 hover:text-yellow-200 transition-colors"
+								href={ templ.SafeURL("https://" + app.Slug + ".softwarecitadel.app") }
+								target="_blank"
+							>
+								https://{ app.Slug }.softwarecitadel.app
+							</a>
+						</dd>
+					</div>
+					<div class="sm:col-span-1">
+						<dt class="text-sm font-semibold text-white">CPU Configuration</dt>
+						<dd class="mt-1 text-sm text-zinc-300">{ app.CpuConfig }</dd>
+					</div>
+					<div class="sm:col-span-1">
+						<dt class="text-sm font-semibold text-white">RAM Configuration</dt>
+						<dd class="mt-1 text-sm text-zinc-300">{ app.RamConfig }</dd>
+					</div>
+				</dl>
+			}
+		</main>
+	}
+}

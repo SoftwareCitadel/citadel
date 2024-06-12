@@ -1,0 +1,71 @@
+package auth
+
+import (
+	"github.com/caesar-rocks/auth"
+
+	"citadel/app/models"
+	"citadel/views/layouts"
+	"citadel/views/ui"
+)
+
+templ CliPage(success bool) {
+	@layouts.AuthLayout(cliPageHeader) {
+		if success {
+			<div>
+				@CliSuccessAlert()
+			</div>
+		} else {
+			<form
+				hx-post
+				hx-target="#cli-form"
+				hx-swap="outerHTML"
+				id="cli-form"
+			>
+				@ui.Button(ui.ButtonProps{
+					Type:  "submit",
+					Value: "Submit",
+					Class: "w-full",
+				}) {
+					Continue as { retrieveUser(ctx).FullName } ({ retrieveUser(ctx).Email })
+				}
+				<a class="text-center text-sm text-white flex items-center space-x-2 justify-center hover:opacity-50 transition mt-3 block" href="/auth/sign_in">
+					<span>
+						Or sign in with another account
+					</span>
+					<i class="w-3 h-3 fa-solid fa-arrow-up-right-from-square"></i>
+				</a>
+			</form>
+		}
+	}
+}
+
+templ CliSuccessAlert() {
+	<div class="relative w-full rounded-lg border p-4 [&>svg~*]:pl-7 [&>svg+div]:translate-y-[-3px] [&>svg]:absolute [&>svg]:left-4 [&>svg]:top-4 [&>svg]:text-foreground bg-emerald-300/10 border-emerald-400/20 text-emerald-400 [&>svg]:text-emerald-300">
+		<h5 class="leading-none tracking-tight font-semibold">
+			<i class="w-4 h-4 fa-solid fa-check"></i>
+			<span>Successfully authenticated</span>
+		</h5>
+	</div>
+}
+
+templ cliPageHeader() {
+	<h2 class="mt-6 font-clash text-center text-3xl font-semibold leading-9 tracking-tight text-white">
+		Awaiting your confirmation
+	</h2>
+	<p class="mt-2 text-center text-sm text-zinc-400">
+		Please confirm your identity to continue using the application.
+	</p>
+}
+
+func retrieveUser(ctx context.Context) *models.User {
+	ctxValue := ctx.Value(auth.USER_CONTEXT_KEY)
+	if ctxValue == nil {
+		return nil
+	}
+	user, ok := ctxValue.(*models.User)
+	if !ok {
+		return nil
+	}
+
+	return user
+}

@@ -1,0 +1,99 @@
+package ui
+
+type ButtonVariant int
+
+const (
+	ButtonVariantPrimary ButtonVariant = iota
+	ButtonVariantSecondary
+	ButtonVariantDanger
+)
+
+const commonButtonClass = ""
+
+var buttonVariantClass = map[ButtonVariant]string{
+	ButtonVariantPrimary:   "primary-btn",
+	ButtonVariantSecondary: "secondary-btn",
+	ButtonVariantDanger:    "danger-btn",
+}
+
+type ButtonProps struct {
+	Class       string
+	Icon        string
+	Variant     ButtonVariant
+	HxIndicator string
+	HxTarget    string
+	HxSwap      string
+	HxTrigger   string
+	HxGet       string
+	HxPatch     string
+	HxPost      string
+	HxPut       string
+	HxDelete    string
+	Type        string
+	Name        string
+	Value       string
+	Disabled    bool
+	Id          string
+	OnClick     templ.ComponentScript
+	Extra       map[string]any
+}
+
+templ Button(props ButtonProps) {
+	<button
+		class={ commonButtonClass + " " + props.Class + " " + buttonVariantClass[props.Variant] }
+		if props.HxIndicator != "" {
+			hx-indicator={ "#" + props.HxIndicator }
+		}
+		if props.Disabled {
+			disabled
+		}
+		if props.Id != "" {
+			id={ props.Id }
+		}
+		if props.HxTarget != "" {
+			hx-target={ props.HxTarget }
+		}
+		if props.HxSwap != "" {
+			hx-swap={ props.HxSwap }
+		}
+		if props.HxTrigger != "" {
+			hx-trigger={ props.HxTrigger }
+		}
+		if props.HxGet != "" {
+			hx-get={ props.HxGet }
+		}
+		if props.HxPatch != "" {
+			hx-patch={ props.HxPatch }
+		}
+		if props.HxPost != "" {
+			hx-post={ props.HxPost }
+		}
+		if props.HxPut != "" {
+			hx-put={ props.HxPut }
+		}
+		if props.HxDelete != "" {
+			hx-delete={ props.HxDelete }
+		}
+		if props.Name != "" {
+			name={ props.Name }
+		}
+		if props.Value != "" {
+			value={ props.Value }
+		}
+		if props.Type != "" {
+			type={ props.Type }
+		}
+		onClick={ props.OnClick }
+		{ props.Extra... }
+	>
+		<i
+			class="htmx-indicator fa-solid !pl-0 !ml-0 fa-spinner w-3 h-3 animate-spin"
+		></i>
+		if props.Icon != "" {
+			<i class={ "btn-icon fa-solid !mr-2 !pl-0 !ml-0 w-3 h-3 " + props.Icon }></i>
+		}
+		<span>
+			{ children... }
+		</span>
+	</button>
+}

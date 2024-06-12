@@ -1,0 +1,27 @@
+package auth
+
+templ continueWithGithub() {
+	<script>
+		function onClickContinueWithGithub() {
+			document.getElementById('continue-with-github').classList.add('loading');
+
+			document.getElementById('continue-with-github').querySelector('.github-icon').classList.add('hidden');
+			document.getElementById('continue-with-github').querySelector('.github-loading-indicator').classList.remove('hidden');
+		}
+	</script>
+	<a class="primary-btn w-full" href="/auth/github/redirect" onClick="onClickContinueWithGithub()" id="continue-with-github">
+		<i class="github-icon fa-solid !pl-0 !ml-0 !mr-2 w-3 h-3 fab fa-github"></i>
+		<i
+			class="github-loading-indicator !mr-2 fa-solid !pl-0 !ml-0 fa-spinner w-3 h-3 animate-spin hidden"
+		></i>
+		<span>Continue With GitHub</span>
+	</a>
+	<div class="relative my-6">
+		<div class="absolute inset-0 flex items-center">
+			<div class="w-full border-t border-zinc-400"></div>
+		</div>
+		<div class="relative flex justify-center text-sm leading-5">
+			<span class="px-2 text-zinc-400 bg-zinc-900 text-xs">OR</span>
+		</div>
+	</div>
+}

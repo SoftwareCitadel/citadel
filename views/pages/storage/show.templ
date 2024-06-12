@@ -1,0 +1,15 @@
+package storagePages
+
+import (
+	"citadel/app/models"
+	"citadel/views/layouts"
+)
+
+templ Show(storageBucket models.StorageBucket) {
+	@layouts.DashboardLayout(layouts.DashboardLayoutProps{
+		Class: "!p-0",
+	}) {
+		@breadcrumbs(storageBucket)
+		@tabs(storageBucket)
+	}
+}

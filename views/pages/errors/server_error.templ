@@ -1,0 +1,16 @@
+package errors
+
+import (
+	"citadel/views/layouts"
+	"net/http"
+	"strconv"
+)
+
+templ ServerErrorPage(errorCode int) {
+	@layouts.SharedLayout() {
+		<div class="container">
+			<h1 class="text-red-500">{ strconv.Itoa(errorCode) } - { http.StatusText(errorCode) }</h1>
+			<p>Something went wrong on our end. Please try again later.</p>
+		</div>
+	}
+}

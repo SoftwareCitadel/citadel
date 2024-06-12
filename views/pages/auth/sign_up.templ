@@ -1,0 +1,74 @@
+package auth
+
+import (
+	"citadel/views/layouts"
+	"citadel/views/ui"
+	"citadel/views/util"
+)
+
+type SignUpInput struct {
+	Email    string
+	Password string
+	FullName string
+}
+
+templ SignUpPage() {
+	@layouts.AuthLayout(signUpPageHeader) {
+		if util.IsFeatureActive(ctx, "github_oauth") {
+			@continueWithGithub()
+		}
+		@SignUpForm(SignUpInput{}, nil)
+	}
+}
+
+templ SignUpForm(input SignUpInput, errors map[string]string) {
+	<form class="space-y-4" hx-post="/auth/sign_up">
+		@ui.InputField(ui.InputFieldProps{
+			Label:       "Full Name",
+			Type:        "text",
+			Id:          "full_name",
+			Placeholder: "John Doe",
+			Required:    true,
+			Value:       input.FullName,
+			Error:       errors["FullName"],
+		})
+		@ui.InputField(ui.InputFieldProps{
+			Label:       "Email",
+			Type:        "email",
+			Id:          "email",
+			Placeholder: "john.doe@example.com",
+			Required:    true,
+			Value:       input.Email,
+			Error:       errors["Email"],
+		})
+		@ui.InputField(ui.InputFieldProps{
+			Label:       "Password",
+			Type:        "password",
+			Id:          "password",
+			Placeholder: "••••••••••",
+			Required:    true,
+			Value:       input.Password,
+			Error:       errors["Password"],
+		})
+		<div class="mt-4">
+			@ui.Button(ui.ButtonProps{
+				Variant: ui.ButtonVariantPrimary,
+				Class:   "w-full",
+			}) {
+				Sign Up
+			}
+		</div>
+	</form>
+}
+
+templ signUpPageHeader() {
+	<h2 class="mt-6 font-clash text-center text-3xl font-semibold leading-9 tracking-tight text-white">
+		Sign Up
+	</h2>
+	<p class="mt-2 text-center text-sm text-zinc-400">
+		Already Signed Up ?
+		<a class="leading-6 text-yellow-400 hover:text-yellow-300" href="/auth/sign_in">
+			Sign In
+		</a>
+	</p>
+}

@@ -1,0 +1,12 @@
+package components
+
+templ Logo(class string, variant string) {
+	<img
+		class={ class }
+		if variant == "black" {
+			src="/assets/logo_black.svg"
+		} else {
+			src="/assets/logo_white.svg"
+		}
+	/>
+}

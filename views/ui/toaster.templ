@@ -1,0 +1,57 @@
+package ui
+
+templ Toaster() {
+	@toasterGlobalState()
+	<div
+		id="toast"
+		x-data
+		x-show="$store.toast.visible"
+		x-transition
+		x-cloak
+		un-cloak
+		class="fixed top-4 z-50 flex justify-between items-center p-4 space-x-2 bg-white shadow-lg rounded-lg text-zinc-900 sm:mx-auto sm:inset-x-0 md:max-w-[420px]"
+		role="alert"
+	>
+		<i class="fa-solid fa-check text-emerald-600" x-show="$store.toast.level === 'success'"></i>
+		<i class="fa-solid fa-info text-blue-600" x-show="$store.toast.level === 'info'"></i>
+		<i class="fa-solid fa-exclamation text-yellow-600" x-show="$store.toast.level === 'warning'"></i>
+		<i class="fa-solid fa-xmark text-red-600" x-show="$store.toast.level === 'danger'"></i>
+		<p class="w-full text-sm font-normal" x-text="$store.toast.message"></p>
+		<button
+			@click="$store.toast.clearToast()"
+			type="button"
+			class="-mx-2 -my-1.5 ms-auto inline-flex h-8 w-8 items-center justify-center rounded-lg bg-white p-1.5 text-zinc-400 hover:bg-zinc-100 hover:text-zinc-900 focus:ring-2 focus:ring-zinc-300"
+			aria-label="Close"
+		>
+			<span class="sr-only">Close</span>
+			<i class="fa-solid fa-xmark text-zinc-500"></i>
+		</button>
+	</div>
+}
+
+script toasterGlobalState() {
+    document.addEventListener('alpine:init', () => {
+        Alpine.store("toast", {
+            visible: false,
+            message: "",
+            level: "",
+
+            displayToast(message, level) {
+                this.visible = true
+                this.message = message
+                this.level = level
+                setTimeout(() => {this.clearToast()}, 8000)
+            },
+
+            clearToast() {
+                this.visible = false
+                this.message = ""
+                this.level = ""
+            }
+        })
+    }) 
+
+    document.body.addEventListener("toast", (e) => {
+        Alpine.store('toast').displayToast(e.detail.message, e.detail.level)
+    })
+}

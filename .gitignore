@@ -1,0 +1,23 @@
+# Environment variables
+.env
+
+# NPM modules
+node_modules
+
+# Temporary folder 
+tmp
+
+# Build files
+bin
+
+# Templ generated files
+views/**/*_templ.go
+views/**/*_templ.txt
+sendgrid.env
+
+# SQLite database (mostly used in development)
+database.sqlite
+
+# Extra
+private-key.pem
+.DS_Store

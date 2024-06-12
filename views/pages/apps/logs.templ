@@ -1,0 +1,27 @@
+package appsPages
+
+import (
+	"citadel/views/layouts"
+	"citadel/app/models"
+	"citadel/views/ui"
+)
+
+templ LogsPage(app models.Application) {
+	@layouts.DashboardLayout(layouts.DashboardLayoutProps{Class: "!p-0 "}) {
+		@breadcrumbs(app)
+		@tabs(app)
+		<main class="px-12 pb-6">
+			@ui.Card(ui.CardProps{
+				Title: "Logs",
+			}) {
+				<code
+					class="text-white text-sm space-y-2"
+					hx-ext="sse"
+					sse-connect={ "/apps/" + app.Slug + "/logs/stream" }
+					sse-swap="log"
+					hx-swap="beforeend"
+				></code>
+			}
+		</main>
+	}
+}

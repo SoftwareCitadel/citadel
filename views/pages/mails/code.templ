@@ -1,0 +1,104 @@
+package mailsPages
+
+templ code() {
+	<script type="module">
+    import { codeToHtml } from 'https://esm.sh/shiki@1.0.0'
+
+    const codeSnippetsData = {
+        shellscript: `curl https://softwarecitadel.com/api/v1/emails\n\t-H "Authorization: Bearer {apiKey}"\n\t-H "Content-Type: application/json"\n\t-X POST\n\t-d $'\n      {\n        "from": "dagny@taggart.com",\n        "to": "henry@rearden.com",\n        "subject": "Urgent Meeting Request: Collaboration Opportunity",\n        "text": "Dear Henry, ...",\n        "html": "Dear <b>Henry</b>, ..."\n      }'\n`,
+        python: `import facteur\n    \nf = facteur.Facteur("facteur-...")\nf.send_email(\n    frm='no-reply@example.com',\n    to='ayn@rand.com',\n    subject='Who is John Galt?',\n    text='I started my life with a single absolute: that the world was mine to shape in the image of my highest values and never to be given up to a lesser standard, no matter how long or hard the struggle.',\n    html='<p>I started my life with <b>a single absolute</b>: that the world was mine to shape in the image of my highest values and never to be given up to a lesser standard, no matter how long or hard the struggle.</p>',\n)`,
+        typescript: `import Facteur from 'facteur-node';\n    \nasync function sendSomeEmail() {\n  const facteur = new Facteur('facteur-...');\n\n  await facteur.sendEmail({\n    from: 'no-reply@example.com',\n    to: 'ayn@rand.com',\n    subject: 'Who is John Galt?',\n    text:\n      'I started my life with a single absolute: that the world was mine to shape in the image of my highest values and never to be given up to a lesser standard, no matter how long or hard the struggle.',\n    html:\n      '<p>I started my life with <b>a single absolute</b>: that the world was mine to shape in the image of my highest values and never to be given up to a lesser standard, no matter how long or hard the struggle.</p>',\n  });\n}\nsendSomeEmail();`,
+        go: `package main\n\nfunc main() {\n\tpayload := &facteur.SendEmailPayload{\n      From: "no-reply@example.com",\n      To: "ayn@rand.com",\n      Subject: "Who is John Galt? From Golang!",\n      Text: "I started my life with a single absolute: that the world was mine to shape in the image of my highest values and never to be given up to a lesser standard, no matter how long or hard the struggle.",\n      HTML: "<p>I started my life with <b>a single absolute</b>: that the world was mine to shape in the image of my highest values and never to be given up to a lesser standard, no matter how long or hard the struggle.</p>",\n\t}\n\n\tf := facteur.NewFacteur("<YOUR_API_KEY>")\n\terr := f.SendEmail(payload)\n\tif err != nil {\n\t\tfmt.Println(err)\n\t}\n}`,
+        php: `use FacteurDevFacteurPhpFacteur;\n$facteur = new Facteur('<your-api-key>');\ntry {\n    $facteur->sendEmail([\n        'from' => 'hank@rearden.com',\n        'to' => 'dagny@taggart.com',\n        'subject' => 'Who is John Galt?',\n        'text' => 'I started my life with a single absolute: that the world was mine to shape in the image of my highest values and never to be given up to a lesser standard, no matter how long or hard the struggle.',\n        'html' => "<h1>it <u>works</u>!</h1>"\n    ]);\n} catch (Exception $e) {\n      echo $e->getMessage();\n  }`
+    }
+
+    const codeSnippets = document.querySelectorAll('#code-snippet')
+    for (const codeSnippet of codeSnippets) {
+      const lang = codeSnippet.getAttribute('data-lang')
+      codeSnippet.innerHTML = await codeToHtml(codeSnippetsData[lang], {
+        lang,
+        theme: 'monokai'
+      })
+    }
+  </script>
+	<script>
+  	function getClass(value, selectedLanguage) {
+		if (value === selectedLanguage) {
+			return 'py-3 text-sm text-yellow-400 border-b border-yellow-500 cursor-pointer'
+		}
+		return 'text-zinc-400 text-sm hover:text-zinc-300 transition-colors cursor-pointer'
+	}
+  </script>
+	<div
+		class="border border-zinc-700 rounded-xl w-full bg-zinc-900 text-white max-w-5xl"
+		x-data="{ selectedLanguage: 'shellscript' }"
+	>
+		<div class="px-4 flex space-x-4 border-b border-zinc-700">
+			<button
+				x-bind:class="getClass('shellscript', selectedLanguage)"
+				x-on:click="selectedLanguage = 'shellscript'"
+			>
+				cURL
+			</button>
+			<button
+				x-bind:class="getClass('python', selectedLanguage)"
+				x-on:click="selectedLanguage = 'python'"
+			>
+				Python
+			</button>
+			<button
+				x-bind:class="getClass('typescript', selectedLanguage)"
+				x-on:click="selectedLanguage = 'typescript'"
+			>
+				Node.js
+			</button>
+			<button
+				x-bind:class="getClass('go', selectedLanguage)"
+				x-on:click="selectedLanguage = 'go'"
+			>
+				Go
+			</button>
+			<button
+				x-bind:class="getClass('php', selectedLanguage)"
+				x-on:click="selectedLanguage = 'php'"
+			>
+				PHP
+			</button>
+		</div>
+		<div
+			class="rounded-b-xl overflow-auto leading-6 text-sm sm:text-sm min-h-72 h-72 max-h-72"
+			style="color: rgb(70, 74, 77); transform: none;"
+		>
+			<code
+				x-show="selectedLanguage === 'shellscript'"
+				class="block p-4 !bg-white/2.5 w-full h-full [&>pre]:!bg-transparent"
+				id="code-snippet"
+				data-lang="shellscript"
+			></code>
+			<code
+				x-show="selectedLanguage === 'python'"
+				class="block p-4 !bg-white/2.5 w-full h-full [&>pre]:!bg-transparent"
+				id="code-snippet"
+				data-lang="python"
+			></code>
+			<code
+				x-show="selectedLanguage === 'typescript'"
+				class="block p-4 !bg-white/2.5 w-full h-full [&>pre]:!bg-transparent"
+				id="code-snippet"
+				data-lang="typescript"
+			></code>
+			<code
+				x-show="selectedLanguage === 'go'"
+				class="block p-4 !bg-white/2.5 w-full h-full [&>pre]:!bg-transparent"
+				id="code-snippet"
+				data-lang="go"
+			></code>
+			<code
+				x-show="selectedLanguage === 'php'"
+				class="block p-4 !bg-white/2.5 w-full h-full [&>pre]:!bg-transparent"
+				id="code-snippet"
+				data-lang="php"
+			></code>
+		</div>
+	</div>
+}

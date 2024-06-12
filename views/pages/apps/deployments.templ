@@ -1,0 +1,162 @@
+package appsPages
+
+import (
+	"citadel/views/layouts"
+	"citadel/app/models"
+	"citadel/views/ui"
+	"time"
+	"strconv"
+)
+
+templ DeploymentsPage(app models.Application) {
+	@layouts.DashboardLayout(layouts.DashboardLayoutProps{Class: "!p-0 "}) {
+		@breadcrumbs(app)
+		@tabs(app)
+		<main class="px-12 space-y-8 !pb-6">
+			@ui.Card(ui.CardProps{
+				Title: "Deployments",
+				Class: "!p-0 !m-0",
+			}) {
+				<div
+					hx-get={ "/apps/" + app.Slug + "/deployments/list" }
+					hx-swap="innerHTML"
+					hx-trigger="load, every 1s"
+					hx-indicator="none"
+				>
+					<div class="p-6 pt-2 mt-4"></div>
+				</div>
+			}
+		</main>
+	}
+}
+
+templ DeploymentsList(app models.Application, depls []models.Deployment) {
+	<script>
+	function getInitiatedXAgo(date) {
+		const now = new Date()
+		const diff = now.getTime() - date.getTime()
+		const seconds = Math.floor(diff / 1000)
+		const minutes = Math.floor(seconds / 60)
+		const hours = Math.floor(minutes / 60)
+		const days = Math.floor(hours / 24)
+
+		if (days > 0) {
+			return `${days}d`
+		}
+
+		if (hours > 0) {
+			return `${hours}h`
+		}
+
+		if (minutes > 0) {
+			return `${minutes}m ${seconds % 60}s`
+		}
+
+		return `${seconds}s`
+	}
+
+
+	startTimer(date) {
+		setInterval(() => {
+			const deploymentsCards = document.querySelectorAll("#deployment-card")
+			for (const card of deploymentsCards) {
+				const deplId = card.getAttribute("data-depl-id")
+				const date = new Date(document.getElementById(deplId + "-initiated-at").innerText)
+				const id = `${deplId}-initiated-ago`
+				document.getElementById(id).innerText = getInitiatedXAgo(date)
+			}
+		}, 1000)
+	}
+	</script>
+	if len(depls) > 0 {
+		<ul class="divide-y divide-zinc-300/20">
+			for _, depl := range depls {
+				@deploymentCard(app, depl)
+			}
+		</ul>
+	} else {
+		<div class="p-6 pt-2 mt-4"></div>
+	}
+}
+
+templ deploymentCard(app models.Application, depl models.Deployment) {
+	<li
+		class="flex items-center space-x-4 px-6 py-6"
+		id="deployment-card"
+		data-depl-id={ depl.ID }
+	>
+		<div class="min-w-0 flex-auto">
+			<div class="flex items-center gap-x-3">
+				<div class={ "flex-none rounded-full p-1 " + getColorClass(depl.Status) }>
+					<div class="h-2 w-2 rounded-full bg-current"></div>
+				</div>
+				<h2 class="min-w-0 text-sm font-semibold leading-6 text-zinc-900">
+					<p class="flex gap-x-2 text-white">
+						<span class="whitespace-nowrap">{ app.Name }</span>
+					</p>
+				</h2>
+				<div
+					class={ getStatusTextColorClass(depl.Status) + " rounded-md flex-none py-1 px-2 text-xs font-medium" }
+				>
+					{ depl.Status.String() }
+				</div>
+			</div>
+			<div class="mt-3 flex items-center gap-x-2.5 text-xs leading-5 text-zinc-100">
+				<p class="truncate">Deploys from { depl.Origin.String() }</p>
+				<svg viewBox="0 0 2 2" class="h-0.5 w-0.5 flex-none fill-zinc-300">
+					<circle cx="1" cy="1" r="1"></circle>
+				</svg>
+				<p class="whitespace-nowrap">Initiated { getInitiatedXAgo(depl.CreatedAt) } ago</p>
+			</div>
+		</div>
+	</li>
+}
+
+func getColorClass(status models.DeploymentStatus) string {
+	switch status {
+	case models.DeploymentStatusBuilding, models.DeploymentStatusDeploying:
+		return "text-yellow-500 !bg-yellow-100/20"
+	case models.DeploymentStatusBuildFailed, models.DeploymentStatusDeployFailed:
+		return "text-red-500 !bg-red-100/20"
+	case models.DeploymentStatusSuccess:
+		return "text-emerald-500 !bg-emerald-100/20"
+	default:
+		return ""
+	}
+}
+
+func getStatusTextColorClass(status models.DeploymentStatus) string {
+	switch status {
+	case models.DeploymentStatusBuilding, models.DeploymentStatusDeploying:
+		return "bg-yellow-400/10 text-yellow-400 ring-1 ring-inset ring-yellow-400/20"
+	case models.DeploymentStatusBuildFailed, models.DeploymentStatusDeployFailed:
+		return "bg-red-400/10 text-red-400 ring-1 ring-inset ring-red-400/20"
+	case models.DeploymentStatusSuccess:
+		return "bg-emerald-400/10 text-emerald-400 ring-1 ring-inset ring-emerald-400/20"
+	default:
+		return ""
+	}
+}
+
+func getInitiatedXAgo(date time.Time) string {
+	now := time.Now()
+	diff := now.Sub(date)
+	seconds := int(diff.Seconds())
+	minutes := seconds / 60
+	hours := minutes / 60
+	days := hours / 24
+
+	if days > 0 {
+		return strconv.Itoa(days) + "d"
+	}
+
+	if hours > 0 {
+		return strconv.Itoa(hours) + "h"
+	}
+
+	if minutes > 0 {
+		return strconv.Itoa(minutes) + "m " + strconv.Itoa(seconds%60) + "s"
+	}
+
+	return strconv.Itoa(seconds) + "s"
+}

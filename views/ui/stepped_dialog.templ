@@ -1,0 +1,61 @@
+package ui
+
+import "fmt"
+
+type Step templ.Component
+
+type SteppedDialogProps struct {
+	Id           string
+	Title        string
+	Steps        []Step
+	ActionButton func() templ.Component
+}
+
+templ SteppedDialog(props SteppedDialogProps) {
+	@Dialog(DialogProps{
+		Id:    props.Id,
+		Title: props.Title,
+		Class: "!px-0",
+	}) {
+		<div x-data={ fmt.Sprintf("{ steps: %v, step: 0 }", len(props.Steps)) }>
+			for i, step := range props.Steps {
+				<div x-show={ fmt.Sprintf("step === %v", i) }>
+					@step
+				</div>
+			}
+			<div class="px-6 pt-4 flex space-x-2 justify-between border-t border-zinc-300/10">
+				<template x-if="step > 0">
+					@Button(ButtonProps{
+						Class:   "!ml-0",
+						Variant: ButtonVariantSecondary,
+						Extra: map[string]any{
+							"x-on:click": "step--",
+						},
+						Type: "button",
+					}) {
+						Previous
+					}
+				</template>
+				<template x-if="step === 0">
+					<div></div>
+				</template>
+				<template x-if="step === steps - 1">
+					<div>
+						@props.ActionButton()
+					</div>
+				</template>
+				<template x-if="step < steps - 1">
+					@Button(ButtonProps{
+						Variant: ButtonVariantSecondary,
+						Extra: map[string]any{
+							"x-on:click": "step++",
+						},
+						Type: "button",
+					}) {
+						Next
+					}
+				</template>
+			</div>
+		</div>
+	}
+}

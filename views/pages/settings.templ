@@ -1,0 +1,108 @@
+package pages
+
+import (
+	"github.com/caesar-rocks/auth"
+
+	"citadel/views/ui"
+	"citadel/views/layouts"
+	"citadel/app/models"
+)
+
+templ SettingsPage() {
+	@layouts.DashboardLayout(layouts.DashboardLayoutProps{}) {
+		<h2 class="text-3xl text-gradient font-semibold font-clash">Settings</h2>
+		@SettingsForm(nil)
+		@ui.Card(ui.CardProps{
+			Title:       "Delete Account",
+			Description: "Deleting your account will permanently remove all your data from our servers. This action cannot be undone.",
+		}) {
+			@ui.Button(ui.ButtonProps{
+				Variant: ui.ButtonVariantDanger,
+				OnClick: ui.OpenDialog("delete_account"),
+			}) {
+				Delete Account
+			}
+		}
+		@ui.Dialog(ui.DialogProps{
+			Id:          "delete_account",
+			Title:       "Delete Account",
+			Description: "Are you sure you want to delete your account?",
+		}) {
+			@ui.Button(ui.ButtonProps{Variant: ui.ButtonVariantDanger, HxDelete: "/settings"}) {
+				Delete Account
+			}
+		}
+	}
+}
+
+templ SettingsForm(errors map[string]string) {
+	<form class="rounded-md border bg-zinc-900 text-card-foreground shadow border-zinc-300/20 mt-6" hx-patch="/settings" hx-swap="outerHTML">
+		<div class="flex flex-col p-6 border-b border-zinc-300/20">
+			<h3 class="font-semibold leading-none tracking-tight text-xl text-white">My Account</h3>
+		</div>
+		<div class="pt-4 pb-2 space-y-4 divide-y divide-zinc-300/20">
+			<div class="space-y-4 px-6">
+				@ui.InputField(ui.InputFieldProps{
+					Label:       "Email Address",
+					Placeholder: "john.doe@example.com",
+					Id:          "email",
+					Type:        "email",
+					Value:       retrieveUser(ctx).Email,
+					Error:       errors["Email"],
+				})
+				@ui.InputField(ui.InputFieldProps{
+					Label:       "Full Name",
+					Placeholder: "John Doe",
+					Id:          "full_name",
+					Type:        "text",
+					Value:       retrieveUser(ctx).FullName,
+					Error:       errors["FullName"],
+				})
+			</div>
+			<div class="space-y-4 py-4 px-6">
+				@ui.InputField(ui.InputFieldProps{
+					Label:       "New Password",
+					LabelRight:  optionalLabelRight,
+					Placeholder: "••••••••••••",
+					Id:          "new_password",
+					Type:        "password",
+					Error:       errors["NewPassword"],
+				})
+				@ui.InputField(ui.InputFieldProps{
+					Label:       "Confirm Password",
+					LabelRight:  optionalLabelRight,
+					Placeholder: "••••••••••••",
+					Id:          "confirm_password",
+					Type:        "password",
+					Error:       errors["ConfirmPassword"],
+				})
+			</div>
+		</div>
+		<div class="flex items-center p-6 border-t border-zinc-300/20 rounded-b-md bg-zinc-900">
+			<div>
+				@ui.Button(ui.ButtonProps{
+					Variant: ui.ButtonVariantPrimary,
+				}) {
+					Save Changes
+				}
+			</div>
+		</div>
+	</form>
+}
+
+templ optionalLabelRight() {
+	<span class="text-zinc-300 text-sm">(optional)</span>
+}
+
+func retrieveUser(ctx context.Context) *models.User {
+	ctxValue := ctx.Value(auth.USER_CONTEXT_KEY)
+	if ctxValue == nil {
+		return nil
+	}
+	user, ok := ctxValue.(*models.User)
+	if !ok {
+		return nil
+	}
+
+	return user
+}

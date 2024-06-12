@@ -1,0 +1,74 @@
+package storagePages
+
+import (
+	"citadel/app/models"
+	"citadel/views/ui"
+	"citadel/views/layouts"
+)
+
+templ Index(storageBuckets []models.StorageBucket) {
+	@layouts.DashboardLayout(layouts.DashboardLayoutProps{}) {
+		<div class="flex items-center space-x-8">
+			<h2 class="text-3xl text-gradient font-semibold font-clash">
+				Storage Buckets
+			</h2>
+			<div>
+				@ui.Button(ui.ButtonProps{
+					Icon:    "fa-solid fa-plus",
+					OnClick: ui.OpenDialog("create_storage_bucket"),
+				}) {
+					Create New Storage Bucket
+				}
+				@createStorageBucketDialog()
+			</div>
+		</div>
+		<br/>
+		<div class="gap-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+			for _, storageBucket := range storageBuckets {
+				@storageBucketCard(storageBucket)
+			}
+		</div>
+	}
+}
+
+templ storageBucketCard(storageBucket models.StorageBucket) {
+	<a class="hover:opacity-75 transition-opacity" href={ templ.SafeURL("/storage/" + storageBucket.Slug) }>
+		<div class="rounded-md border bg-zinc-900 text-card-foreground shadow border-zinc-300/20">
+			<div class="p-6">
+				<h3 class="font-semibold leading-none tracking-tight text-xl text-white !text-lg">
+					{ storageBucket.Name }
+				</h3>
+				<p class="text-sm text-white">
+					{ storageBucket.Slug }
+				</p>
+				<i class="fa-solid fa-hard-drive w-4 h-4 mt-2 text-white"></i>
+			</div>
+		</div>
+	</a>
+}
+
+templ createStorageBucketDialog() {
+	<form hx-post="/storage">
+		@ui.Dialog(ui.DialogProps{
+			Id:    "create_storage_bucket",
+			Title: "Create Storage Bucket",
+			Class: "!px-0",
+		}) {
+			@ui.InputField(ui.InputFieldProps{
+				DivClass:    "px-6 pb-4",
+				Id:          "name",
+				Label:       "Name",
+				Placeholder: "my-bucket",
+				Class:       "lowercase",
+				Extra:       map[string]any{"minlength": "3"},
+			})
+			<div class="px-6 pt-4 border-t border-zinc-300/10">
+				@ui.Button(ui.ButtonProps{
+					Type: "submit",
+				}) {
+					Create Bucket
+				}
+			</div>
+		}
+	</form>
+}

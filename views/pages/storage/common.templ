@@ -1,0 +1,68 @@
+package storagePages
+
+import (
+	"citadel/app/models"
+)
+
+templ breadcrumbs(storageBucket models.StorageBucket) {
+	<div class="flex flex-col items-start justify-between gap-x-8 gap-y-4 py-4 px-12 sm:flex-row sm:items-center border-b border-zinc-300/20">
+		<div class="flex items-center gap-x-3">
+			<h1 class="flex gap-x-3 text-base leading-7 items-center">
+				<a class="hover:opacity-75 transition" href="/storage">
+					<i class="fa-solid fa-hard-drive w-4 h-4 text-zinc-300"></i>
+				</a>
+				<span class="!text-zinc-300">/</span>
+				<div class="flex gap-x-2">
+					<span class="font-semibold text-zinc-300">{ storageBucket.Name }</span>
+					if storageBucket.Slug != storageBucket.Name {
+						<span class="text-zinc-300">({ storageBucket.Slug })</span>
+					}
+				</div>
+			</h1>
+		</div>
+	</div>
+}
+
+templ tabs(storageBucket models.StorageBucket) {
+	<nav class="flex overflow-x-auto border-b border-zinc-300/20 py-4 px-12">
+		<ul class="flex min-w-full flex-none gap-x-6 text-sm leading-6 text-zinc-300">
+			<li>
+				<a
+					class={ getClassForTab("/storage/"+storageBucket.Slug, retrievePath(ctx)) }
+					href={ templ.SafeURL("/storage/" + storageBucket.Slug) }
+				>
+					Overview
+				</a>
+			</li>
+			<li>
+				<a
+					class={ getClassForTab("/storage/"+storageBucket.Slug+"/edit", retrievePath(ctx)) }
+					href={ templ.SafeURL("/storage/" + storageBucket.Slug + "/edit") }
+				>
+					Settings
+				</a>
+			</li>
+		</ul>
+	</nav>
+}
+
+func getClassForTab(tabPath string, currentPath string) string {
+	if tabPath == currentPath {
+		return "text-yellow-300 whitespace-nowrap"
+	}
+
+	return "hover:text-yellow-300 transition-colors whitespace-nowrap"
+}
+
+func retrievePath(ctx context.Context) string {
+	ctxValue := ctx.Value("path")
+	if ctxValue == nil {
+		return ""
+	}
+	path, ok := ctxValue.(string)
+	if !ok {
+		return ""
+	}
+
+	return path
+}

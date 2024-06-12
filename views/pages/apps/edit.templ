@@ -1,0 +1,163 @@
+package appsPages
+
+import (
+	"citadel/views/layouts"
+	"citadel/app/models"
+	"citadel/views/ui"
+)
+
+templ EditPage(app models.Application) {
+	@layouts.DashboardLayout(layouts.DashboardLayoutProps{Class: "!p-0 "}) {
+		@breadcrumbs(app)
+		@tabs(app)
+		<main class="px-12 space-y-8 !pb-6">
+			@ApplicationsSettingsForm(app, nil)
+			@ui.Card(ui.CardProps{
+				Title: "Connected GitHub Repository",
+			}) {
+				if app.GitHubRepository == "" {
+					@ui.Button(ui.ButtonProps{
+						Variant: ui.ButtonVariantPrimary,
+						OnClick: ui.OpenDialog("connect_github"),
+						Type:    "button",
+					}) {
+						Connect a GitHub repository
+					}
+				} else {
+					<form
+						class="flex flex-col sm:flex-row py-2 items-start"
+						hx-post={ "/apps/" + app.Slug + "/disconnect_github" }
+						hx-swap="outerHTML"
+						hx-trigger="submit"
+						hx-target="body"
+					>
+						<div class="flex flex-col space-y-2 !mr-8">
+							<a
+								class="flex space-x-2 text-white items-center hover:opacity-75 transition-opacity"
+								href={ templ.SafeURL("https://github.com/" + app.GitHubRepository) }
+								target="_blank"
+							>
+								<span class="text-sm font-semibold">{ app.GitHubRepository }</span>
+								<i class="fa-solid fa-arrow-up-right-from-square w-3 h-3"></i>
+							</a>
+							<div class="flex items-center space-x-2 text-yellow-400">
+								<i class="fa-solid fa-code-branch w-3 h-3"></i>
+								<span class="text-sm">{ app.GitHubBranch }</span>
+							</div>
+						</div>
+						@ui.Button(ui.ButtonProps{
+							Variant:     ui.ButtonVariantDanger,
+							Type:        "submit",
+							HxIndicator: "disconnect",
+							Class:       "mt-2 sm:mt-0",
+						}) {
+							Disconnect
+						}
+					</form>
+				}
+			}
+			@ui.Card(ui.CardProps{
+				Title:       "Delete Application",
+				Description: "Deleting your application will remove all data associated with it. This action cannot be undone.",
+			}) {
+				@ui.Button(ui.ButtonProps{
+					Variant: ui.ButtonVariantDanger,
+					OnClick: ui.OpenDialog("delete_application"),
+				}) {
+					Delete Application
+				}
+			}
+		</main>
+		@ui.Dialog(ui.DialogProps{
+			Id:    "connect_github",
+			Title: "Connect GitHub Repository",
+			Class: "!p-0 flex flex-col",
+		}) {
+			<div class="px-6 py-4">
+				<a
+					class="text-yellow-400 hover:text-yellow-500 transition-colors text-sm cursor-pointer"
+					onclick="window.open('https://github.com/apps/software-citadel/installations/new', 'popup', 'width=600,height=600')"
+				>
+					Install or configure GitHub app
+				</a>
+			</div>
+			<form
+				x-data
+				id="connect_github_form"
+				method="post"
+				action={ templ.SafeURL("/apps/" + app.Slug + "/connect_github") }
+				@connect-repository="
+				    document.getElementById('github_installation_id').value = $event.detail.installationId;
+					document.getElementById('github_repository').value = $event.detail.repository;
+					document.getElementById('github_branch').value = $event.detail.branch;
+					document.getElementById('connect_github_form').submit();
+				"
+			>
+				<input type="hidden" name="github_installation_id" id="github_installation_id"/>
+				<input type="hidden" name="github_repository" id="github_repository"/>
+				<input type="hidden" name="github_branch" id="github_branch"/>
+				// Load GitHub repositories 
+				<div
+					class="px-6 py-4 border-t border-zinc-300/10"
+					hx-get="/github/repositories"
+					hx-trigger="load"
+					hx-swap="outerHTML"
+				>
+					<i class="fa-solid text-yellow-400 fa-spinner w-3.5 h-3.5 animate-spin"></i>
+				</div>
+			</form>
+		}
+		@ui.Dialog(ui.DialogProps{
+			Id:          "delete_application",
+			Title:       "Delete Application",
+			Description: "Are you sure you want to delete your application?",
+		}) {
+			@ui.Button(ui.ButtonProps{
+				Variant:  ui.ButtonVariantDanger,
+				HxDelete: "/apps/" + app.Slug,
+			}) {
+				Delete Application
+			}
+		}
+	}
+}
+
+templ ApplicationsSettingsForm(app models.Application, errors map[string]string) {
+	<form hx-patch={ "/apps/" + app.Slug }>
+		@ui.Card(ui.CardProps{
+			Title: "Application settings",
+			Class: "!p-0",
+		}) {
+			<div class="px-6 mb-4">
+				@ui.InputField(ui.InputFieldProps{
+					Label:       "Name",
+					Id:          "name",
+					Placeholder: "webapp",
+					Value:       app.Name,
+					Class:       "lowercase",
+					Extra: map[string]any{
+						"minlength": "3",
+					},
+				})
+			</div>
+			<div class="px-6 py-4 border-t border-zinc-300/20">
+				<div class="max-w-lg">
+					@computingSpecsFormPart(&app)
+				</div>
+			</div>
+			<div class="px-6 py-4 border-t border-zinc-300/20">
+				@ui.InputField(ui.InputFieldProps{
+					Label:       "Release command",
+					Id:          "release_command",
+					Placeholder: "php artisan migrate",
+					Value:       app.ReleaseCommand,
+				})
+			</div>
+			<div class="px-6 py-4 border-t border-zinc-300/20">
+				@ui.Button(ui.ButtonProps{Variant: ui.ButtonVariantPrimary}) {
+					Save Changes
+				}
+			</div>
+		}
+	</form>
+}

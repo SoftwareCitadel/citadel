@@ -1,0 +1,53 @@
+package mailsPages
+
+templ tabs() {
+	<nav class="flex overflow-x-auto border-b border-zinc-300/20 py-4 px-12">
+		<ul class="flex min-w-full flex-none gap-x-6 text-sm leading-6 text-zinc-300">
+			<li>
+				<a
+					class={ getClassForTab("/mails", retrievePath(ctx)) }
+					href={ templ.SafeURL("/mails") }
+				>
+					Overview
+				</a>
+			</li>
+			<li>
+				<a
+					class={ getClassForTab("/mails/domains", retrievePath(ctx)) }
+					href={ templ.SafeURL("/mails/domains") }
+				>
+					Domains
+				</a>
+			</li>
+			<li>
+				<a
+					class={ getClassForTab("/mails/api_keys", retrievePath(ctx)) }
+					href={ templ.SafeURL("/mails/api_keys") }
+				>
+					API Keys
+				</a>
+			</li>
+		</ul>
+	</nav>
+}
+
+func getClassForTab(tabPath string, currentPath string) string {
+	if tabPath == currentPath {
+		return "text-yellow-300 whitespace-nowrap"
+	}
+
+	return "hover:text-yellow-300 transition-colors whitespace-nowrap"
+}
+
+func retrievePath(ctx context.Context) string {
+	ctxValue := ctx.Value("path")
+	if ctxValue == nil {
+		return ""
+	}
+	path, ok := ctxValue.(string)
+	if !ok {
+		return ""
+	}
+
+	return path
+}

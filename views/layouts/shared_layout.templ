@@ -1,0 +1,31 @@
+package layouts
+
+import (
+	"os"
+	"citadel/views/ui"
+)
+
+templ SharedLayout() {
+	<!DOCTYPE html>
+	<html class="bg-zinc-900" lang="en">
+		<head>
+			<title>{ os.Getenv("APP_NAME") }</title>
+			<meta charset="UTF-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			// Styles
+			<link rel="stylesheet" href="/assets/styles.css"/>
+			// Font Awesome
+			<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js"></script>
+			// HTMX
+			<script src="https://unpkg.com/htmx.org@1.9.12"></script>
+			// HTMX SSE
+			<script src="https://unpkg.com/htmx.org@1.9.12/dist/ext/sse.js"></script>
+			// Alpine.js 
+			<script defer src="https://unpkg.com/alpinejs@latest/dist/cdn.min.js"></script>
+		</head>
+		<body>
+			@ui.Toaster()
+			{ children... }
+		</body>
+	</html>
+}

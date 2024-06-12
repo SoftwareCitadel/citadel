@@ -1,0 +1,61 @@
+package ui
+
+type InputFieldProps struct {
+	Class       string
+	DivClass    string
+	SubDivClass string
+	Id          string
+	Label       string
+	Error       string
+	LabelRight  func() templ.Component
+	Type        string
+	Placeholder string
+	Readonly    bool
+	Required    bool
+	Value       string
+	Icon        string
+	Info        string
+	Extra       map[string]any
+}
+
+templ InputField(props InputFieldProps) {
+	<div class={ props.DivClass }>
+		if props.Label != "" {
+			@Label(LabelProps{
+				Id:         props.Id,
+				Label:      props.Label,
+				LabelRight: props.LabelRight,
+			})
+		}
+		<div class={ "mt-1 flex items-center space-x-2 w-full " + props.SubDivClass }>
+			if props.Icon != "" {
+				<i class={ "w-3 h-3 fa-solid text-yellow-400 " + props.Icon }></i>
+			}
+			<input
+				if props.Type == "range" {
+					class={ "block w-full rounded-md outline-none bg-white/5 !px-0 py-1.5 text-white text-sm sm:leading-6 accent-yellow-400 " + props.Class }
+				} else {
+					class={ "base-input " + props.Class }
+				}
+				readonly?={ props.Readonly }
+				required?={ props.Required }
+				if props.Value != "" {
+					value={ props.Value }
+				}
+				id={ props.Id }
+				name={ props.Id }
+				type={ props.Type }
+				placeholder={ props.Placeholder }
+				autofocus
+				{ props.Extra... }
+			/>
+		</div>
+		{ children... }
+		if props.Info != "" {
+			<p class="text-sm text-white text-center">{ props.Info }</p>
+		}
+		if props.Error != "" {
+			<p class="text-sm text-red-500 mt-1">{ props.Error }</p>
+		}
+	</div>
+}

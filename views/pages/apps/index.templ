@@ -1,0 +1,164 @@
+package appsPages
+
+import (
+	"citadel/views/layouts"
+	"citadel/views/ui"
+	"citadel/app/models"
+)
+
+templ IndexPage(apps []models.Application) {
+	@layouts.DashboardLayout(layouts.DashboardLayoutProps{}) {
+		<div class="flex items-center space-x-8">
+			<h2 class="text-3xl text-gradient font-semibold font-clash">
+				Applications
+			</h2>
+			<div>
+				@ui.Button(ui.ButtonProps{
+					Icon:    "fa-solid fa-plus",
+					OnClick: ui.OpenDialog("create_application"),
+				}) {
+					Create New Application
+				}
+				@createApplicationDialog()
+			</div>
+		</div>
+		<br/>
+		<div class="gap-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+			for _, app := range apps {
+				@applicationCard(app)
+			}
+		</div>
+	}
+}
+
+templ createApplicationDialog() {
+	<form hx-post="/apps">
+		@ui.SteppedDialog(ui.SteppedDialogProps{
+			Id:           "create_application",
+			Title:        "New Application",
+			Steps:        []ui.Step{namingStep(), computingSpecsStep(), githubStep()},
+			ActionButton: createApplicationDialogActionButton,
+		})
+	</form>
+}
+
+templ createApplicationDialogActionButton() {
+	@ui.Button(ui.ButtonProps{
+		OnClick: ui.CloseDialog("create_application"),
+		Type:    "submit",
+	}) {
+		Create Application
+	}
+}
+
+templ namingStep() {
+	<div class="px-6 pb-4">
+		@ui.InputField(ui.InputFieldProps{
+			Label:       "Name",
+			Id:          "name",
+			Placeholder: "webapp",
+			Class:       "lowercase",
+			Extra: map[string]any{
+				"minlength": "3",
+			},
+		})
+	</div>
+}
+
+templ computingSpecsStep() {
+	<div class="px-6 pb-4">
+		@computingSpecsFormPart(nil)
+	</div>
+}
+
+templ githubStep() {
+	<script>
+    document.addEventListener('alpine:init', () => {
+		Alpine.store('githubNewApp', {
+			installationId: -1,
+			repository: '',
+			branch: '',
+
+			disconnect() {
+				this.installationId = -1
+				this.repository = ''
+				this.branch = ''
+			}
+		})
+	})
+	</script>
+	<div
+		x-data
+		@connect-repository="
+			$store.githubNewApp.installationId = $event.detail.installationId; 
+			$store.githubNewApp.repository = $event.detail.repository; 
+			$store.githubNewApp.branch = $event.detail.branch;
+		"
+	>
+		<input type="hidden" x-model="$store.githubNewApp.installationId" name="github_installation_id"/>
+		<input type="hidden" x-model="$store.githubNewApp.repository" name="github_repository"/>
+		<input type="hidden" x-model="$store.githubNewApp.branch" name="github_branch"/>
+		<div class="px-6 mb-4">
+			<a
+				class="text-yellow-400 hover:text-yellow-500 transition-colors text-sm cursor-pointer"
+				onclick="window.open('https://github.com/apps/software-citadel/installations/new', 'popup', 'width=600,height=600')"
+			>
+				Install or configure GitHub app
+			</a>
+		</div>
+		<div
+			x-show="$store.githubNewApp.installationId === -1"
+			hx-get="/github/repositories"
+			hx-trigger="load"
+		>
+			<div class="mt-4 px-6 py-4 border-t border-zinc-300/10">
+				<i class="fa-solid text-yellow-400 fa-spinner w-3.5 h-3.5 animate-spin"></i>
+			</div>
+		</div>
+		<div class="px-6 py-4 border-t border-zinc-300/10" x-show="$store.githubNewApp.installationId !== -1">
+			<div class="flex justify-between space-x-4 py-2 items-center">
+				<div class="flex flex-col">
+					<a
+						class="flex space-x-2 text-white items-center hover:opacity-75 transition-opacity"
+						x-bind:href="'https://github.com/'+$store.githubNewApp.repository"
+						target="_blank"
+					>
+						<span class="text-sm font-semibold" x-text="$store.githubNewApp.repository"></span>
+						<i class="fa-solid fa-arrow-up-right-from-square w-3 h-3"></i>
+					</a>
+					<div class="flex items-center space-x-2 text-yellow-400">
+						<i class="fa-solid fa-code-branch w-3 h-3"></i>
+						<span class="text-sm" x-text="$store.githubNewApp.branch"></span>
+					</div>
+				</div>
+				@ui.Button(ui.ButtonProps{
+					Variant: ui.ButtonVariantDanger,
+					Type:    "button",
+					OnClick: disconnectGitHubRepoFromForm(),
+				}) {
+					Disconnect
+				}
+			</div>
+		</div>
+	</div>
+}
+
+script disconnectGitHubRepoFromForm() {
+	Alpine.store('githubNewApp').disconnect()
+}
+
+templ applicationCard(app models.Application) {
+	<a class="hover:opacity-75 transition-opacity" href={ templ.SafeURL("/apps/" + app.Slug) }>
+		<div class="rounded-md border bg-zinc-900 text-card-foreground shadow border-zinc-300/20">
+			<div class="p-6">
+				<h3 class="font-semibold leading-none tracking-tight text-xl text-white !text-lg">
+					{ app.Name }
+				</h3>
+				<p class="text-sm text-white">
+					{ app.Slug }
+				</p>
+				<i class="fa-solid fa-terminal w-4 h-4 mt-2 text-white"></i>
+			</div>
+		</div>
+	</a>
+}

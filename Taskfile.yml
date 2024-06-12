@@ -1,0 +1,22 @@
+version: "3"
+
+tasks:
+  install:
+    cmds:
+      - templ generate
+      - go get ./...
+      - go mod tidy
+      - go mod download
+      - npm install -D tailwindcss
+
+  air:
+    cmds:
+      - air -c .air.toml
+
+  css:
+    cmds:
+      - npx tailwindcss -i ./views/app.css -o public/assets/styles.css --watch
+
+  templ:
+    cmds:
+      - templ generate --watch --proxy=http://localhost:3000

@@ -1,0 +1,72 @@
+/* Import Inter font */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap");
+
+/* Clash Display font */
+@import url("https://api.fontshare.com/v2/css?f[]=clash-display@700,600,500,400,300&display=swap");
+
+/* Tailwind CSS */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Text Gradient */
+.text-gradient {
+  background: linear-gradient(to right bottom, #fff 30%, #fefce8 50%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: unset;
+}
+
+/* Button-specific styles */
+.htmx-indicator {
+  @apply !hidden transition-opacity duration-500 ease-in;
+}
+
+.htmx-request .htmx-indicator {
+  @apply block;
+}
+
+.btn-icon {
+  @apply block;
+}
+
+.htmx-request .btn-icon {
+  @apply hidden transition-opacity duration-500 ease-in;
+}
+
+.htmx-request {
+  @apply opacity-50 cursor-progress;
+}
+
+.base-btn {
+  @apply py-1.5 px-3 inline-flex items-center justify-center rounded-md text-sm font-medium overflow-hidden transition;
+}
+
+.primary-btn {
+  @apply base-btn bg-yellow-400/10 text-yellow-400 ring-1 ring-inset ring-yellow-400/20 hover:bg-yellow-400/10 hover:text-yellow-300 hover:ring-yellow-300 disabled:hover:text-yellow-400 disabled:hover:ring-yellow-400/20 disabled:opacity-70 disabled:cursor-not-allowed;
+}
+
+.danger-btn {
+  @apply base-btn bg-red-400/10 text-red-400 ring-1 ring-inset ring-red-400/20 hover:bg-red-400/10 hover:text-red-300 hover:ring-red-300;
+}
+
+.success-btn {
+  @apply base-btn bg-emerald-400/10 text-emerald-400 ring-1 ring-inset ring-emerald-400/20 hover:bg-emerald-400/10 hover:text-emerald-300 hover:ring-emerald-300;
+}
+
+.secondary-btn {
+  @apply base-btn items-center overflow-hidden  transition rounded-md py-1.5 px-3 ring-1 ring-inset text-zinc-400 ring-white/10 hover:bg-white/5 hover:text-white;
+}
+
+.base-input {
+  @apply block w-full rounded-md outline-none placeholder-zinc-400 bg-white/5 px-3 py-1.5 text-white shadow-sm border focus:border-transparent border-zinc-300/20 ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-yellow-500 text-sm sm:leading-6;
+}
+
+.loading {
+  @apply opacity-50 cursor-progress;
+}
+
+[x-cloak] {
+  display: none !important;
+}

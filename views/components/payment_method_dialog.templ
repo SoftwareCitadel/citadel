@@ -1,0 +1,20 @@
+package components
+
+import "citadel/views/ui"
+
+templ PaymentMethodDialog() {
+	@ui.Dialog(ui.DialogProps{
+		Open:          true,
+		HideCloseIcon: true,
+		Title:         "Add Payment Method",
+		Description:   "In order to use Software Citadel, you need to add a payment method. This will be used to pay for the services you use, on usage basis.",
+	}) {
+		<a
+			class="focus:outline-none primary-btn"
+			href="/billing/payment_method"
+			autoFocus
+		>
+			Add Payment Method
+		</a>
+	}
+}

@@ -1,0 +1,31 @@
+package pages
+
+import (
+	"citadel/views/layouts"
+	"citadel/views/ui"
+)
+
+templ BillingPage() {
+	@layouts.DashboardLayout(layouts.DashboardLayoutProps{}) {
+		<div class="flex items-center !space-x-8">
+			<h2 class="text-3xl text-gradient font-semibold font-clash">Billing</h2>
+			<a class="primary-btn" href="/billing/manage">Manage Billing</a>
+		</div>
+		<div class="grid sm:grid-cols-3 gap-4">
+			<div class="col-span-2">
+				@ui.Card(ui.CardProps{
+					Title: "Preview Invoice",
+				}) {
+					<p class="text-white text-sm">No upcoming invoice</p>
+				}
+			</div>
+			<div class="col-span-1">
+				@ui.Card(ui.CardProps{
+					Title: "Invoices",
+				}) {
+					<p class="text-white text-sm">No previous invoices</p>
+				}
+			</div>
+		</div>
+	}
+}

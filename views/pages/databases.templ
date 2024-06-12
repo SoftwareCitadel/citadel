@@ -1,0 +1,105 @@
+package pages
+
+import (
+	"citadel/views/ui"
+	"citadel/views/layouts"
+)
+
+templ DatabasesPage() {
+	@layouts.DashboardLayout(layouts.DashboardLayoutProps{}) {
+		<div class="flex items-center space-x-8">
+			<h2 class="text-3xl text-gradient font-semibold font-clash">
+				Databases
+			</h2>
+			<div>
+				@ui.Button(ui.ButtonProps{
+					Icon:    "fa-solid fa-plus",
+					OnClick: ui.OpenDialog("create_database"),
+				}) {
+					Create New Database
+				}
+				@createDatabaseDialog()
+			</div>
+		</div>
+	}
+}
+
+templ createDatabaseDialog() {
+	<form hx-post="/databases">
+		@ui.SteppedDialog(ui.SteppedDialogProps{
+			Id:           "create_database",
+			Title:        "New Database",
+			Steps:        []ui.Step{chooseDbmsStep(), namingStep()},
+			ActionButton: createDatabaseDialogActionButton,
+		})
+	</form>
+}
+
+templ chooseDbmsStep() {
+	<div class="grid sm:grid-cols-2 gap-4 grid-flow-row auto-rows-fr px-6 pb-4" x-data="{ dbms: 'postgres' }">
+		<label
+			class="flex cursor-pointer flex-col space-y-2 items-center justify-center space-x-2 rounded p-4 border border-zinc-300/20"
+		>
+			<img src={ `/assets/icons/postgres.svg` } class="w-8 h-8" alt="PostgreSQL icon"/>
+			<span class="text-sm text-white">Postgres</span>
+			<input
+				class="h-3 w-3 text-yellow-300 focus:ring-0"
+				type="radio"
+				id="postgres"
+				name="dbms"
+				value="postgres"
+				x-model="dbms"
+			/>
+		</label>
+		<label
+			class="flex cursor-pointer flex-col space-y-2 items-center justify-center space-x-2 rounded p-4 border border-zinc-300/20"
+		>
+			<img src={ `/assets/icons/mysql.svg` } class="w-8 h-8" alt="MySQL icon"/>
+			<span class="text-sm text-white">MySQL</span>
+			<input
+				class="h-3 w-3 text-yellow-300 focus:ring-0"
+				type="radio"
+				id="mysql"
+				name="dbms"
+				value="mysql"
+				x-model="dbms"
+			/>
+		</label>
+		<label
+			class="flex cursor-pointer flex-col space-y-2 items-center justify-center space-x-2 rounded p-4 border border-zinc-300/20"
+		>
+			<img src={ `/assets/icons/redis.svg` } class="w-8 h-8" alt="Redis icon"/>
+			<span class="text-sm text-white">Redis</span>
+			<input
+				class="h-3 w-3 text-yellow-300 focus:ring-0"
+				type="radio"
+				id="redis"
+				name="dbms"
+				value="redis"
+				x-model="dbms"
+			/>
+		</label>
+	</div>
+}
+
+templ namingStep() {
+	@ui.InputField(ui.InputFieldProps{
+		Label:       "Database Name",
+		Placeholder: "my-database",
+		Id:          "name",
+		DivClass:    "px-6 pb-4",
+		Class:       "lowercase",
+		Extra: map[string]any{
+			"minlength": 3,
+		},
+	})
+}
+
+templ createDatabaseDialogActionButton() {
+	@ui.Button(ui.ButtonProps{
+		OnClick: ui.CloseDialog("create_database"),
+		Type:    "submit",
+	}) {
+		Create Database
+	}
+}

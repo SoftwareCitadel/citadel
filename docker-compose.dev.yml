@@ -1,0 +1,64 @@
+version: "3"
+
+services:
+  traefik:
+    image: traefik:v3.0
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      - "--certificatesresolvers.myresolver.acme.httpchallenge=true"
+      - "--certificatesresolvers.myresolver.acme.httpchallenge.entrypoint=web"
+      - "--certificatesresolvers.myresolver.acme.email=contact@softwarecitadel.com"
+      - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
+      - "--entrypoints.postgres.address=:5432"
+      - "--entrypoints.redis.address=:6379"
+      - "--entrypoints.mysql.address=:3306"
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"
+      - "5432:5432"
+      - "6379:6379"
+      - "3306:3306"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - "citadel_traefik:/letsencrypt"
+    networks:
+      - traefik
+
+  redis:
+    image: redis:6.2
+    ports:
+      # We use the 6380 port to avoid conflicts with Traefik
+      - "6380:6379"
+
+  registry:
+    image: registry:2
+    ports:
+      - "5000:5000"
+    volumes:
+      - "citadel_registry:/var/lib/registry"
+
+  minio:
+    image: "minio/minio:latest"
+    ports:
+      - "${MINIO_PORT:-9000}:9000"
+      - "${MINIO_CONSOLE_PORT:-8900}:8900"
+    environment:
+      MINIO_ROOT_USER: "console"
+      MINIO_ROOT_PASSWORD: "consoleconsole"
+    volumes:
+      - "citadel_minio:/data/minio"
+    command: minio server /data/minio --console-address ":8900"
+
+volumes:
+  citadel_traefik:
+  citadel_registry:
+  citadel_minio:
+
+networks:
+  traefik:
+    name: traefik

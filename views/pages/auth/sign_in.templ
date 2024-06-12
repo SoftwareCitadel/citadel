@@ -1,0 +1,74 @@
+package auth
+
+import (
+	"citadel/views/layouts"
+	"citadel/views/ui"
+	"citadel/views/util"
+)
+
+type SignInInput struct {
+	Email    string
+	Password string
+}
+
+templ SignInPage() {
+	@layouts.AuthLayout(signInPageHeader) {
+		if util.IsFeatureActive(ctx, "github_oauth") {
+			@continueWithGithub()
+		}
+		@SignInForm(SignInInput{}, map[string]string{})
+	}
+}
+
+templ signInPageHeader() {
+	<h2 class="mt-6 font-clash text-center text-3xl font-semibold leading-9 tracking-tight text-white">
+		Sign In
+	</h2>
+	<p class="mt-2 text-center text-sm text-zinc-400">
+		Not Signed Up Yet ?
+		<a class="leading-6 text-yellow-400 hover:text-yellow-300 transition" href="/auth/sign_up">
+			Sign Up
+		</a>
+	</p>
+}
+
+templ passwordFieldLabelRight() {
+	<a class="text-sm text-yellow-400 hover:text-yellow-300 transition !ml-auto" href="/auth/forgot_password">
+		Forgot Password ?
+	</a>
+}
+
+templ SignInForm(input SignInInput, errors map[string]string) {
+	<form class="space-y-4" hx-post="/auth/sign_in">
+		@ui.InputField(ui.InputFieldProps{
+			Label:       "Email",
+			Type:        "email",
+			Id:          "email",
+			Placeholder: "john.doe@example.com",
+			Required:    true,
+			Value:       input.Email,
+			Error:       errors["Email"],
+		})
+		@ui.InputField(ui.InputFieldProps{
+			Label:       "Password",
+			Type:        "password",
+			Id:          "password",
+			Placeholder: "••••••••••",
+			Required:    true,
+			LabelRight:  passwordFieldLabelRight,
+			Value:       input.Password,
+			Error:       errors["Password"],
+		})
+		if errors["Auth"] != "" {
+			<p class="text-sm text-red-500 mt-1">{ errors["Auth"] }</p>
+		}
+		<div class="mt-4">
+			@ui.Button(ui.ButtonProps{
+				Variant: ui.ButtonVariantPrimary,
+				Class:   "w-full",
+			}) {
+				Sign In
+			}
+		</div>
+	</form>
+}
