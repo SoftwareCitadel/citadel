@@ -55,15 +55,15 @@ func NewDockerDriver(appsRepo *repositories.ApplicationsRepository, deplsRepo *r
 		log.Fatal("Failed to login to registry")
 	}
 
-	minioClient, err := minio.New("localhost:9000", &minio.Options{
-		Creds:  credentials.NewStaticV4("lx2SYcws9BFBGpRcl7Gu", "FxhgH4bn56uXMy5be3tY3DEitPeS2OV7zuDsaz1X", ""),
+	minioClient, err := minio.New(os.Getenv("MINIO_HOST"), &minio.Options{
+		Creds:  credentials.NewStaticV4(os.Getenv("MINIO_ACCESS_KEY"), os.Getenv("MINIO_SECRET_KEY"), ""),
 		Secure: false,
 	})
 	if err != nil {
 		log.Fatalln(err)
 	}
 
-	minioAdmin, err := madmin.New("localhost:9000", "lx2SYcws9BFBGpRcl7Gu", "FxhgH4bn56uXMy5be3tY3DEitPeS2OV7zuDsaz1X", false)
+	minioAdmin, err := madmin.New(os.Getenv("MINIO_HOST"), os.Getenv("MINIO_ACCESS_KEY"), os.Getenv("MINIO_SECRET_KEY"), false)
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -154,7 +154,7 @@ func (d *DockerDriver) IgniteApplication(app models.Application, depl models.Dep
 		}
 	}
 
-	traefikRule := "Host(`" + app.Slug + ".softwarecitadel.app"
+	traefikRule := "Host(`" + app.Slug + "." + os.Getenv("WILDCARD_TRAEFIK_DOMAIN")
 	for _, cert := range depl.Application.Certificates {
 		traefikRule += "`, `www." + cert.Domain
 	}
@@ -168,7 +168,7 @@ func (d *DockerDriver) IgniteApplication(app models.Application, depl models.Dep
 				"deployment_id": depl.ID,
 
 				"traefik.enable": "true",
-				"traefik.http.routers." + app.ID + ".rule":                      "Host(`" + app.Slug + ".softwarecitadel.app" + "`)",
+				"traefik.http.routers." + app.ID + ".rule":                      "Host(`" + app.Slug + "." + os.Getenv("WILDCARD_TRAEFIK_DOMAIN") + "`)",
 				"traefik.http.routers." + app.ID + ".entrypoints":               "websecure",
 				"traefik.http.routers." + app.ID + ".tls.certresolver":          "myresolver",
 				"traefik.http.services." + app.ID + ".loadbalancer.server.port": app.GetEnvVar("PORT", "3000"),

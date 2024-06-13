@@ -27,7 +27,7 @@ func runOpen(cmd *cobra.Command, args []string) {
 		os.Exit(1)
 	}
 
-	openBrowser("https://" + appSlug + ".softwarecitadel.app")
+	openBrowser("https://" + appSlug + "." + os.Getenv("WILDCARD_TRAEFIK_DOMAIN"))
 }
 
 func openBrowser(url string) {
