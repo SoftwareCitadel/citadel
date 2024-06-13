@@ -13,39 +13,54 @@ templ Edit(storageBucket models.StorageBucket) {
 		@breadcrumbs(storageBucket)
 		@tabs(storageBucket)
 		<div class="py-2 px-12 space-y-8">
-			@ui.Card(ui.CardProps{
-				Title: "Edit Storage Bucket",
-				Class: "!p-0 flex flex-col",
-			}) {
-				@ui.InputField(ui.InputFieldProps{
-					DivClass:    "px-6 pb-4",
-					Id:          "name",
-					Label:       "Name",
-					Placeholder: "my-bucket",
-					Class:       "lowercase",
-					Value:       storageBucket.Name,
-					Extra: map[string]any{
-						"minlength": "3",
-					},
-				})
-				<div class="px-6 py-4 border-t border-zinc-300/20">
-					@ui.Button(ui.ButtonProps{
-						Variant: ui.ButtonVariantPrimary,
-					}) {
-						Update
-					}
-				</div>
-			}
+			<form hx-put>
+				@ui.Card(ui.CardProps{
+					Title: "Edit Storage Bucket",
+					Class: "!p-0 flex flex-col",
+				}) {
+					@ui.InputField(ui.InputFieldProps{
+						DivClass:    "px-6 pb-4",
+						Id:          "name",
+						Label:       "Name",
+						Placeholder: "my-bucket",
+						Class:       "lowercase",
+						Value:       storageBucket.Name,
+						Extra: map[string]any{
+							"minlength": "3",
+						},
+					})
+					<div class="px-6 py-4 border-t border-zinc-300/20">
+						@ui.Button(ui.ButtonProps{
+							Variant: ui.ButtonVariantPrimary,
+						}) {
+							Update
+						}
+					</div>
+				}
+			</form>
 			@ui.Card(ui.CardProps{
 				Title:       "Delete Storage Bucket",
 				Description: "This action is irreversible. All the data in this bucket will be lost.",
 			}) {
 				@ui.Button(ui.ButtonProps{
 					Variant: ui.ButtonVariantDanger,
+					OnClick: ui.OpenDialog("delete_storage_bucket"),
 				}) {
 					Delete Bucket
 				}
 			}
 		</div>
+		@ui.Dialog(ui.DialogProps{
+			Id:          "delete_storage_bucket",
+			Title:       "Delete Storage Bucket",
+			Description: "Are you sure you want to delete your storage bucket?",
+		}) {
+			@ui.Button(ui.ButtonProps{
+				Variant:  ui.ButtonVariantDanger,
+				HxDelete: "/storage/" + storageBucket.Slug,
+			}) {
+				Delete Storage Bucket
+			}
+		}
 	}
 }

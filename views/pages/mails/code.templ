@@ -20,7 +20,7 @@ templ code() {
         theme: 'monokai'
       })
     }
-  </script>
+  	</script>
 	<script>
   	function getClass(value, selectedLanguage) {
 		if (value === selectedLanguage) {
@@ -28,9 +28,9 @@ templ code() {
 		}
 		return 'text-zinc-400 text-sm hover:text-zinc-300 transition-colors cursor-pointer'
 	}
-  </script>
+  	</script>
 	<div
-		class="border border-zinc-700 rounded-xl w-full bg-zinc-900 text-white max-w-5xl"
+		class="border border-zinc-700 rounded-xl w-full bg-zinc-900 text-white max-w-5xl mt-6"
 		x-data="{ selectedLanguage: 'shellscript' }"
 	>
 		<div class="px-4 flex space-x-4 border-b border-zinc-700">
@@ -67,7 +67,7 @@ templ code() {
 		</div>
 		<div
 			class="rounded-b-xl overflow-auto leading-6 text-sm sm:text-sm min-h-72 h-72 max-h-72"
-			style="color: rgb(70, 74, 77); transform: none;"
+			style="color: rgb(70, 74, 77); transform: none; background: black !important;"
 		>
 			<code
 				x-show="selectedLanguage === 'shellscript'"

@@ -112,6 +112,9 @@ func RegisterRoutes(
 		Get("/mails/domains", mailDomainsController.Index).
 		Use(auth.AuthMiddleware)
 	router.
+		Get("/mails/domains/{domain}", mailDomainsController.Show).
+		Use(auth.AuthMiddleware)
+	router.
 		Get("/mails/api_keys", mailApiKeysController.Index).
 		Use(auth.AuthMiddleware)
 
@@ -131,6 +134,12 @@ func RegisterRoutes(
 		Use(auth.AuthMiddleware)
 	router.
 		Get("/storage/{slug}/edit", storageController.Edit).
+		Use(auth.AuthMiddleware)
+	router.
+		Put("/storage/{slug}/edit", storageController.Update).
+		Use(auth.AuthMiddleware)
+	router.
+		Delete("/storage/{slug}", storageController.Delete).
 		Use(auth.AuthMiddleware)
 
 	// Environment variables-related routes

@@ -13,7 +13,7 @@ func certificatesMigrationUp_1717081779(ctx context.Context, db *bun.DB) error {
 }
 
 func certificatesMigrationDown_1717081779(ctx context.Context, db *bun.DB) error {
-	_, err := db.NewDropColumn().Model((*models.Certificate)(nil)).Exec(ctx)
+	_, err := db.NewDropTable().Model((*models.Certificate)(nil)).Exec(ctx)
 	return err
 }
 

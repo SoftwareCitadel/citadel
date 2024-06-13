@@ -9,7 +9,6 @@ import (
 	caesarAuth "github.com/caesar-rocks/auth"
 	caesar "github.com/caesar-rocks/core"
 	"github.com/caesar-rocks/events"
-	"github.com/rs/xid"
 )
 
 type SignUpController struct {
@@ -55,7 +54,7 @@ func (c *SignUpController) Handle(ctx *caesar.CaesarCtx) error {
 		return caesar.NewError(400)
 	}
 
-	user = &models.User{ID: xid.New().String(), Email: data.Email, FullName: data.FullName, Password: hashedPassword}
+	user = &models.User{Email: data.Email, FullName: data.FullName, Password: hashedPassword}
 	if err := c.service.CreateAndEmitEvent(ctx.Context(), user); err != nil {
 		return caesar.NewError(400)
 	}

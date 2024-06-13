@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"time"
 
+	"github.com/rs/xid"
 	"github.com/uptrace/bun"
 )
 
@@ -28,6 +29,7 @@ var _ bun.BeforeAppendModelHook = (*User)(nil)
 func (user *User) BeforeAppendModel(ctx context.Context, query bun.Query) error {
 	switch query.(type) {
 	case *bun.InsertQuery:
+		user.ID = xid.New().String()
 		user.CreatedAt = time.Now()
 	case *bun.UpdateQuery:
 		user.UpdatedAt = time.Now()

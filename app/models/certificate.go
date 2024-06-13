@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	"github.com/rs/xid"
 	"github.com/uptrace/bun"
 )
 
@@ -34,12 +35,13 @@ type DnsEntry struct {
 
 var _ bun.BeforeAppendModelHook = (*Deployment)(nil)
 
-func (certificate *Certificate) BeforeAppendModel(ctx context.Context, query bun.Query) error {
+func (cert *Certificate) BeforeAppendModel(ctx context.Context, query bun.Query) error {
 	switch query.(type) {
 	case *bun.InsertQuery:
-		certificate.CreatedAt = time.Now()
+		cert.ID = xid.New().String()
+		cert.CreatedAt = time.Now()
 	case *bun.UpdateQuery:
-		certificate.UpdatedAt = time.Now()
+		cert.UpdatedAt = time.Now()
 	}
 	return nil
 }

@@ -13,7 +13,7 @@ func deploymentMigrationUp_1717507533(ctx context.Context, db *bun.DB) error {
 }
 
 func deploymentMigrationDown_1717507533(ctx context.Context, db *bun.DB) error {
-	_, err := db.NewDropColumn().Model((*models.Deployment)(nil)).Exec(ctx)
+	_, err := db.NewDropTable().Model((*models.Deployment)(nil)).Exec(ctx)
 	return err
 }
 

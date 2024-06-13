@@ -16,3 +16,7 @@ func NewMailDomainsController() *MailDomainsController {
 func (c *MailDomainsController) Index(ctx *caesar.CaesarCtx) error {
 	return ctx.Render(mailsPages.DomainsPage())
 }
+
+func (c *MailDomainsController) Show(ctx *caesar.CaesarCtx) error {
+	return ctx.Render(mailsPages.ShowDomainPage())
+}

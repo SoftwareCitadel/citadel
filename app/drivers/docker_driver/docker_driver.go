@@ -18,6 +18,9 @@ import (
 	"github.com/docker/docker/api/types/network"
 	"github.com/docker/docker/api/types/registry"
 	"github.com/docker/docker/client"
+	"github.com/minio/madmin-go/v3"
+	"github.com/minio/minio-go/v7"
+	"github.com/minio/minio-go/v7/pkg/credentials"
 )
 
 type DockerDriver struct {
@@ -27,6 +30,8 @@ type DockerDriver struct {
 	DeplsRepo    *repositories.DeploymentsRepository
 	ipv4         string
 	ipv6         string
+	minioClient  *minio.Client
+	minioAdmin   *madmin.AdminClient
 }
 
 func NewDockerDriver(appsRepo *repositories.ApplicationsRepository, deplsRepo *repositories.DeploymentsRepository) *DockerDriver {
@@ -50,10 +55,25 @@ func NewDockerDriver(appsRepo *repositories.ApplicationsRepository, deplsRepo *r
 		log.Fatal("Failed to login to registry")
 	}
 
+	minioClient, err := minio.New("localhost:9000", &minio.Options{
+		Creds:  credentials.NewStaticV4("lx2SYcws9BFBGpRcl7Gu", "FxhgH4bn56uXMy5be3tY3DEitPeS2OV7zuDsaz1X", ""),
+		Secure: false,
+	})
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	minioAdmin, err := madmin.New("localhost:9000", "lx2SYcws9BFBGpRcl7Gu", "FxhgH4bn56uXMy5be3tY3DEitPeS2OV7zuDsaz1X", false)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
 	return &DockerDriver{
 		Client:       client,
 		RegistryAuth: registryAuth,
 		DeplsRepo:    deplsRepo,
+		minioClient:  minioClient,
+		minioAdmin:   minioAdmin,
 	}
 }
 
@@ -217,8 +237,4 @@ func (d *DockerDriver) StreamLogs(ctx *caesar.CaesarCtx, app models.Application)
 	}
 
 	return nil
-}
-
-func (d *DockerDriver) CreateStorageBucket(bucket models.StorageBucket) (host string, keyId string, secretKey string, err error) {
-	return "", "", "", nil
 }

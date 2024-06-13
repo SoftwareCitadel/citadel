@@ -13,7 +13,6 @@ import (
 	caesar "github.com/caesar-rocks/core"
 	"github.com/caesar-rocks/drive"
 	"github.com/caesar-rocks/events"
-	"github.com/rs/xid"
 )
 
 type DeploymentsController struct {
@@ -54,7 +53,6 @@ func (c *DeploymentsController) Store(ctx *caesar.CaesarCtx) error {
 	}
 
 	depl := &models.Deployment{
-		ID:            xid.New().String(),
 		Application:   app,
 		ApplicationID: app.ID,
 		Status:        models.DeploymentStatusBuilding,

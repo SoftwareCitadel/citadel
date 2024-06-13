@@ -7,7 +7,6 @@ import (
 
 	"github.com/caesar-rocks/auth"
 	caesar "github.com/caesar-rocks/core"
-	"github.com/rs/xid"
 )
 
 type GithubController struct {
@@ -32,7 +31,7 @@ func (c *GithubController) Callback(ctx *caesar.CaesarCtx) error {
 
 	user, err := c.repo.FindOneBy(ctx.Context(), "github_user_id", oauthUser.UserID)
 	if err != nil {
-		user = &models.User{ID: xid.New().String(), Email: oauthUser.Email, FullName: oauthUser.Name, GitHubUserID: oauthUser.UserID}
+		user = &models.User{Email: oauthUser.Email, FullName: oauthUser.Name, GitHubUserID: oauthUser.UserID}
 		if err := c.service.CreateAndEmitEvent(ctx.Context(), user); err != nil {
 			return caesar.NewError(400)
 		}

@@ -5,13 +5,13 @@ import (
 	"citadel/app/models"
 	"citadel/app/repositories"
 	"citadel/app/services"
-	"citadel/app/toast"
+
 	appsPages "citadel/views/pages/apps"
 
 	"github.com/caesar-rocks/auth"
 	caesar "github.com/caesar-rocks/core"
+	"github.com/caesar-rocks/ui/toast"
 	"github.com/charmbracelet/log"
-	"github.com/rs/xid"
 )
 
 type AppsController struct {
@@ -71,7 +71,6 @@ func (c *AppsController) Store(ctx *caesar.CaesarCtx) error {
 	}
 
 	app := &models.Application{
-		ID:                   xid.New().String(),
 		UserID:               user.ID,
 		Name:                 data.Name,
 		CpuConfig:            data.CpuConfig,

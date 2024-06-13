@@ -2,6 +2,7 @@ package mailsPages
 
 import (
 	"citadel/views/layouts"
+	"citadel/views/ui"
 )
 
 templ APIKeysPage() {
@@ -110,4 +111,14 @@ templ APIKeysPage() {
 			</div>
 		</div>
 	}
+}
+
+templ addApiKeyDialog() {
+	<form hx-post="/mails/api_keys">
+		@ui.Dialog(ui.DialogProps{
+			Id:    "add_api_key",
+			Title: "Add API Key",
+		}) {
+		}
+	</form>
 }

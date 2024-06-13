@@ -9,7 +9,6 @@ import (
 
 	"github.com/caesar-rocks/auth"
 	caesar "github.com/caesar-rocks/core"
-	"github.com/rs/xid"
 )
 
 type CertsController struct {
@@ -53,7 +52,7 @@ func (c *CertsController) Store(ctx *caesar.CaesarCtx) error {
 		return err
 	}
 
-	cert := &models.Certificate{ID: xid.New().String(), Domain: data.Domain, ApplicationID: app.ID}
+	cert := &models.Certificate{Domain: data.Domain, ApplicationID: app.ID}
 
 	dnsEntries, err := c.driver.CreateCertificate(*app, *cert)
 	if err != nil {

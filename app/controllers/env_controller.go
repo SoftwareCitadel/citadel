@@ -3,10 +3,11 @@ package controllers
 import (
 	"citadel/app/repositories"
 	"citadel/app/services"
-	"citadel/app/toast"
+
 	appsPages "citadel/views/pages/apps"
 
 	caesar "github.com/caesar-rocks/core"
+	"github.com/caesar-rocks/ui/toast"
 )
 
 type EnvController struct {

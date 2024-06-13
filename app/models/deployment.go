@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	"github.com/rs/xid"
 	"github.com/uptrace/bun"
 )
 
@@ -22,6 +23,7 @@ var _ bun.BeforeAppendModelHook = (*Deployment)(nil)
 func (deployment *Deployment) BeforeAppendModel(ctx context.Context, query bun.Query) error {
 	switch query.(type) {
 	case *bun.InsertQuery:
+		deployment.ID = xid.New().String()
 		deployment.CreatedAt = time.Now()
 	case *bun.UpdateQuery:
 		deployment.UpdatedAt = time.Now()

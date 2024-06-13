@@ -3,13 +3,14 @@ package controllers
 import (
 	"citadel/app/models"
 	"citadel/app/repositories"
-	"citadel/app/toast"
+
 	"citadel/views/pages"
 	"fmt"
 
 	caesarAuth "github.com/caesar-rocks/auth"
 	caesar "github.com/caesar-rocks/core"
 	"github.com/caesar-rocks/events"
+	"github.com/caesar-rocks/ui/toast"
 )
 
 type SettingsController struct {

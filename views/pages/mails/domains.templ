@@ -2,13 +2,23 @@ package mailsPages
 
 import (
 	"citadel/views/layouts"
+	"citadel/views/ui"
 )
 
 templ DomainsPage() {
 	@layouts.DashboardLayout(layouts.DashboardLayoutProps{Class: "!p-0"}) {
 		@tabs()
 		<div class="flex flex-col py-8 px-12">
-			<h2 class="text-3xl text-gradient font-semibold font-clash">Domains</h2>
+			<div class="flex space-x-4 items-center">
+				<h2 class="text-3xl text-gradient font-semibold font-clash">Domains</h2>
+				@ui.Button(ui.ButtonProps{
+					Icon:    "fa-solid fa-plus",
+					OnClick: ui.OpenDialog("add_domain"),
+				}) {
+					Add Domain
+				}
+			</div>
+			@addDomainDialog()
 			<h3 class="mt-2 text-zinc-300 text-sm">Use your own domains to send your emails.</h3>
 			<div class="mt-8 flow-root">
 				<div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
@@ -89,5 +99,21 @@ templ DomainsPage() {
 				</div>
 			</div>
 		</div>
+	}
+}
+
+templ addDomainDialog() {
+	<form hx-post="/mails/domains">
+		@ui.Dialog(ui.DialogProps{
+			Id:    "add_domain",
+			Title: "Add Domain",
+		}) {
+		}
+	</form>
+}
+
+templ ShowDomainPage() {
+	@layouts.DashboardLayout(layouts.DashboardLayoutProps{Class: "!p-0"}) {
+		@tabs()
 	}
 }

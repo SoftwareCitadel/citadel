@@ -69,7 +69,7 @@ func (c *StorageController) Store(ctx *caesar.CaesarCtx) error {
 		return err
 	}
 
-	return ctx.Redirect("/storage")
+	return ctx.Redirect("/storage/" + bucket.Slug)
 }
 
 func (c *StorageController) Show(ctx *caesar.CaesarCtx) error {
@@ -108,6 +108,34 @@ func (c *StorageController) Edit(ctx *caesar.CaesarCtx) error {
 	return ctx.Render(storagePages.Edit(*bucket))
 }
 
+func (c *StorageController) Update(ctx *caesar.CaesarCtx) error {
+	user, err := auth.RetrieveUserFromCtx[models.User](ctx)
+	if err != nil {
+		return err
+	}
+
+	bucket, err := c.storageBucketsRepo.FindOneBy(ctx.Context(), "slug", ctx.PathValue("slug"))
+	if err != nil {
+		return err
+	}
+
+	if bucket.UserID != user.ID {
+		return caesar.NewError(403)
+	}
+
+	data, _, ok := caesar.Validate[StoreStorageBucketValidator](ctx)
+	if !ok {
+		return ctx.RedirectBack()
+	}
+
+	bucket.Name = data.Name
+	if err := c.storageBucketsRepo.UpdateOneWhere(ctx.Context(), "id", bucket.ID, bucket); err != nil {
+		return err
+	}
+
+	return ctx.RedirectBack()
+}
+
 func (c *StorageController) Delete(ctx *caesar.CaesarCtx) error {
 	user, err := auth.RetrieveUserFromCtx[models.User](ctx)
 	if err != nil {
@@ -127,5 +155,9 @@ func (c *StorageController) Delete(ctx *caesar.CaesarCtx) error {
 		return err
 	}
 
-	return ctx.Render(storagePages.Edit(*bucket))
+	if err := c.driver.DeleteStorageBucket(*bucket); err != nil {
+		return err
+	}
+
+	return ctx.Redirect("/storage")
 }
