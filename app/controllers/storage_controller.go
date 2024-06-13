@@ -8,6 +8,7 @@ import (
 
 	"github.com/caesar-rocks/auth"
 	caesar "github.com/caesar-rocks/core"
+	"github.com/caesar-rocks/ui/toast"
 )
 
 type StorageController struct {
@@ -133,7 +134,9 @@ func (c *StorageController) Update(ctx *caesar.CaesarCtx) error {
 		return err
 	}
 
-	return ctx.RedirectBack()
+	toast.Success(ctx, "Storage bucket updated successfully.")
+
+	return ctx.Render(storagePages.EditForm(*bucket))
 }
 
 func (c *StorageController) Delete(ctx *caesar.CaesarCtx) error {
