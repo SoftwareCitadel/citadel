@@ -2,6 +2,7 @@ package models
 
 import (
 	"context"
+	"time"
 
 	"github.com/rs/xid"
 	"github.com/uptrace/bun"
@@ -27,4 +28,11 @@ func (bucket *StorageBucket) BeforeAppendModel(ctx context.Context, query bun.Qu
 		bucket.ID = xid.New().String()
 	}
 	return nil
+}
+
+type StorageFile struct {
+	Size      float64
+	Name      string
+	UpdatedAt time.Time
+	Type      string
 }

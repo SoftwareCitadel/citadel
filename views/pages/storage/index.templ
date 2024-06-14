@@ -33,7 +33,7 @@ templ Index(storageBuckets []models.StorageBucket) {
 
 templ storageBucketCard(storageBucket models.StorageBucket) {
 	<a class="hover:opacity-75 transition-opacity" href={ templ.SafeURL("/storage/" + storageBucket.Slug) }>
-		<div class="rounded-md border bg-zinc-900 text-card-foreground shadow border-zinc-300/20">
+		<div class="rounded-md border bg-zinc-900 text-white shadow border-zinc-300/20">
 			<div class="p-6">
 				<h3 class="font-semibold leading-none tracking-tight text-xl text-white !text-lg">
 					{ storageBucket.Name }

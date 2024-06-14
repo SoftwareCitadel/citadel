@@ -983,6 +983,10 @@ select{
   margin-left: 0.25rem;
 }
 
+.ml-4{
+  margin-left: 1rem;
+}
+
 .ml-auto{
   margin-left: auto;
 }
@@ -1021,6 +1025,10 @@ select{
 
 .mt-auto{
   margin-top: auto;
+}
+
+.\!mt-2{
+  margin-top: 0.5rem !important;
 }
 
 .block{
@@ -1528,6 +1536,10 @@ select{
 
 .rounded-xl{
   border-radius: 0.75rem;
+}
+
+.\!rounded-none{
+  border-radius: 0px !important;
 }
 
 .\!rounded-l-none{

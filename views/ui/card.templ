@@ -5,30 +5,35 @@ type CardProps struct {
 	Title       string
 	Description string
 	Class       string
+	DivClass    string
 	NoContent   bool
 }
 
 templ Card(props CardProps) {
-	<div class="rounded-md border bg-zinc-900 text-card-foreground shadow border-zinc-300/20 mt-6">
-		<div
-			if props.NoContent {
-				class="flex flex-col p-6"
-			} else {
-				class="flex flex-col p-6 border-b border-zinc-300/20"
-			}
-		>
-			if props.Header != nil {
-				@props.Header
-			}
-			<h3 class="font-semibold leading-none tracking-tight text-xl text-white">
-				{ props.Title }
-			</h3>
-			if props.Description != "" {
-				<p class="text-white text-sm mt-2">
-					{ props.Description }
-				</p>
-			}
-		</div>
+	<div class={ "rounded-md border bg-zinc-900 text-white shadow border-zinc-300/20 mt-6 " + props.DivClass }>
+		if props.Header != nil || props.Title != "" || props.Description != "" {
+			<div
+				if props.NoContent {
+					class="flex flex-col p-6"
+				} else {
+					class="flex flex-col p-6 border-b border-zinc-300/20"
+				}
+			>
+				if props.Header != nil {
+					@props.Header
+				}
+				if props.Title != "" {
+					<h3 class="font-semibold leading-none tracking-tight text-xl text-white">
+						{ props.Title }
+					</h3>
+				}
+				if props.Description != "" {
+					<p class="text-white text-sm mt-2">
+						{ props.Description }
+					</p>
+				}
+			</div>
+		}
 		if !props.NoContent {
 			<div class={ "p-6 pt-2 mt-4", props.Class }>
 				{ children... }

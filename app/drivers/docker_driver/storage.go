@@ -78,3 +78,28 @@ func generateSecretKey() (string, error) {
 	secretKey := hex.EncodeToString(key)
 	return secretKey, nil
 }
+
+func (d *DockerDriver) GetBucketSize(bucket models.StorageBucket) (float64, error) {
+	return 0, nil
+}
+
+func (d *DockerDriver) ListFiles(bucket models.StorageBucket) ([]models.StorageFile, error) {
+	storageFiles := make([]models.StorageFile, 0)
+
+	objectCh := d.minioClient.ListObjects(context.Background(), bucket.Slug, minio.ListObjectsOptions{
+		Recursive: true,
+	})
+	for object := range objectCh {
+		if object.Err != nil {
+			return nil, object.Err
+		}
+		storageFiles = append(storageFiles, models.StorageFile{
+			Name:      object.Key,
+			Size:      float64(object.Size),
+			UpdatedAt: object.LastModified,
+			Type:      object.ContentType,
+		})
+	}
+
+	return storageFiles, nil
+}

@@ -88,7 +88,17 @@ func (c *StorageController) Show(ctx *caesar.CaesarCtx) error {
 		return caesar.NewError(403)
 	}
 
-	return ctx.Render(storagePages.Show(*bucket))
+	storageFiles, err := c.driver.ListFiles(*bucket)
+	if err != nil {
+		return err
+	}
+
+	bucketSize, err := c.driver.GetBucketSize(*bucket)
+	if err != nil {
+		return err
+	}
+
+	return ctx.Render(storagePages.Show(*bucket, storageFiles, bucketSize))
 }
 
 func (c *StorageController) Edit(ctx *caesar.CaesarCtx) error {

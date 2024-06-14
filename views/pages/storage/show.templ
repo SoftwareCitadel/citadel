@@ -1,19 +1,21 @@
 package storagePages
 
 import (
-	"citadel/app/models"
-	"citadel/views/layouts"
 	"fmt"
 	"math"
+	"citadel/app/models"
+	"citadel/views/layouts"
+	"citadel/views/ui"
 )
 
-templ Show(storageBucket models.StorageBucket) {
+templ Show(storageBucket models.StorageBucket, storageFiles []models.StorageFile, bucketSize float64) {
 	@layouts.DashboardLayout(layouts.DashboardLayoutProps{
 		Class: "!p-0",
 	}) {
 		@breadcrumbs(storageBucket)
 		@tabs(storageBucket)
-		@storageBucketInfo(storageBucket, float64(0.0))
+		@storageBucketInfo(storageBucket, bucketSize)
+		@fileBrowser(storageBucket, storageFiles, bucketSize)
 	}
 }
 
@@ -63,7 +65,7 @@ templ storageBucketCodeBlock(storageBucket models.StorageBucket) {
         theme: 'monokai'
       })
     }
-  </script>
+  	</script>
 	<script>
   	function getClass(value, selectedLanguage) {
 		if (value === selectedLanguage) {
@@ -71,9 +73,9 @@ templ storageBucketCodeBlock(storageBucket models.StorageBucket) {
 		}
 		return 'text-zinc-400 text-sm hover:text-zinc-300 transition-colors cursor-pointer'
 	}
-  </script>
+  	</script>
 	<div
-		class="border border-zinc-700 rounded-xl w-full bg-zinc-900 text-white max-w-5xl mt-6"
+		class="border border-zinc-700 rounded-xl w-full bg-zinc-900 text-white mt-6"
 		x-data="{ selectedLanguage: 'shellscript' }"
 	>
 		<div class="px-4 flex space-x-4 border-b border-zinc-700">
@@ -147,4 +149,139 @@ func formatFileSize(size float64) string {
 	} else {
 		return fmt.Sprintf("%.2fGB", floorToTwoDecimals(size/(1024*1024*1024)))
 	}
+}
+
+templ fileBrowser(storageBucket models.StorageBucket, storageFiles []models.StorageFile, bucketSize float64) {
+	<div class="px-12">
+		@ui.Card(ui.CardProps{
+			Header: fileBrowserHeader(storageBucket),
+			Class:  "!mt-0",
+		}) {
+			@ui.Card(ui.CardProps{
+				Class: "!mt-0 !p-0",
+			}) {
+				<table class="min-w-full divide-y divide-zinc-700 mt-1">
+					<thead class="bg-zinc-900">
+						<tr>
+							<th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-white sm:pl-6">
+								Name
+							</th>
+							<th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-white">
+								Content Type
+							</th>
+							<th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-white">
+								Size
+							</th>
+							<th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-white">
+								Updated At
+							</th>
+							<th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-6">
+								<span class="sr-only">Edit</span>
+							</th>
+						</tr>
+					</thead>
+					<tbody class="divide-y divide-zinc-700 bg-white/2.5">
+						for _, file := range storageFiles {
+							<tr>
+								<td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-zinc-300 sm:pl-6">
+									{ file.Name }
+								</td>
+								<td class="whitespace-nowrap px-3 py-4 text-sm text-zinc-300">
+									{ file.Type }
+								</td>
+								<td class="whitespace-nowrap px-3 py-4 text-sm text-zinc-300">
+									{ formatFileSize(file.Size) }
+								</td>
+								<td class="whitespace-nowrap px-3 py-4 text-sm text-zinc-300">
+									{ file.UpdatedAt.Format("Jan 2, 2006") }
+								</td>
+								<td
+									class="absolute z-10 whitespace-nowrap py-4 pl-3 pr-4 text-right items-center justify-center flex text-sm font-medium sm:pr-6"
+									x-data="dropdown()"
+								>
+									<button
+										class="text-zinc-300 hover:text-zinc-50 text-lg transition-colors -mt-1"
+										@click="toggleDropdown"
+										x-bind:aria-expanded="dropdownOpen"
+									>
+										...
+									</button>
+									<div
+										class="absolute overflow-hidden left-0 z-50 top-0 right-0-mt-2 flex flex-col divide-y divide-zinc-700 bs b-thin p-block bg-zinc-900 rounded-lg text-white border border-zinc-700"
+										x-show="dropdownOpen"
+										@click.away="toggleDropdown"
+									>
+										<div x-data="modal()">
+											//   @include('partials/dashboard/edit-api-key-modal')
+											<button
+												class="text-zinc-300 space-x-2 flex items-center text-left hover:text-zinc-50 text-sm transition-colors px-4 py-2"
+												@click="toggleModal"
+											>
+												<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+													<path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"></path>
+												</svg>
+												<span>
+													Edit
+												</span>
+											</button>
+										</div>
+										<div x-data="modal()">
+											//   @include('partials/dashboard/remove-api-key-modal')
+											<button
+												class="text-zinc-300 space-x-2 flex items-center text-left hover:text-zinc-50 text-sm transition-colors px-4 py-2"
+												@click="toggleModal"
+											>
+												<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+													<path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"></path>
+												</svg>
+												<span>
+													Remove
+												</span>
+											</button>
+										</div>
+									</div>
+								</td>
+							</tr>
+						}
+					</tbody>
+				</table>
+			}
+		}
+	</div>
+}
+
+script onUploadClick() {
+	document.getElementById('file').click()
+}
+
+templ fileBrowserHeader(storageBucket models.StorageBucket) {
+	<div class="flex items-center space-x-2">
+		<div class="flex items-center space-x-2 text-white">
+			<i class="w-5 h-5 fa-solid fa-cloud"></i>
+			<h2 class="font-semibold text-sm">{ storageBucket.Name }</h2>
+		</div>
+		<form
+			id="upload-form"
+			encType="multipart/form-data"
+			action={ `/organizations/${params.organizationSlug}/projects/${project.slug}/storage_buckets/${storageBucket.slug}/upload` }
+			method="post"
+		>
+			<input
+				type="file"
+				name="file"
+				id="file"
+				onChange="(event) => { if (event.target.files?.length > 0) { uploadFormRef?.current.submit() }}"
+				hidden
+			/>
+			@ui.Button(ui.ButtonProps{
+				Type:    "button",
+				Class:   "ml-4",
+				Variant: ui.ButtonVariantPrimary,
+				OnClick: onUploadClick(),
+			}) {
+				<i class="h-3 w-3 fa-solid fa-upload"></i>
+				<span class="ml-1">Upload file</span>
+			}
+		</form>
+	</div>
 }
