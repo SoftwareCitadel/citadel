@@ -79,27 +79,25 @@ func generateSecretKey() (string, error) {
 	return secretKey, nil
 }
 
-func (d *DockerDriver) GetBucketSize(bucket models.StorageBucket) (float64, error) {
-	return 0, nil
-}
-
-func (d *DockerDriver) ListFiles(bucket models.StorageBucket) ([]models.StorageFile, error) {
-	storageFiles := make([]models.StorageFile, 0)
+func (d *DockerDriver) GetFilesAndTotalSize(bucket models.StorageBucket) (float64, []models.StorageFile, error) {
+	var totalSize float64
+	files := make([]models.StorageFile, 0)
 
 	objectCh := d.minioClient.ListObjects(context.Background(), bucket.Slug, minio.ListObjectsOptions{
 		Recursive: true,
 	})
 	for object := range objectCh {
 		if object.Err != nil {
-			return nil, object.Err
+			return 0, nil, object.Err
 		}
-		storageFiles = append(storageFiles, models.StorageFile{
+		files = append(files, models.StorageFile{
 			Name:      object.Key,
 			Size:      float64(object.Size),
 			UpdatedAt: object.LastModified,
 			Type:      object.ContentType,
 		})
+		totalSize += float64(object.Size)
 	}
 
-	return storageFiles, nil
+	return totalSize, files, nil
 }

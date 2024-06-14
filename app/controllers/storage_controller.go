@@ -88,12 +88,7 @@ func (c *StorageController) Show(ctx *caesar.CaesarCtx) error {
 		return caesar.NewError(403)
 	}
 
-	storageFiles, err := c.driver.ListFiles(*bucket)
-	if err != nil {
-		return err
-	}
-
-	bucketSize, err := c.driver.GetBucketSize(*bucket)
+	bucketSize, storageFiles, err := c.driver.GetFilesAndTotalSize(*bucket)
 	if err != nil {
 		return err
 	}

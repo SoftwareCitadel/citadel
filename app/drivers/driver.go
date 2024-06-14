@@ -22,7 +22,6 @@ type Driver interface {
 	StreamLogs(ctx *caesar.CaesarCtx, app models.Application) error
 
 	CreateStorageBucket(bucket models.StorageBucket) (host string, keyId string, secretKey string, err error)
-	GetBucketSize(bucket models.StorageBucket) (float64, error)
-	ListFiles(bucket models.StorageBucket) ([]models.StorageFile, error)
+	GetFilesAndTotalSize(bucket models.StorageBucket) (totalSize float64, files []models.StorageFile, err error)
 	DeleteStorageBucket(bucket models.StorageBucket) error
 }

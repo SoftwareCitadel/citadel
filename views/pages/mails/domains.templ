@@ -107,7 +107,24 @@ templ addDomainDialog() {
 		@ui.Dialog(ui.DialogProps{
 			Id:    "add_domain",
 			Title: "Add Domain",
+			Class: "!px-0",
 		}) {
+			@ui.InputField(ui.InputFieldProps{
+				DivClass:    "px-6 pb-4",
+				Label:       "Domain",
+				Id:          "domain",
+				Placeholder: "example.com",
+				Required:    true,
+			})
+			<div class="border-t border-zinc-300/20 pt-4">
+				@ui.Button(ui.ButtonProps{
+					Class:   "mx-6",
+					Variant: ui.ButtonVariantPrimary,
+					Icon:    "fa-solid fa-plus",
+				}) {
+					Add Domain
+				}
+			</div>
 		}
 	</form>
 }
