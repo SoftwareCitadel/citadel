@@ -2,6 +2,7 @@ package config
 
 import (
 	"citadel/app/controllers"
+	apiControllers "citadel/app/controllers/api"
 	authControllers "citadel/app/controllers/auth"
 	"citadel/app/drivers"
 	dockerDriver "citadel/app/drivers/docker_driver"
@@ -22,6 +23,7 @@ func ProvideApp(env *EnvironmentVariables) *core.App {
 	})
 
 	app.RegisterProviders(
+		apiControllers.NewEmailsController,
 		controllers.NewMailDomainsController,
 		controllers.NewMailApiKeysController,
 		controllers.NewStorageController,
@@ -61,6 +63,7 @@ func ProvideApp(env *EnvironmentVariables) *core.App {
 		repositories.NewCertificatesRepository,
 		repositories.NewDeploymentsRepository,
 		repositories.NewStorageBucketsRepository,
+		repositories.NewDatabasesRepository,
 	)
 
 	app.RegisterProviders(

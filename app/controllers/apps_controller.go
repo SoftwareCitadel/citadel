@@ -16,12 +16,12 @@ import (
 
 type AppsController struct {
 	appsService *services.AppsService
-	repo        *repositories.ApplicationsRepository
+	appsRepo    *repositories.ApplicationsRepository
 	driver      drivers.Driver
 }
 
-func NewAppsController(appsService *services.AppsService, repo *repositories.ApplicationsRepository, driver drivers.Driver) *AppsController {
-	return &AppsController{appsService, repo, driver}
+func NewAppsController(appsService *services.AppsService, appsRepo *repositories.ApplicationsRepository, driver drivers.Driver) *AppsController {
+	return &AppsController{appsService, appsRepo, driver}
 }
 
 func (c *AppsController) Index(ctx *caesar.CaesarCtx) error {
@@ -30,7 +30,7 @@ func (c *AppsController) Index(ctx *caesar.CaesarCtx) error {
 		return err
 	}
 
-	apps, err := c.repo.FindAllFromUser(ctx.Context(), user.ID)
+	apps, err := c.appsRepo.FindAllFromUser(ctx.Context(), user.ID)
 	if err != nil {
 		log.Error("err", err)
 		return caesar.NewError(400)
@@ -79,7 +79,7 @@ func (c *AppsController) Store(ctx *caesar.CaesarCtx) error {
 		GitHubRepository:     data.GitHubRepository,
 		GitHubBranch:         data.GitHubBranch,
 	}
-	if err := c.repo.Create(ctx.Context(), app); err != nil {
+	if err := c.appsRepo.Create(ctx.Context(), app); err != nil {
 		return caesar.NewError(400)
 	}
 
@@ -109,7 +109,7 @@ func (c *AppsController) Edit(ctx *caesar.CaesarCtx) error {
 		return err
 	}
 
-	app, err := c.repo.FindOneBy(ctx.Context(), "slug", ctx.PathValue("slug"))
+	app, err := c.appsRepo.FindOneBy(ctx.Context(), "slug", ctx.PathValue("slug"))
 	if err != nil {
 		return err
 	}
@@ -144,7 +144,7 @@ func (c *AppsController) Update(ctx *caesar.CaesarCtx) error {
 	app.CpuConfig = data.CpuConfig
 	app.RamConfig = data.RamConfig
 
-	if err := c.repo.UpdateOneWhere(ctx.Context(), "slug", ctx.PathValue("slug"), app); err != nil {
+	if err := c.appsRepo.UpdateOneWhere(ctx.Context(), "slug", ctx.PathValue("slug"), app); err != nil {
 		return err
 	}
 
@@ -174,7 +174,7 @@ func (c *AppsController) ConnectGitHub(ctx *caesar.CaesarCtx) error {
 	app.GitHubRepository = data.GitHubRepository
 	app.GitHubBranch = data.GitHubBranch
 
-	if err := c.repo.UpdateOneWhere(ctx.Context(), "slug", ctx.PathValue("slug"), app); err != nil {
+	if err := c.appsRepo.UpdateOneWhere(ctx.Context(), "slug", ctx.PathValue("slug"), app); err != nil {
 		return err
 	}
 
@@ -191,7 +191,7 @@ func (c *AppsController) DisconnectGitHub(ctx *caesar.CaesarCtx) error {
 	app.GitHubRepository = ""
 	app.GitHubBranch = ""
 
-	if err := c.repo.UpdateOneWhere(ctx.Context(), "slug", ctx.PathValue("slug"), app); err != nil {
+	if err := c.appsRepo.UpdateOneWhere(ctx.Context(), "slug", ctx.PathValue("slug"), app); err != nil {
 		return err
 	}
 
@@ -204,7 +204,7 @@ func (c *AppsController) Delete(ctx *caesar.CaesarCtx) error {
 		return err
 	}
 
-	if err := c.repo.DeleteOneWhere(ctx.Context(), "id", app.ID); err != nil {
+	if err := c.appsRepo.DeleteOneWhere(ctx.Context(), "id", app.ID); err != nil {
 		return err
 	}
 

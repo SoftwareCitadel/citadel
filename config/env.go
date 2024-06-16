@@ -82,6 +82,9 @@ type EnvironmentVariables struct {
 
 	// GITHUB_APP_PRIVATE_KEY_PATH is the path to the private key for the GitHub App.
 	GITHUB_APP_PRIVATE_KEY_PATH string
+
+	// DB_HOST is the host for the database.
+	DB_HOST string
 }
 
 func ProvideEnvironmentVariables() *EnvironmentVariables {

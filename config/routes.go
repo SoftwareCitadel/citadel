@@ -2,6 +2,7 @@ package config
 
 import (
 	"citadel/app/controllers"
+	apiControllers "citadel/app/controllers/api"
 	authControllers "citadel/app/controllers/auth"
 	"citadel/app/middleware"
 	"citadel/app/vexillum"
@@ -33,6 +34,7 @@ func RegisterRoutes(
 	mailDomainsController *controllers.MailDomainsController,
 	mailApiKeysController *controllers.MailApiKeysController,
 	storageController *controllers.StorageController,
+	emailsController *apiControllers.EmailsController,
 	emitter *events.EventsEmitter,
 	vexillum *vexillum.Vexillum,
 ) *caesar.Router {
@@ -105,6 +107,7 @@ func RegisterRoutes(
 
 	// Databases-related routes
 	router.Get("/databases", databasesController.Index).Use(auth.AuthMiddleware)
+	router.Post("/databases", databasesController.Store).Use(auth.AuthMiddleware)
 
 	// Mails-related routes
 	router.Render("/mails", mailsPages.OverviewPage())
@@ -191,6 +194,9 @@ func RegisterRoutes(
 	// Webhooks routes
 	router.Post("/webhooks/github", githubController.HandleWebhook)
 	router.Post("/webhooks/stripe", stripeController.HandleWebhook)
+
+	// API-related routes
+	router.Get("/api/v1/emails", emailsController.Send).Use(auth.AuthMiddleware)
 
 	return router
 }

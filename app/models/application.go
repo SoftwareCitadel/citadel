@@ -14,8 +14,6 @@ type Application struct {
 	Name           string          `bun:"name"`
 	ReleaseCommand string          `bun:"release_command"`
 	Slug           string          `bun:"slug,unique"`
-	UserID         string          `bun:"user_id"`
-	User           *User           `bun:"rel:belongs-to,join:user_id=id"`
 	Env            json.RawMessage `bun:"env,type:jsonb,default:'[]'"`
 	CpuConfig      string          `bun:"cpu_cfg"`
 	RamConfig      string          `bun:"ram_cfg"`
@@ -25,6 +23,9 @@ type Application struct {
 	GitHubInstallationID int64  `bun:"github_installation_id,default:-1"`
 
 	Certificates []*Certificate `bun:"rel:has-many,join:id=application_id"`
+
+	UserID string `bun:"user_id"`
+	User   *User  `bun:"rel:belongs-to,join:user_id=id"`
 
 	CreatedAt time.Time
 	UpdatedAt time.Time

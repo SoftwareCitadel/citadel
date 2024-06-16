@@ -13,6 +13,7 @@ type StorageBucket struct {
 	Name      string `bun:"name"`
 	Slug      string `bun:"slug,unique"`
 	Host      string `bun:"host"`
+	Region    string `bun:"region"`
 	KeyId     string `bun:"key_id"`
 	SecretKey string `bun:"secret_key"`
 

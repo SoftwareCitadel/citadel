@@ -3,9 +3,10 @@ package pages
 import (
 	"citadel/views/ui"
 	"citadel/views/layouts"
+	"citadel/app/models"
 )
 
-templ DatabasesPage() {
+templ DatabasesPage(dbs []models.Database) {
 	@layouts.DashboardLayout(layouts.DashboardLayoutProps{}) {
 		<div class="flex items-center space-x-8">
 			<h2 class="text-3xl text-gradient font-semibold font-clash">
@@ -21,22 +22,36 @@ templ DatabasesPage() {
 				@createDatabaseDialog()
 			</div>
 		</div>
+		<div class="gap-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+			for _, db := range dbs {
+				@databaseCard(db)
+			}
+		</div>
 	}
 }
 
 templ createDatabaseDialog() {
-	<form hx-post="/databases">
+	<form hx-post="/databases" x-data="{ dbms: 'postgres' }" hx-swap="outerHTML">
 		@ui.SteppedDialog(ui.SteppedDialogProps{
 			Id:           "create_database",
 			Title:        "New Database",
-			Steps:        []ui.Step{chooseDbmsStep(), namingStep()},
+			Steps:        []ui.Step{chooseDbmsStep(), credentialsStep()},
 			ActionButton: createDatabaseDialogActionButton,
 		})
 	</form>
 }
 
+templ createDatabaseDialogActionButton() {
+	@ui.Button(ui.ButtonProps{
+		OnClick: ui.CloseDialog("create_database"),
+		Type:    "submit",
+	}) {
+		Create Database
+	}
+}
+
 templ chooseDbmsStep() {
-	<div class="grid sm:grid-cols-2 gap-4 grid-flow-row auto-rows-fr px-6 pb-4" x-data="{ dbms: 'postgres' }">
+	<div class="grid sm:grid-cols-2 gap-4 grid-flow-row auto-rows-fr px-6 pb-4">
 		<label
 			class="flex cursor-pointer flex-col space-y-2 items-center justify-center space-x-2 rounded p-4 border border-zinc-300/20"
 		>
@@ -82,24 +97,52 @@ templ chooseDbmsStep() {
 	</div>
 }
 
-templ namingStep() {
-	@ui.InputField(ui.InputFieldProps{
-		Label:       "Database Name",
-		Placeholder: "my-database",
-		Id:          "name",
-		DivClass:    "px-6 pb-4",
-		Class:       "lowercase",
-		Extra: map[string]any{
-			"minlength": 3,
-		},
-	})
+templ credentialsStep() {
+	<div class="flex flex-col">
+		<input type="hidden" id="dbms" name="dbms" x-model="dbms"/>
+		<template x-if="dbms === 'postgres'">
+			@ui.InputField(ui.InputFieldProps{
+				Label:       "Database Username",
+				Placeholder: "my-username",
+				Id:          "username",
+				DivClass:    "px-6 pb-4",
+				Extra: map[string]any{
+					"minlength": 3,
+				},
+			})
+		</template>
+		@ui.InputField(ui.InputFieldProps{
+			Label:       "Database Name",
+			Placeholder: "my-database",
+			Id:          "name",
+			DivClass:    "px-6 pb-4",
+			Class:       "lowercase",
+			Extra: map[string]any{
+				"minlength": 3,
+			},
+		})
+		@ui.InputField(ui.InputFieldProps{
+			Label:       "Database Password",
+			Placeholder: "••••••••••",
+			Id:          "password",
+			Type:        "password",
+			DivClass:    "px-6 pb-4",
+		})
+	</div>
 }
 
-templ createDatabaseDialogActionButton() {
-	@ui.Button(ui.ButtonProps{
-		OnClick: ui.CloseDialog("create_database"),
-		Type:    "submit",
-	}) {
-		Create Database
+templ databaseCard(db models.Database) {
+	@ui.Card(ui.CardProps{}) {
+		<h3 class="font-semibold leading-none tracking-tight text-xl text-white !text-lg">
+			{ db.Name }
+		</h3>
+		<p class="text-sm text-white">
+			{ db.Slug }
+		</p>
+		<img
+			src={ "/assets/icons/" + string(db.DBMS) + ".svg" }
+			class="pt-1 w-7 h-7"
+			alt="Database icon"
+		/>
 	}
 }

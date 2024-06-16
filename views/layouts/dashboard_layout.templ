@@ -14,9 +14,6 @@ type DashboardLayoutProps struct {
 
 templ DashboardLayout(props DashboardLayoutProps) {
 	@SharedLayout() {
-		if util.ShowPaymentMethodDialog(ctx) {
-			@components.PaymentMethodDialog()
-		}
 		<main class="flex min-h-screen flex-col justify-center bg-zinc-900">
 			<div class="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-72 lg:flex-col">
 				<div class="flex grow flex-col gap-y-5 overflow-y-auto border-r border-zinc-300/20 bg-zinc-900">
@@ -96,6 +93,9 @@ templ DashboardLayout(props DashboardLayoutProps) {
 					</div>
 				</div>
 				<main class={ "py-8 px-12 bg-zinc-850 bg-white/2.5 min-h-[calc(100vh-64px)]", props.Class }>
+					if util.ShowPaymentMethodDialog(ctx) {
+						@components.PaymentMethodDialog()
+					}
 					<div>
 						{ children... }
 					</div>
