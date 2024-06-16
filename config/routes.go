@@ -108,6 +108,7 @@ func RegisterRoutes(
 	// Databases-related routes
 	router.Get("/databases", databasesController.Index).Use(auth.AuthMiddleware)
 	router.Post("/databases", databasesController.Store).Use(auth.AuthMiddleware)
+	router.Delete("/databases/{slug}", databasesController.Delete).Use(auth.AuthMiddleware)
 
 	// Mails-related routes
 	router.Render("/mails", mailsPages.OverviewPage())

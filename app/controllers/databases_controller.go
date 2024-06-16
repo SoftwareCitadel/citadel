@@ -70,3 +70,29 @@ func (c *DatabasesController) Store(ctx *caesar.CaesarCtx) error {
 
 	return ctx.Redirect("/databases")
 }
+
+func (c *DatabasesController) Delete(ctx *caesar.CaesarCtx) error {
+	user, err := auth.RetrieveUserFromCtx[models.User](ctx)
+	if err != nil {
+		return err
+	}
+
+	db, err := c.dbRepo.FindOneBy(ctx.Context(), "slug", ctx.PathValue("slug"))
+	if err != nil {
+		return err
+	}
+
+	if db.UserID != user.ID {
+		return ctx.Redirect("/databases")
+	}
+
+	if err := c.dbRepo.DeleteOneWhere(ctx.Context(), "slug", ctx.PathValue("slug")); err != nil {
+		return err
+	}
+
+	if err := c.driver.DeleteDatabase(*db); err != nil {
+		return err
+	}
+
+	return ctx.Redirect("/databases")
+}
