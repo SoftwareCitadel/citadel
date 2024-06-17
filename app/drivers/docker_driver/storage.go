@@ -39,6 +39,19 @@ func (d *DockerDriver) CreateStorageBucket(bucket models.StorageBucket) (host st
 }
 
 func (d *DockerDriver) DeleteStorageBucket(bucket models.StorageBucket) error {
+	ctx := context.Background()
+
+	objectCh := d.minioClient.ListObjects(ctx, bucket.Slug, minio.ListObjectsOptions{Recursive: true})
+
+	for object := range objectCh {
+		if object.Err != nil {
+			return object.Err
+		}
+		if err := d.minioClient.RemoveObject(ctx, bucket.Slug, object.Key, minio.RemoveObjectOptions{}); err != nil {
+			return err
+		}
+	}
+
 	if err := d.minioClient.RemoveBucket(context.Background(), bucket.Slug); err != nil {
 		return err
 	}
