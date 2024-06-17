@@ -1261,10 +1261,6 @@ select{
   max-width: 32rem;
 }
 
-.max-w-\[32rem\]{
-  max-width: 32rem;
-}
-
 .flex-1{
   flex: 1 1 0%;
 }
@@ -2922,24 +2918,20 @@ select{
     width: 18rem;
   }
 
+  .lg\:w-\[26rem\]{
+    width: 26rem;
+  }
+
   .lg\:max-w-96{
     max-width: 24rem;
   }
 
-  .lg\:max-w-\[32rem\]{
-    max-width: 32rem;
-  }
-
-  .lg\:max-w-\[24rem\]{
-    max-width: 24rem;
-  }
-
-  .lg\:max-w-\[28rem\]{
-    max-width: 28rem;
-  }
-
   .lg\:max-w-\[26rem\]{
     max-width: 26rem;
+  }
+
+  .lg\:max-w-\[32rem\]{
+    max-width: 32rem;
   }
 
   .lg\:grid-cols-3{

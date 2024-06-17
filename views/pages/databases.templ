@@ -506,7 +506,17 @@ public class RedisExample {
 
 	  for (const codeBlock of codeBlocks) {
 		const lang = codeBlock.getAttribute('data-lang')
-		codeBlock.innerHTML = await codeToHtml(codeTemplates[lang][dbms], {
+		const content = formatTemplate({
+			runtime: lang,
+			database: dbms,
+			databaseUri: codeSnippet.getAttribute('data-uri'),
+			host: codeSnippet.getAttribute('data-host'),
+			name: codeSnippet.getAttribute('data-name'),
+			username: codeSnippet.getAttribute('data-username'),
+			password: codeSnippet.getAttribute('data-password'),
+		})
+
+		codeBlock.innerHTML = await codeToHtml(content, {
 			lang,
 			theme: 'monokai'
 	 	})
@@ -526,6 +536,11 @@ public class RedisExample {
 		id="connect_database_code_snippet"
 		data-database-id={ db.Slug }
 		data-dbms={ string(db.DBMS) }
+		data-host={ db.Host }
+		data-name={ db.Name }
+		data-username={ db.Username }
+		data-password={ db.Password }
+		data-uri={ db.GetURI() }
 		x-data="{ selectedLanguage: 'javascript' }"
 	>
 		<div class="px-4 flex space-x-4 border-b border-zinc-700">
@@ -555,8 +570,8 @@ public class RedisExample {
 			</button>
 		</div>
 		<div
-			class="rounded-b-xl overflow-auto leading-6 text-sm sm:text-sm min-h-72 h-72 max-h-72 lg:max-w-[26rem] overflow-x-auto"
 			style="color: rgb(70, 74, 77); transform: none; background: black !important;"
+			class="rounded-b-xl overflow-auto leading-6 text-sm sm:text-sm min-h-72 h-72 max-h-72 lg:w-[26rem] lg:max-w-[26rem] overflow-x-auto"
 		>
 			<code
 				x-show="selectedLanguage === 'javascript'"
