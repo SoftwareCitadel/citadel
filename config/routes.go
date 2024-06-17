@@ -106,9 +106,18 @@ func RegisterRoutes(
 		Use(middleware.PaymentMethodMiddleware(vexillum))
 
 	// Databases-related routes
-	router.Get("/databases", databasesController.Index).Use(auth.AuthMiddleware)
-	router.Post("/databases", databasesController.Store).Use(auth.AuthMiddleware)
-	router.Delete("/databases/{slug}", databasesController.Delete).Use(auth.AuthMiddleware)
+	router.
+		Get("/databases", databasesController.Index).
+		Use(auth.AuthMiddleware).
+		Use(middleware.PaymentMethodMiddleware(vexillum))
+	router.
+		Post("/databases", databasesController.Store).
+		Use(auth.AuthMiddleware).
+		Use(middleware.PaymentMethodMiddleware(vexillum))
+	router.
+		Delete("/databases/{slug}", databasesController.Delete).
+		Use(auth.AuthMiddleware).
+		Use(middleware.PaymentMethodMiddleware(vexillum))
 
 	// Mails-related routes
 	router.Render("/mails", mailsPages.OverviewPage())

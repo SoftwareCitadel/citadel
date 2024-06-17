@@ -807,6 +807,10 @@ select{
   visibility: visible;
 }
 
+.static{
+  position: static;
+}
+
 .fixed{
   position: fixed;
 }
@@ -829,6 +833,10 @@ select{
 
 .-left-\[9\.5px\]{
   left: -9.5px;
+}
+
+.-right-4{
+  right: -1rem;
 }
 
 .bottom-0{
@@ -863,28 +871,8 @@ select{
   top: 1.75rem;
 }
 
-.top-14{
-  top: 3.5rem;
-}
-
-.left-4{
-  left: 1rem;
-}
-
 .top-8{
   top: 2rem;
-}
-
-.right-0{
-  right: 0px;
-}
-
-.-left-4{
-  left: -1rem;
-}
-
-.-right-4{
-  right: -1rem;
 }
 
 .z-10{
@@ -1273,6 +1261,10 @@ select{
   max-width: 32rem;
 }
 
+.max-w-\[32rem\]{
+  max-width: 32rem;
+}
+
 .flex-1{
   flex: 1 1 0%;
 }
@@ -1373,6 +1365,10 @@ select{
 
 .justify-between{
   justify-content: space-between;
+}
+
+.gap-1{
+  gap: 0.25rem;
 }
 
 .gap-2{
@@ -1936,6 +1932,11 @@ select{
 .py-\[11px\]{
   padding-top: 11px;
   padding-bottom: 11px;
+}
+
+.py-\[6px\]{
+  padding-top: 6px;
+  padding-bottom: 6px;
 }
 
 .\!pb-6{
@@ -2923,6 +2924,22 @@ select{
 
   .lg\:max-w-96{
     max-width: 24rem;
+  }
+
+  .lg\:max-w-\[32rem\]{
+    max-width: 32rem;
+  }
+
+  .lg\:max-w-\[24rem\]{
+    max-width: 24rem;
+  }
+
+  .lg\:max-w-\[28rem\]{
+    max-width: 28rem;
+  }
+
+  .lg\:max-w-\[26rem\]{
+    max-width: 26rem;
   }
 
   .lg\:grid-cols-3{

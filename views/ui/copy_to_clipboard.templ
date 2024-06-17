@@ -1,0 +1,16 @@
+package ui
+
+script CopyValueToClipboard(id string, value string) {
+	navigator.clipboard.writeText(value)
+
+	const icon = document.getElementById(id)
+	icon.classList.add("fa-check")
+	icon.classList.remove("fa-copy")
+
+	setTimeout(() => {
+		const icon = document.getElementById(id)
+		icon.classList.remove("fa-check")
+		icon.classList.add("fa-regular")
+		icon.classList.add("fa-copy")
+	}, 3 * 1000)
+}

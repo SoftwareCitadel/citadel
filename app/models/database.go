@@ -53,6 +53,7 @@ func (db *Database) GetURI() string {
 		return "postgres://" + db.Username + ":" + db.Password + "@" + db.Host + "/" + db.Name
 	case Redis:
 		return "redis://default:" + db.Password + "@" + db.Host
+	default:
+		return ""
 	}
-	return ""
 }
