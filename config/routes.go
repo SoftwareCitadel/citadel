@@ -125,7 +125,10 @@ func RegisterRoutes(
 		Get("/mails/domains", mailDomainsController.Index).
 		Use(auth.AuthMiddleware)
 	router.
-		Get("/mails/domains/{domain}", mailDomainsController.Show).
+		Get("/mails/domains/{id}", mailDomainsController.Show).
+		Use(auth.AuthMiddleware)
+	router.
+		Delete("/mails/domains/{id}", mailDomainsController.Show).
 		Use(auth.AuthMiddleware)
 	router.
 		Get("/mails/api_keys", mailApiKeysController.Index).

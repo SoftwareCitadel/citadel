@@ -5,7 +5,6 @@ import (
 	"citadel/app/repositories"
 
 	"citadel/views/pages"
-	"fmt"
 
 	caesarAuth "github.com/caesar-rocks/auth"
 	caesar "github.com/caesar-rocks/core"
@@ -39,13 +38,10 @@ func (c *SettingsController) Update(ctx *caesar.CaesarCtx) error {
 		return caesar.NewError(400)
 	}
 
-	fmt.Println("user: ", user)
 	data, errors, ok := caesar.Validate[SettingsValidator](ctx)
 	if !ok {
-		fmt.Println("errors: ", errors)
 		return ctx.Render(pages.SettingsForm(errors))
 	}
-	fmt.Println("data: ", data)
 
 	user.Email = data.Email
 	user.FullName = data.FullName
