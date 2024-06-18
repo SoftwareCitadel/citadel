@@ -835,10 +835,6 @@ select{
   left: -9.5px;
 }
 
-.-right-4{
-  right: -1rem;
-}
-
 .bottom-0{
   bottom: 0px;
 }
@@ -871,8 +867,16 @@ select{
   top: 1.75rem;
 }
 
-.top-8{
-  top: 2rem;
+.right-0{
+  right: 0px;
+}
+
+.-right-4{
+  right: -1rem;
+}
+
+.-top-2{
+  top: -0.5rem;
 }
 
 .z-10{
@@ -979,6 +983,10 @@ select{
 
 .-mt-1{
   margin-top: -0.25rem;
+}
+
+.-mt-2{
+  margin-top: -0.5rem;
 }
 
 .-mt-\[6px\]{
@@ -1209,6 +1217,10 @@ select{
   width: 10rem;
 }
 
+.w-48{
+  width: 12rem;
+}
+
 .w-5{
   width: 1.25rem;
 }
@@ -1259,6 +1271,14 @@ select{
 
 .max-w-lg{
   max-width: 32rem;
+}
+
+.max-w-sm{
+  max-width: 24rem;
+}
+
+.max-w-64{
+  max-width: 16rem;
 }
 
 .flex-1{
@@ -1425,18 +1445,6 @@ select{
   --tw-space-x-reverse: 0 !important;
   margin-right: calc(2rem * var(--tw-space-x-reverse)) !important;
   margin-left: calc(2rem * calc(1 - var(--tw-space-x-reverse))) !important;
-}
-
-.-space-y-\[1px\] > :not([hidden]) ~ :not([hidden]){
-  --tw-space-y-reverse: 0;
-  margin-top: calc(-1px * calc(1 - var(--tw-space-y-reverse)));
-  margin-bottom: calc(-1px * var(--tw-space-y-reverse));
-}
-
-.space-x-1 > :not([hidden]) ~ :not([hidden]){
-  --tw-space-x-reverse: 0;
-  margin-right: calc(0.25rem * var(--tw-space-x-reverse));
-  margin-left: calc(0.25rem * calc(1 - var(--tw-space-x-reverse)));
 }
 
 .space-x-2 > :not([hidden]) ~ :not([hidden]){
@@ -1608,10 +1616,6 @@ select{
   border-bottom-right-radius: 0px;
 }
 
-.\!border{
-  border-width: 1px !important;
-}
-
 .border{
   border-width: 1px;
 }
@@ -1638,10 +1642,6 @@ select{
 
 .border-t{
   border-top-width: 1px;
-}
-
-.\!border-zinc-100\/20{
-  border-color: rgb(244 244 245 / 0.2) !important;
 }
 
 .border-emerald-300{
@@ -1724,10 +1724,6 @@ select{
 .bg-white{
   --tw-bg-opacity: 1;
   background-color: rgb(255 255 255 / var(--tw-bg-opacity));
-}
-
-.bg-white\/10{
-  background-color: rgb(255 255 255 / 0.1);
 }
 
 .bg-white\/2\.5{
@@ -1821,6 +1817,10 @@ select{
 
 .p-2\.5{
   padding: 0.625rem;
+}
+
+.p-3{
+  padding: 0.75rem;
 }
 
 .p-4{
@@ -2673,6 +2673,11 @@ select{
   background-color: rgb(39 39 42 / var(--tw-bg-opacity));
 }
 
+.hover\:\!text-red-400:hover{
+  --tw-text-opacity: 1 !important;
+  color: rgb(248 113 113 / var(--tw-text-opacity)) !important;
+}
+
 .hover\:text-green-400:hover{
   --tw-text-opacity: 1;
   color: rgb(74 222 128 / var(--tw-text-opacity));
@@ -2734,6 +2739,10 @@ select{
 
 .hover\:opacity-75:hover{
   opacity: 0.75;
+}
+
+.hover\:\!ring-red-400\/20:hover{
+  --tw-ring-color: rgb(248 113 113 / 0.2) !important;
 }
 
 .hover\:ring-green-400\/20:hover{

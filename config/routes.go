@@ -127,11 +127,22 @@ func RegisterRoutes(
 	router.
 		Get("/mails/domains/{id}", mailDomainsController.Show).
 		Use(auth.AuthMiddleware)
+	router.Post("/mails/domains", mailDomainsController.Store).Use(auth.AuthMiddleware)
 	router.
-		Delete("/mails/domains/{id}", mailDomainsController.Show).
+		Delete("/mails/domains/{id}", mailDomainsController.Delete).
 		Use(auth.AuthMiddleware)
+
 	router.
 		Get("/mails/api_keys", mailApiKeysController.Index).
+		Use(auth.AuthMiddleware)
+	router.
+		Post("/mails/api_keys", mailApiKeysController.Store).
+		Use(auth.AuthMiddleware)
+	router.
+		Patch("/mails/api_keys/{id}", mailApiKeysController.Update).
+		Use(auth.AuthMiddleware)
+	router.
+		Delete("/mails/api_keys/{id}", mailApiKeysController.Delete).
 		Use(auth.AuthMiddleware)
 
 	// Logs-related routes

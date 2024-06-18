@@ -3,7 +3,7 @@ package controllers
 import (
 	"citadel/app/models"
 	"citadel/app/repositories"
-	mailsPages "citadel/views/pages/mails"
+	mailsPages "citadel/views/concerns/mails/pages"
 
 	caesarAuth "github.com/caesar-rocks/auth"
 	caesar "github.com/caesar-rocks/core"
@@ -19,11 +19,21 @@ func NewMailDomainsController(mailDomainsRepo *repositories.MailDomainsRepositor
 }
 
 func (c *MailDomainsController) Index(ctx *caesar.CaesarCtx) error {
-	return ctx.Render(mailsPages.DomainsPage())
+	user, err := caesarAuth.RetrieveUserFromCtx[models.User](ctx)
+	if err != nil {
+		return caesar.NewError(400)
+	}
+
+	domains, err := c.mailDomainsRepo.FindAllFromUser(ctx.Context(), user.ID)
+	if err != nil {
+		return caesar.NewError(500)
+	}
+
+	return ctx.Render(mailsPages.ListDomainsPage(domains))
 }
 
 type StoreMailDomainValidator struct {
-	Domain string `json:"domain" validate:"required"`
+	Domain string `form:"domain" validate:"required"`
 }
 
 func (c *MailDomainsController) Store(ctx *caesar.CaesarCtx) error {
@@ -45,7 +55,7 @@ func (c *MailDomainsController) Store(ctx *caesar.CaesarCtx) error {
 
 	toast.Success(ctx, "Mail domain created successfully.")
 
-	return ctx.Redirect("/mail_domains")
+	return ctx.Redirect("/mails/domains")
 }
 
 func (c *MailDomainsController) Show(ctx *caesar.CaesarCtx) error {
@@ -63,7 +73,7 @@ func (c *MailDomainsController) Show(ctx *caesar.CaesarCtx) error {
 		return caesar.NewError(403)
 	}
 
-	return ctx.Render(mailsPages.ShowDomainPage())
+	return ctx.Render(mailsPages.ShowDomainPage(*domain))
 }
 
 func (c *MailDomainsController) Delete(ctx *caesar.CaesarCtx) error {
@@ -87,5 +97,5 @@ func (c *MailDomainsController) Delete(ctx *caesar.CaesarCtx) error {
 
 	toast.Success(ctx, "Mail domain deleted successfully.")
 
-	return ctx.Redirect("/mail_domains")
+	return ctx.Redirect("/mails/domains")
 }

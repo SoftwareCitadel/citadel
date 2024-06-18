@@ -1,0 +1,87 @@
+package ui
+
+type DropdownItemProps struct {
+	Label   string
+	Icon    string
+	OnClick templ.ComponentScript
+	Variant string
+}
+
+type DropdownProps struct {
+	ButtonText    string
+	ButtonIcon    string
+	Items         []DropdownItemProps
+	ButtonClass   string
+	DropdownClass string
+	ButtonOnClick templ.ComponentScript
+	DropdownOpen  bool
+	HxGet         string
+	HxPatch       string
+	HxPost        string
+	HxPut         string
+	HxDelete      string
+}
+
+templ Dropdown(props DropdownProps) {
+	<div
+		class="relative"
+		x-data="{
+			open: false,
+			toggle() {
+				if (this.open) {
+					return this.close()
+				}
+
+				this.$refs.button.focus()
+
+				this.open = true
+			},
+			close(focusAfter) {
+				if (! this.open) return
+
+				this.open = false
+
+				focusAfter && focusAfter.focus()
+			}
+		}"
+		x-on:keydown.escape.prevent.stop="close($refs.button)"
+		x-on:focusin.window="! $refs.panel.contains($event.target) && close()"
+		x-id="['dropdown-button']"
+	>
+		// Trigger button
+		<button
+			class={ props.ButtonClass }
+			x-on:click.prevent="open = !open"
+			:aria-expanded="open"
+			:aria-controls="$id('dropdown-button')"
+			type="button"
+		>
+			if props.ButtonIcon != "" {
+				<i class={ "btn-icon fa-solid !mr-2 !pl-0 !ml-0 w-3 h-3 " + props.ButtonIcon }></i>
+			}
+			<span>{ props.ButtonText } </span>
+		</button>
+		// Actual dropdown
+		<div x-show="open" x-transition.origin.bottom.right x-on:click.outside="open = false" :id="$id('dropdown-button')" style="display: none;" class={ "absolute z-10 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 " + props.DropdownClass }>
+			<div
+				class="divide-y divide-zinc-300/20"
+				role="menu"
+				aria-orientation="vertical"
+				aria-labelledby="options-menu"
+			>
+				for _, item := range props.Items {
+					<button
+						class={ "hover:opacity-75 transition w-full p-3 relative flex space-x-2 cursor-default select-none items-center rounded-sm text-sm outline-none transition-colors focus:bg-zinc-300/10 focus:text-zinc-300-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 hover:opacity-75 transition cursor-pointer " + item.Variant }
+						onClick={ item.OnClick }
+						role="menuitem"
+					>
+						if item.Icon != "" {
+							<i class={ "btn-icon fa-solid !mr-2 !pl-0 !ml-0 w-3 h-3 " + item.Icon }></i>
+						}
+						{ item.Label }
+					</button>
+				}
+			</div>
+		</div>
+	</div>
+}

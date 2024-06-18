@@ -65,6 +65,7 @@ func ProvideApp(env *EnvironmentVariables) *core.App {
 		repositories.NewStorageBucketsRepository,
 		repositories.NewDatabasesRepository,
 		repositories.NewMailDomainsRepository,
+		repositories.NewMailApiKeysRepository,
 	)
 
 	app.RegisterProviders(

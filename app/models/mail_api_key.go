@@ -1,6 +1,7 @@
 package models
 
 import (
+	"citadel/app/util"
 	"context"
 	"time"
 
@@ -11,7 +12,7 @@ import (
 type MailApiKey struct {
 	ID    string `bun:"id,pk"`
 	Name  string `bun:"name"`
-	Value bool   `bun:"value"`
+	Value string `bun:"value"`
 
 	User   *User  `bun:"rel:belongs-to,join:user_id=id"`
 	UserID string `bun:"user_id"`
@@ -30,6 +31,11 @@ func (domain *MailApiKey) BeforeAppendModel(ctx context.Context, query bun.Query
 	case *bun.InsertQuery:
 		domain.ID = xid.New().String()
 		domain.CreatedAt = time.Now()
+		value, err := util.GenerateSecretKey()
+		if err != nil {
+			return err
+		}
+		domain.Value = value
 	case *bun.UpdateQuery:
 		domain.UpdatedAt = time.Now()
 	}

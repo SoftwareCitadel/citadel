@@ -1,0 +1,13 @@
+package mailsPages
+
+import (
+	"citadel/app/models"
+	"citadel/views/layouts"
+	"citadel/views/concerns/mails/components"
+)
+
+templ ShowDomainPage(domain models.MailDomain) {
+	@layouts.DashboardLayout(layouts.DashboardLayoutProps{Class: "!p-0"}) {
+		@mailsComponents.Tabs()
+	}
+}

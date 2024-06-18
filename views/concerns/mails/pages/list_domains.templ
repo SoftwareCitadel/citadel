@@ -4,11 +4,12 @@ import (
 	"citadel/app/models"
 	"citadel/views/layouts"
 	"citadel/views/ui"
+	"citadel/views/concerns/mails/components"
 )
 
-templ DomainsPage(domains []models.MailDomain) {
+templ ListDomainsPage(domains []models.MailDomain) {
 	@layouts.DashboardLayout(layouts.DashboardLayoutProps{Class: "!p-0"}) {
-		@tabs()
+		@mailsComponents.Tabs()
 		<div class="flex flex-col py-8 px-12">
 			<div class="flex space-x-4 items-center">
 				<h2 class="text-3xl text-gradient font-semibold font-clash">Domains</h2>
@@ -40,6 +41,13 @@ templ DomainsPage(domains []models.MailDomain) {
 									</tr>
 								</thead>
 								<tbody class="divide-y divide-zinc-700 bg-white/2.5">
+									if len(domains) == 0 {
+										<tr>
+											<td class="py-4 pl-4 pr-3 text-sm font-medium text-zinc-300 sm:pl-6" colspan="5">
+												No domains added yet.
+											</td>
+										</tr>
+									}
 									for _, domain := range(domains) {
 										@domainsTableItem(domain)
 									}
@@ -58,62 +66,48 @@ templ domainsTableItem(domain models.MailDomain) {
 		<td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-zinc-300 sm:pl-6 max-w-[100vw] ">
 			<a
 				class="underline text-zinc-300 hover:text-zinc-100 transition-colors"
-				href="{{ route('dashboard.domains.show', [domain.id]) }}"
+				href={ templ.SafeURL("/mails/domains/" + domain.ID) }
 			>
 				{ domain.Domain }
 			</a>
 		</td>
 		<td class="whitespace-nowrap px-3 py-4 text-sm text-zinc-300">
 			if domain.IsVerified {
-				<span class="success-button hover:text-green-400 hover:ring-green-400/20">
+				<span class="success-btn !hover:text-emerald-400 !hover:ring-emerald-400/20">
 					Verified
 				</span>
 			} else {
-				<span class="danger-button hover:text-red-400 hover:ring-red-400/20">
+				<span class="danger-btn hover:!text-red-400 hover:!ring-red-400/20">
 					Not Verified
 				</span>
 			}
 		</td>
-		<td
-			class="absolute z-10 whitespace-nowrap py-4 pl-3 pr-4 text-right items-center justify-center flex text-sm font-medium sm:pr-6"
-			x-data="dropdown()"
-		>
-			<button
-				class="text-zinc-300 hover:text-zinc-50 text-lg transition-colors -mt-[6px]"
-				@click="toggleDropdown"
-				x-bind:aria-expanded="dropdownOpen"
-			>...</button>
-			<div
-				class="absolute overflow-hidden left-2 z-50 bottom-0 flex flex-col divide-y divide-zinc-700 bs b-thin p-block bg-zinc-900 rounded-lg text-white border border-zinc-700"
-				x-show="dropdownOpen"
-				@click.away="toggleDropdown"
-			>
-				<div x-data="modal()">
-					@ui.Dialog(ui.DialogProps{
-						Id:          "delete_application",
-						Title:       "Delete Application",
-						Description: "Are you sure you want to delete your application?",
-					}) {
-						@ui.Button(ui.ButtonProps{
-							Variant:  ui.ButtonVariantDanger,
-							HxDelete: "/mails/domains/" + domain.ID,
-						}) {
-							Delete Domain
-						}
-					}
-					<button
-						class="text-zinc-300 space-x-2 flex items-center text-left hover:text-zinc-50 text-sm transition-colors px-4 py-2"
-						@click="toggleModal"
-					>
-						<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
-							<path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"></path>
-						</svg>
-						<span>
-							Remove
-						</span>
-					</button>
-				</div>
-			</div>
+		<td class="absolute flex -mt-2 whitespace-nowrap px-3 py-4 text-sm text-zinc-300 z-50">
+			@ui.Dropdown(ui.DropdownProps{
+				ButtonText: "...",
+				Items: []ui.DropdownItemProps{
+					{
+						Label:   "Delete",
+						Icon:    "fa-solid fa-trash",
+						Variant: "text-red-400",
+						OnClick: ui.OpenDialog("delete_mail_domain_" + domain.ID),
+					},
+				},
+				ButtonClass:   "flex items-center gap-x-4 py-3 text-sm leading-6 font-normal text-white hover:opacity-75 transition",
+				DropdownClass: "-mt-2 -right-4 top-4 bg-zinc-900 text-white border border-zinc-300/20",
+			})
+			@ui.Dialog(ui.DialogProps{
+				Id:          "delete_mail_domain_" + domain.ID,
+				Title:       "Delete domain",
+				Description: "Are you sure you want to delete your domain?",
+			}) {
+				@ui.Button(ui.ButtonProps{
+					Variant:  ui.ButtonVariantDanger,
+					HxDelete: "/mails/domains/" + domain.ID,
+				}) {
+					Delete Domain
+				}
+			}
 		</td>
 	</tr>
 }
@@ -143,10 +137,4 @@ templ addDomainDialog() {
 			</div>
 		}
 	</form>
-}
-
-templ ShowDomainPage() {
-	@layouts.DashboardLayout(layouts.DashboardLayoutProps{Class: "!p-0"}) {
-		@tabs()
-	}
 }

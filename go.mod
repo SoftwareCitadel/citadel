@@ -5,7 +5,6 @@ go 1.22.2
 require (
 	github.com/Squwid/go-randomizer v0.1.2
 	github.com/ThreeDotsLabs/watermill v1.3.5
-	github.com/a-h/templ v0.2.707
 	github.com/alevinval/sse v1.0.2
 	github.com/bradleyfalzon/ghinstallation v1.1.1
 	github.com/bradleyfalzon/ghinstallation/v2 v2.11.0
@@ -38,6 +37,7 @@ require (
 	code.gitea.io/sdk/gitea v0.17.1 // indirect
 	github.com/Masterminds/semver/v3 v3.2.1 // indirect
 	github.com/Microsoft/hcsshim v0.12.4 // indirect
+	github.com/a-h/templ v0.2.707 // indirect
 	github.com/atotto/clipboard v0.1.4 // indirect
 	github.com/charmbracelet/x/ansi v0.1.1 // indirect
 	github.com/charmbracelet/x/input v0.1.1 // indirect
@@ -63,7 +63,6 @@ require (
 	github.com/mattn/go-localereader v0.0.1 // indirect
 	github.com/matttproud/golang_protobuf_extensions v1.0.4 // indirect
 	github.com/minio/md5-simd v1.1.2 // indirect
-	github.com/minio/pkg v1.7.5 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/moby/patternmatcher v0.6.0 // indirect
 	github.com/moby/sys/sequential v0.5.0 // indirect
