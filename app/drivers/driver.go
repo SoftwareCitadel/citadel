@@ -26,7 +26,7 @@ type Driver interface {
 	DeleteDatabase(db models.Database) error
 
 	// Storage-related methods
-	CreateStorageBucket(bucket models.StorageBucket) (host string, keyId string, secretKey string, err error)
+	CreateStorageBucket(bucket models.StorageBucket) (host string, keyId string, secretKey string, region string, err error)
 	GetFilesAndTotalSize(bucket models.StorageBucket) (totalSize float64, files []models.StorageFile, err error)
 	DeleteStorageBucket(bucket models.StorageBucket) error
 }

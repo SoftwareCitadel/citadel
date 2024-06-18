@@ -7,35 +7,68 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
+	"log"
 	"math/big"
+	"os"
 
+	"github.com/minio/madmin-go/v3"
 	"github.com/minio/minio-go/v7"
 )
 
-func (d *DockerDriver) CreateStorageBucket(bucket models.StorageBucket) (host string, keyId string, secretKey string, err error) {
+func (d *DockerDriver) CreateStorageBucket(bucket models.StorageBucket) (host string, keyId string, secretKey string, region string, err error) {
 	exists, err := d.minioClient.BucketExists(context.Background(), bucket.Slug)
 	if err != nil {
-		return "", "", "", err
+		return "", "", "", "", err
 	}
 	if exists {
-		return "", "", "", errors.New("bucket already exists")
+		return "", "", "", "", errors.New("bucket already exists")
 	}
 
 	if err := d.minioClient.MakeBucket(context.Background(), bucket.Slug, minio.MakeBucketOptions{}); err != nil {
-		return "", "", "", err
+		return "", "", "", "", err
 	}
 
 	newAccessKey := bucket.ID
 	newSecretKey, err := generateSecretKey()
 	if err != nil {
-		return "", "", "", err
+		return "", "", "", "", err
 	}
 
 	if err := d.minioAdmin.AddUser(context.Background(), newAccessKey, newSecretKey); err != nil {
-		return "", "", "", err
+		return "", "", "", "", err
 	}
 
-	return d.ipv4, newAccessKey, newSecretKey, nil
+	policyBytes := []byte(fmt.Sprintf(`{
+		"Version": "2012-10-17",
+		"Statement": [
+		 {
+		  "Effect": "Allow",
+		  "Principal": {"AWS": ["arn:aws:iam::minio:user/%s"]},
+		  "Action": [
+		   "s3:PutObject",
+		   "s3:GetObject",
+		   "s3:ListBucket"
+		  ],
+		  "Resource": [
+		   "arn:aws:s3:::%s/*"
+		  ]
+		 }
+		]
+	}`, newAccessKey, bucket.Slug))
+
+	if err := d.minioAdmin.AddCannedPolicy(context.Background(), newAccessKey+"-policy", policyBytes); err != nil {
+		log.Println("Failed to add canned policy")
+		return "", "", "", "", err
+	}
+
+	if _, err := d.minioAdmin.AttachPolicy(context.Background(), madmin.PolicyAssociationReq{
+		Policies: []string{newAccessKey + "-policy"},
+		User:     newAccessKey,
+	}); err != nil {
+		return "", "", "", "", err
+	}
+
+	return os.Getenv("MINIO_HOST"), newAccessKey, newSecretKey, os.Getenv("MINIO_REGION"), nil
 }
 
 func (d *DockerDriver) DeleteStorageBucket(bucket models.StorageBucket) error {

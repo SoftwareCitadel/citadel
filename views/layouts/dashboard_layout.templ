@@ -13,6 +13,26 @@ type DashboardLayoutProps struct {
 }
 
 templ DashboardLayout(props DashboardLayoutProps) {
+	<script>
+	// When there is a slugify tag on an input, it will automatically slugify the value of the input
+	// and set it to the target element.
+	function slugify(event) {
+		if (!event.target) {
+			return
+		}
+
+		event.target.value = event.target.value
+			.toLowerCase()
+			.replaceAll(" ", "-")
+			.replaceAll(/[^a-z0-9-]/g, "")
+	}
+
+	document.addEventListener("DOMContentLoaded", () => {
+		document.querySelectorAll("[slugify]").forEach((element) => {
+			element.addEventListener("input", slugify)
+		})
+	})	
+	</script>
 	@SharedLayout() {
 		<main class="flex min-h-screen flex-col justify-center bg-zinc-900">
 			<div class="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-72 lg:flex-col">

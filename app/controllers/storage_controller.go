@@ -1,13 +1,16 @@
 package controllers
 
 import (
+	"bytes"
 	"citadel/app/drivers"
 	"citadel/app/models"
 	"citadel/app/repositories"
 	storagePages "citadel/views/pages/storage"
+	"io"
 
 	"github.com/caesar-rocks/auth"
 	caesar "github.com/caesar-rocks/core"
+	"github.com/caesar-rocks/drive"
 	"github.com/caesar-rocks/ui/toast"
 )
 
@@ -58,13 +61,14 @@ func (c *StorageController) Store(ctx *caesar.CaesarCtx) error {
 		return err
 	}
 
-	host, keyId, secretKey, err := c.driver.CreateStorageBucket(*bucket)
+	host, keyId, secretKey, region, err := c.driver.CreateStorageBucket(*bucket)
 	if err != nil {
 		return err
 	}
 	bucket.Host = host
 	bucket.KeyId = keyId
 	bucket.SecretKey = secretKey
+	bucket.Region = region
 
 	if err := c.storageBucketsRepo.UpdateOneWhere(ctx.Context(), "id", bucket.ID, bucket); err != nil {
 		return err
@@ -168,4 +172,50 @@ func (c *StorageController) Delete(ctx *caesar.CaesarCtx) error {
 	}
 
 	return ctx.Redirect("/storage")
+}
+
+func (c *StorageController) UploadFile(ctx *caesar.CaesarCtx) error {
+	// Retrieve the bucket owned by the current user
+	user, err := auth.RetrieveUserFromCtx[models.User](ctx)
+	if err != nil {
+		return err
+	}
+	bucket, err := c.storageBucketsRepo.FindOneBy(ctx.Context(), "slug", ctx.PathValue("slug"))
+	if err != nil {
+		return err
+	}
+
+	if bucket.UserID != user.ID {
+		return caesar.NewError(403)
+	}
+
+	// Parse the file, and pass its contents into a buffer.
+	ctx.Request.ParseMultipartForm(10 << 20) // 10 MB
+	file, fileHeader, err := ctx.Request.FormFile("file")
+	if err != nil {
+		return err
+	}
+	buf := bytes.NewBuffer(nil)
+	if _, err := io.Copy(buf, file); err != nil {
+		return err
+	}
+
+	// Create a new Drive instance.
+	myDrive := drive.NewDrive(map[string]drive.FileSystem{
+		"s3": &drive.S3{
+			Key:            bucket.KeyId,
+			Secret:         bucket.SecretKey,
+			Region:         bucket.Region,
+			Endpoint:       bucket.Host,
+			Bucket:         bucket.Slug,
+			ForcePathStyle: true,
+		},
+	})
+
+	// Upload the file to the S3 bucket.
+	if err := myDrive.Use("s3").Put(fileHeader.Filename, buf.Bytes()); err != nil {
+		return err
+	}
+
+	return ctx.RedirectBack()
 }

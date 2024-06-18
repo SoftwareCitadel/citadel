@@ -6,6 +6,7 @@ type CardProps struct {
 	Description string
 	Class       string
 	DivClass    string
+	SubDivClass string
 	NoContent   bool
 }
 
@@ -16,7 +17,7 @@ templ Card(props CardProps) {
 				if props.NoContent {
 					class="flex flex-col p-6"
 				} else {
-					class="flex flex-col p-6 border-b border-zinc-300/20"
+					class={ "flex flex-col p-6 border-b border-zinc-300/20 " + props.SubDivClass }
 				}
 			>
 				if props.Header != nil {

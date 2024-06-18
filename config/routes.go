@@ -154,6 +154,9 @@ func RegisterRoutes(
 	router.
 		Delete("/storage/{slug}", storageController.Delete).
 		Use(auth.AuthMiddleware)
+	router.
+		Post("/storage/{slug}/upload", storageController.UploadFile).
+		Use(auth.AuthMiddleware)
 
 	// Environment variables-related routes
 	router.Get("/apps/{slug}/env", envController.Edit).Use(auth.AuthMiddleware)

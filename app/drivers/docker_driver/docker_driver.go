@@ -55,7 +55,11 @@ func NewDockerDriver(appsRepo *repositories.ApplicationsRepository, deplsRepo *r
 		log.Fatal("Failed to login to registry")
 	}
 
-	minioClient, err := minio.New(os.Getenv("MINIO_HOST"), &minio.Options{
+	// Set up Minio-related stuff
+	minioHost := strings.Replace(os.Getenv("MINIO_HOST"), "http://", "", 1)
+	minioHost = strings.Replace(minioHost, "https://", "", 1)
+
+	minioClient, err := minio.New(minioHost, &minio.Options{
 		Creds:  credentials.NewStaticV4(os.Getenv("MINIO_ACCESS_KEY"), os.Getenv("MINIO_SECRET_KEY"), ""),
 		Secure: false,
 	})
@@ -63,7 +67,7 @@ func NewDockerDriver(appsRepo *repositories.ApplicationsRepository, deplsRepo *r
 		log.Fatalln(err)
 	}
 
-	minioAdmin, err := madmin.New(os.Getenv("MINIO_HOST"), os.Getenv("MINIO_ACCESS_KEY"), os.Getenv("MINIO_SECRET_KEY"), false)
+	minioAdmin, err := madmin.New(minioHost, os.Getenv("MINIO_ACCESS_KEY"), os.Getenv("MINIO_SECRET_KEY"), false)
 	if err != nil {
 		log.Fatalln(err)
 	}

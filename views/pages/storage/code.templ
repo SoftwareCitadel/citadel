@@ -1,0 +1,111 @@
+package storagePages
+
+import (
+	"citadel/app/models"
+)
+
+templ storageBucketCodeBlock(storageBucket models.StorageBucket) {
+	<script type="module">
+    import { codeToHtml } from 'https://esm.sh/shiki@1.0.0'
+
+    const codeSnippetsData = {
+        shellscript: '# Install AWS CLI, if not already installed\ncurl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"\nunzip awscliv2.zip\nsudo ./aws/install\n\n# Set the S3 credentials\naws configure set aws_access_key_id "#storageBucket.keyId#"\naws configure set aws_secret_access_key "#storageBucket.secretKey#"\naws configure set default.region "#storageBucket.region#"\n\n# Upload the file to the specified bucket\naws --endpoint-url=#storageBucket.host# s3 cp <some_file> s3://#storageBucket.slug#',
+        python: "import boto3\n\nstorage_bucket_key_id = '#storageBucket.keyId#'\nstorage_bucket_secret_key = '#storageBucket.secretKey#'\nstorage_bucket_slug = '#storageBucket.slug#'\ns3_endpoint = '#storageBucket.host#'\nregion = '#storageBucket.region#'\n\ns3_client = boto3.client('s3',\n\tendpoint_url=s3_endpoint,\n\taws_access_key_id=storage_bucket_key_id,\n\taws_secret_access_key=storage_bucket_secret_key,\n\tregion_name=region\n)\n\nresponse = s3_client.list_objects(Bucket=storage_bucket_slug)\n\nprint(response['Contents'])\n\n",
+        typescript: "import {\n  S3Client,\n  ListObjectsCommand,\n} from '@aws-sdk/client-s3'\n\nconst client = new S3Client({\n  endpoint: '#storageBucket.host#',\n  region: '#storageBucket.region#',\n  credentials: {\n    accessKeyId: '#storageBucket.keyId#',\n    secretAccessKey: '#storageBucket.secretKey#',\n  },\n})\n\nconst command = new ListObjectsCommand({\n  Bucket: '#storageBucket.slug#',\n})\n\nconst response = await client.send(command)\n\nconsole.log(response.Contents)\n\n",
+		php: `require 'vendor/autoload.php';\n\nuse AwsS3S3Client;\nuse AwsExceptionAwsException;\n\n$storageBucketKeyId = '#storageBucket.keyId#';\n$storageBucketSecretKey = '#storageBucket.secretKey#';\n$storageBucketSlug = '#storageBucket.slug#';\n$s3Endpoint = 'storageBucket.host';\n$region = '#storageBucket.region#';\n\n$s3Client = new S3Client([\n    'version'     => 'latest',\n    'region'      => $region,\n    'endpoint'    => $s3Endpoint,\n    'credentials' => [\n        'key'    => $storageBucketKeyId,\n        'secret' => $storageBucketSecretKey,\n    ],\n]);\n\ntry {\n    $result = $s3Client->listObjects([\n        'Bucket' => $storageBucketSlug,\n    ]);\n\n    print_r($result['Contents']);\n} catch (AwsException $e) {\n    echo "Error: " . $e->getAwsErrorMessage() . "\\n";\n}\n\n`,
+	}
+
+	const codeSnippetsDiv = document.getElementById('code-snippets')
+	const host = codeSnippetsDiv.getAttribute('data-host')
+	const keyId = codeSnippetsDiv.getAttribute('data-key-id')
+	const secretKey = codeSnippetsDiv.getAttribute('data-secret-key')
+	const region = codeSnippetsDiv.getAttribute('data-region')
+	const bucket = codeSnippetsDiv.getAttribute('data-bucket')
+
+    const codeSnippets = document.querySelectorAll('#code-snippet')
+    for (const codeSnippet of codeSnippets) {
+      const lang = codeSnippet.getAttribute('data-lang')
+	  const content = codeSnippetsData[lang]
+	  	.replace('#storageBucket.keyId#', keyId)
+		.replace('#storageBucket.secretKey#', secretKey)
+		.replace('#storageBucket.slug#', bucket)
+		.replace('#storageBucket.host#', host)
+		.replace('#storageBucket.region#', region)
+      codeSnippet.innerHTML = await codeToHtml(content, {
+        lang,
+        theme: 'monokai'
+      })
+    }
+  	</script>
+	<script>
+  	function getClass(value, selectedLanguage) {
+		if (value === selectedLanguage) {
+			return 'py-3 text-sm text-yellow-400 border-b border-yellow-500 cursor-pointer'
+		}
+		return 'text-zinc-400 text-sm hover:text-zinc-300 transition-colors cursor-pointer'
+	}
+  	</script>
+	<div
+		class="border border-zinc-700 rounded-xl w-full bg-zinc-900 text-white mt-6"
+		x-data="{ selectedLanguage: 'shellscript' }"
+		id="code-snippets"
+		data-bucket={ storageBucket.Slug }
+		data-host={ storageBucket.Host }
+		data-key-id={ storageBucket.KeyId }
+		data-secret-key={ storageBucket.SecretKey }
+		data-region={ storageBucket.Region }
+	>
+		<div class="px-4 flex space-x-4 border-b border-zinc-700">
+			<button
+				x-bind:class="getClass('shellscript', selectedLanguage)"
+				x-on:click="selectedLanguage = 'shellscript'"
+			>
+				AWS CLI
+			</button>
+			<button
+				x-bind:class="getClass('python', selectedLanguage)"
+				x-on:click="selectedLanguage = 'python'"
+			>
+				Python
+			</button>
+			<button
+				x-bind:class="getClass('typescript', selectedLanguage)"
+				x-on:click="selectedLanguage = 'typescript'"
+			>
+				Node.js
+			</button>
+			<button
+				x-bind:class="getClass('php', selectedLanguage)"
+				x-on:click="selectedLanguage = 'php'"
+			>
+				PHP
+			</button>
+		</div>
+		<div class="rounded-b-xl overflow-auto leading-6 text-sm sm:text-sm min-h-72 h-72 max-h-72" style="background: black !important;">
+			<code
+				x-show="selectedLanguage === 'shellscript'"
+				class="block p-4 !bg-white/2.5 w-full h-full [&>pre]:!bg-transparent"
+				id="code-snippet"
+				data-lang="shellscript"
+			></code>
+			<code
+				x-show="selectedLanguage === 'python'"
+				class="block p-4 !bg-white/2.5 w-full h-full [&>pre]:!bg-transparent"
+				id="code-snippet"
+				data-lang="python"
+			></code>
+			<code
+				x-show="selectedLanguage === 'typescript'"
+				class="block p-4 !bg-white/2.5 w-full h-full [&>pre]:!bg-transparent"
+				id="code-snippet"
+				data-lang="typescript"
+			></code>
+			<code
+				x-show="selectedLanguage === 'php'"
+				class="block p-4 !bg-white/2.5 w-full h-full [&>pre]:!bg-transparent"
+				id="code-snippet"
+				data-lang="php"
+			></code>
+		</div>
+	</div>
+}

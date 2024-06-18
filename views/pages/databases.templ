@@ -12,15 +12,13 @@ templ DatabasesPage(dbs []models.Database) {
 			<h2 class="text-3xl text-gradient font-semibold font-clash">
 				Databases
 			</h2>
-			<div>
-				@ui.Button(ui.ButtonProps{
-					Icon:    "fa-solid fa-plus",
-					OnClick: ui.OpenDialog("create_database"),
-				}) {
-					Create New Database
-				}
-				@createDatabaseDialog()
-			</div>
+			@ui.Button(ui.ButtonProps{
+				Icon:    "fa-solid fa-plus",
+				OnClick: ui.OpenDialog("create_database"),
+			}) {
+				Create New Database
+			}
+			@createDatabaseDialog()
 		</div>
 		<div class="gap-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
 			for _, db := range dbs {
@@ -119,6 +117,7 @@ templ credentialsStep() {
 			Id:          "name",
 			DivClass:    "px-6 pb-4",
 			Class:       "lowercase",
+			Slugify:     true,
 			Extra: map[string]any{
 				"minlength": 3,
 			},

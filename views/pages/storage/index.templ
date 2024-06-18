@@ -12,15 +12,13 @@ templ Index(storageBuckets []models.StorageBucket) {
 			<h2 class="text-3xl text-gradient font-semibold font-clash">
 				Storage Buckets
 			</h2>
-			<div>
-				@ui.Button(ui.ButtonProps{
-					Icon:    "fa-solid fa-plus",
-					OnClick: ui.OpenDialog("create_storage_bucket"),
-				}) {
-					Create New Storage Bucket
-				}
-				@createStorageBucketDialog()
-			</div>
+			@ui.Button(ui.ButtonProps{
+				Icon:    "fa-solid fa-plus",
+				OnClick: ui.OpenDialog("create_storage_bucket"),
+			}) {
+				Create New Storage Bucket
+			}
+			@createStorageBucketDialog()
 		</div>
 		<br/>
 		<div class="gap-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
@@ -61,6 +59,7 @@ templ createStorageBucketDialog() {
 				Placeholder: "my-bucket",
 				Class:       "lowercase",
 				Extra:       map[string]any{"minlength": "3"},
+				Slugify:     true,
 			})
 			<div class="px-6 pt-4 border-t border-zinc-300/10">
 				@ui.Button(ui.ButtonProps{
