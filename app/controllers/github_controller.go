@@ -4,7 +4,7 @@ import (
 	"citadel/app/models"
 	"citadel/app/repositories"
 	"citadel/app/types"
-	appsPages "citadel/views/pages/apps"
+	appsPages "citadel/views/concerns/apps/pages"
 	"fmt"
 	"net/http"
 	"os"

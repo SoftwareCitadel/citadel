@@ -6,7 +6,8 @@ import (
 	authControllers "citadel/app/controllers/auth"
 	"citadel/app/middleware"
 	"citadel/app/vexillum"
-	mailsPages "citadel/views/pages/mails"
+
+	mailsPages "citadel/views/concerns/mails/pages"
 
 	caesarAuth "github.com/caesar-rocks/auth"
 	caesar "github.com/caesar-rocks/core"
@@ -72,6 +73,10 @@ func RegisterRoutes(
 	// Forgot password routes
 	router.Get("/auth/forgot_password", forgotPwdController.Show)
 	router.Post("/auth/forgot_password", forgotPwdController.Handle)
+
+	// Reset password routes
+	router.Get("/auth/reset_password/{jwt}", forgotPwdController.Show)
+	router.Post("/auth/reset_password/{jwt}", forgotPwdController.Handle)
 
 	// Apps CRUD routes
 	router.Get("/apps", appsController.Index).Use(auth.AuthMiddleware)

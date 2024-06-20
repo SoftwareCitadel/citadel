@@ -4,7 +4,7 @@ import (
 	"citadel/app/repositories"
 	"citadel/app/services"
 
-	appsPages "citadel/views/pages/apps"
+	appsPages "citadel/views/concerns/apps/pages"
 
 	caesar "github.com/caesar-rocks/core"
 	"github.com/caesar-rocks/ui/toast"

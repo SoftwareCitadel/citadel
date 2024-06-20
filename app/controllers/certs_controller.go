@@ -5,7 +5,7 @@ import (
 	"citadel/app/models"
 	"citadel/app/repositories"
 	"citadel/app/services"
-	appsPages "citadel/views/pages/apps"
+	appsPages "citadel/views/concerns/apps/pages"
 
 	"github.com/caesar-rocks/auth"
 	caesar "github.com/caesar-rocks/core"

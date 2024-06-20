@@ -3,11 +3,12 @@ package mailsPages
 import (
 	"citadel/views/layouts"
 	"citadel/views/ui"
+	"citadel/views/concerns/mails/components"
 )
 
 templ OverviewPage() {
 	@layouts.DashboardLayout(layouts.DashboardLayoutProps{Class: "!p-0"}) {
-		@tabs()
+		@mailsComponents.Tabs()
 		<div class="flex flex-col py-8 px-12">
 			<h2 class="text-3xl text-gradient font-semibold font-clash">Send Your First Email</h2>
 			<h3 class="mt-2 text-zinc-300 text-sm">Follow these steps to send your first email.</h3>
@@ -135,7 +136,7 @@ templ thirdStep() {
 					<p class="mb-6 text-sm text-zinc-300 font-normal">
 						Send an email to test your configuration.
 					</p>
-					@code()
+					@mailsComponents.Code()
 				</div>
 			</div>
 		</div>

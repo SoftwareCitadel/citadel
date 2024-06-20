@@ -2,7 +2,7 @@ package authControllers
 
 import (
 	"citadel/app/repositories"
-	authPages "citadel/views/pages/auth"
+	authPages "citadel/views/concerns/auth/pages"
 
 	caesarAuth "github.com/caesar-rocks/auth"
 	caesar "github.com/caesar-rocks/core"

@@ -4,7 +4,7 @@ import (
 	"citadel/app/models"
 	"citadel/app/repositories"
 	"citadel/app/services"
-	authPages "citadel/views/pages/auth"
+	authPages "citadel/views/concerns/auth/pages"
 
 	caesarAuth "github.com/caesar-rocks/auth"
 	caesar "github.com/caesar-rocks/core"

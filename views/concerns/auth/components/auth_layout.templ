@@ -1,9 +1,12 @@
 package layouts
 
-import "citadel/views/components"
+import (
+	"citadel/views/components"
+	"citadel/views/layouts"
+)
 
 templ AuthLayout(header func() templ.Component) {
-	@SharedLayout() {
+	@layouts.SharedLayout() {
 		<main class="flex min-h-screen flex-col justify-center px-6 py-12 lg:px-8 bg-zinc-900">
 			<div class="sm:mx-auto sm:w-full sm:max-w-sm">
 				<div class="flex items-center justify-center">

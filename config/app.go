@@ -10,7 +10,7 @@ import (
 	"citadel/app/repositories"
 	"citadel/app/services"
 	"citadel/public"
-	"log"
+	"log/slog"
 	"os"
 
 	"github.com/caesar-rocks/core"
@@ -87,9 +87,11 @@ func ProvideApp(env *EnvironmentVariables) *core.App {
 		core.ServeStaticAssets(public.FS),
 		events.ListenForEvents,
 		func(driver drivers.Driver) {
-			if err := driver.Init(); err != nil {
-				log.Fatal(err)
-			}
+			go func() {
+				if err := driver.Init(); err != nil {
+					slog.Error("Failed to initialize driver", "error", err)
+				}
+			}()
 		},
 	)
 

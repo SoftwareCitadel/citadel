@@ -68,6 +68,11 @@ templ DashboardLayout(props DashboardLayoutProps) {
 										href:       "/mails",
 										comingSoon: true,
 									})
+									@sidebarItem(sidebarItemProps{
+										label: "Analytics",
+										icon:  "fa-chart-simple",
+										href:  "/analytics",
+									})
 									if util.IsFeatureActive(ctx, "billing") {
 										@sidebarItem(sidebarItemProps{
 											label: "Billing",

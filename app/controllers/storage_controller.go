@@ -5,7 +5,7 @@ import (
 	"citadel/app/drivers"
 	"citadel/app/models"
 	"citadel/app/repositories"
-	storagePages "citadel/views/pages/storage"
+	storagePages "citadel/views/concerns/storage/pages"
 	"io"
 
 	"github.com/caesar-rocks/auth"

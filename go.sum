@@ -88,6 +88,8 @@ github.com/caesar-rocks/orm v0.0.2 h1:nlgTEnWtPR3ydDACUEqfZ8r7UTBLsh7PAl9joByIzc
 github.com/caesar-rocks/orm v0.0.2/go.mod h1:CAHl4SriBNMO9bgeRDSUrbZEiIVfQauh9Mcsy6cPsBQ=
 github.com/caesar-rocks/ui v0.0.2 h1:H6cl0/1+qFbU1dH5upl4vjMzPR04fsGIko2Pt08U2WE=
 github.com/caesar-rocks/ui v0.0.2/go.mod h1:DQsGlURkVvdGVO4bwad93zrzOukjUk7z7/KFIAWGRUc=
+github.com/caesar-rocks/vexillum v0.0.1 h1:YHxeqGPSgURaySUojjoTNeRmjz+em5PIE7BE60ZyTe0=
+github.com/caesar-rocks/vexillum v0.0.1/go.mod h1:zJ19TnvnOHkNih698tZNVmjjtO2cLs6wH2O7YKhREgM=
 github.com/cenkalti/backoff/v4 v4.3.0 h1:MyRJ/UdXutAwSAT+s3wNd7MfTIcy71VQueUuFK343L8=
 github.com/cenkalti/backoff/v4 v4.3.0/go.mod h1:Y3VNntkOUPxTVeUxJ/G5vcM//AlwfmyYozVcomhLiZE=
 github.com/cespare/xxhash/v2 v2.2.0 h1:DC2CZ1Ep5Y4k3ZQ899DldepgrayRUGE6BBZ/cd9Cj44=
@@ -171,6 +173,8 @@ github.com/go-playground/universal-translator v0.18.1 h1:Bcnm0ZwsGyWbCzImXv+pAJn
 github.com/go-playground/universal-translator v0.18.1/go.mod h1:xekY+UJKNuX9WP91TpwSH2VMlDf28Uj24BCp08ZFTUY=
 github.com/go-playground/validator/v10 v10.21.0 h1:4fZA11ovvtkdgaeev9RGWPgc1uj3H8W+rNYyH/ySBb0=
 github.com/go-playground/validator/v10 v10.21.0/go.mod h1:dbuPbCMFw/DrkbEynArYaCwl3amGuJotoKCe95atGMM=
+github.com/go-playground/validator/v10 v10.22.0 h1:k6HsTZ0sTnROkhS//R0O+55JgM8C4Bx7ia+JlgcnOao=
+github.com/go-playground/validator/v10 v10.22.0/go.mod h1:dbuPbCMFw/DrkbEynArYaCwl3amGuJotoKCe95atGMM=
 github.com/go-sql-driver/mysql v1.8.1 h1:LedoTUt/eveggdHS9qUFC1EFSa8bU2+1pZjSRpvNJ1Y=
 github.com/go-sql-driver/mysql v1.8.1/go.mod h1:wEBSXgmK//2ZFJyE+qWnIsVGmvmEKlqwuVSjsCm7DZg=
 github.com/go-test/deep v1.1.0 h1:WOcxcdHcvdgThNXjw0t76K42FXTU7HpNQWHpA2HHNlg=

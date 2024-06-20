@@ -6,7 +6,7 @@ import (
 	"citadel/app/repositories"
 	"citadel/app/services"
 	"citadel/util"
-	appsPages "citadel/views/pages/apps"
+	appsPages "citadel/views/concerns/apps/pages"
 	"io"
 	"log/slog"
 

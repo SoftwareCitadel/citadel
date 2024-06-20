@@ -2,7 +2,7 @@ package authControllers
 
 import (
 	"citadel/app/models"
-	authPages "citadel/views/pages/auth"
+	authPages "citadel/views/concerns/auth/pages"
 	"time"
 
 	"github.com/caesar-rocks/auth"

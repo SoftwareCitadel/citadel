@@ -3,8 +3,8 @@ package authControllers
 import (
 	"bytes"
 	"citadel/app/repositories"
+	authPages "citadel/views/concerns/auth/pages"
 	"citadel/views/mails"
-	authPages "citadel/views/pages/auth"
 	"log/slog"
 
 	caesar "github.com/caesar-rocks/core"
