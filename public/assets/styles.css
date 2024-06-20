@@ -839,16 +839,8 @@ select{
   right: -1rem;
 }
 
-.bottom-0{
-  bottom: 0px;
-}
-
 .bottom-14{
   bottom: 3.5rem;
-}
-
-.left-2{
-  left: 0.5rem;
 }
 
 .right-4{
@@ -975,10 +967,6 @@ select{
 
 .-mt-2{
   margin-top: -0.5rem;
-}
-
-.-mt-\[6px\]{
-  margin-top: -6px;
 }
 
 .mb-1{
@@ -2662,16 +2650,6 @@ select{
   color: rgb(248 113 113 / var(--tw-text-opacity)) !important;
 }
 
-.hover\:text-green-400:hover{
-  --tw-text-opacity: 1;
-  color: rgb(74 222 128 / var(--tw-text-opacity));
-}
-
-.hover\:text-red-400:hover{
-  --tw-text-opacity: 1;
-  color: rgb(248 113 113 / var(--tw-text-opacity));
-}
-
 .hover\:text-white:hover{
   --tw-text-opacity: 1;
   color: rgb(255 255 255 / var(--tw-text-opacity));
@@ -2727,14 +2705,6 @@ select{
 
 .hover\:\!ring-red-400\/20:hover{
   --tw-ring-color: rgb(248 113 113 / 0.2) !important;
-}
-
-.hover\:ring-green-400\/20:hover{
-  --tw-ring-color: rgb(74 222 128 / 0.2);
-}
-
-.hover\:ring-red-400\/20:hover{
-  --tw-ring-color: rgb(248 113 113 / 0.2);
 }
 
 .focus\:bg-zinc-300\/10:focus{

@@ -1,9 +1,9 @@
 package auth
 
 import (
-	"citadel/views/layouts"
 	"citadel/views/ui"
 	"citadel/views/util"
+	"citadel/views/concerns/auth/components"
 )
 
 type SignUpInput struct {
@@ -13,7 +13,7 @@ type SignUpInput struct {
 }
 
 templ SignUpPage() {
-	@layouts.AuthLayout(signUpPageHeader) {
+	@components.AuthLayout(signUpPageHeader) {
 		if util.IsFeatureActive(ctx, "github_oauth") {
 			@continueWithGithub()
 		}

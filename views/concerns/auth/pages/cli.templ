@@ -4,12 +4,12 @@ import (
 	"github.com/caesar-rocks/auth"
 
 	"citadel/app/models"
-	"citadel/views/layouts"
 	"citadel/views/ui"
+	"citadel/views/concerns/auth/components"
 )
 
 templ CliPage(success bool) {
-	@layouts.AuthLayout(cliPageHeader) {
+	@components.AuthLayout(cliPageHeader) {
 		if success {
 			<div>
 				@CliSuccessAlert()
