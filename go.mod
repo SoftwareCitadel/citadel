@@ -5,6 +5,7 @@ go 1.22.2
 require (
 	github.com/Squwid/go-randomizer v0.1.2
 	github.com/ThreeDotsLabs/watermill v1.3.5
+	github.com/a-h/templ v0.2.707
 	github.com/alevinval/sse v1.0.2
 	github.com/bradleyfalzon/ghinstallation v1.1.1
 	github.com/bradleyfalzon/ghinstallation/v2 v2.11.0
@@ -20,6 +21,7 @@ require (
 	github.com/charmbracelet/log v0.4.0
 	github.com/creativeprojects/go-selfupdate v1.2.0
 	github.com/docker/docker v26.1.4+incompatible
+	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/google/go-github/v62 v62.0.0
 	github.com/gosimple/slug v1.14.0
 	github.com/minio/madmin-go/v3 v3.0.55
@@ -37,9 +39,7 @@ require (
 	code.gitea.io/sdk/gitea v0.17.1 // indirect
 	github.com/Masterminds/semver/v3 v3.2.1 // indirect
 	github.com/Microsoft/hcsshim v0.12.4 // indirect
-	github.com/a-h/templ v0.2.707 // indirect
 	github.com/atotto/clipboard v0.1.4 // indirect
-	github.com/caesar-rocks/vexillum v0.0.1 // indirect
 	github.com/charmbracelet/x/ansi v0.1.1 // indirect
 	github.com/charmbracelet/x/input v0.1.1 // indirect
 	github.com/charmbracelet/x/term v0.1.1 // indirect

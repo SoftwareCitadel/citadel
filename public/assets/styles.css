@@ -2048,6 +2048,10 @@ select{
   text-transform: lowercase;
 }
 
+.italic{
+  font-style: italic;
+}
+
 .leading-5{
   line-height: 1.25rem;
 }
@@ -2197,6 +2201,11 @@ select{
 .text-zinc-900{
   --tw-text-opacity: 1;
   color: rgb(24 24 27 / var(--tw-text-opacity));
+}
+
+.text-emerald-200{
+  --tw-text-opacity: 1;
+  color: rgb(167 243 208 / var(--tw-text-opacity));
 }
 
 .underline{
@@ -2693,6 +2702,16 @@ select{
 .hover\:text-zinc-900:hover{
   --tw-text-opacity: 1;
   color: rgb(24 24 27 / var(--tw-text-opacity));
+}
+
+.hover\:text-emerald-500:hover{
+  --tw-text-opacity: 1;
+  color: rgb(16 185 129 / var(--tw-text-opacity));
+}
+
+.hover\:text-emerald-300:hover{
+  --tw-text-opacity: 1;
+  color: rgb(110 231 183 / var(--tw-text-opacity));
 }
 
 .hover\:opacity-50:hover{

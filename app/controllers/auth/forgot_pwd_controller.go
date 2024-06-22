@@ -6,9 +6,12 @@ import (
 	authPages "citadel/views/concerns/auth/pages"
 	"citadel/views/mails"
 	"log/slog"
+	"os"
+	"time"
 
 	caesar "github.com/caesar-rocks/core"
 	mailer "github.com/caesar-rocks/mail"
+	"github.com/golang-jwt/jwt"
 )
 
 type ForgotPwdController struct {
@@ -39,8 +42,18 @@ func (c *ForgotPwdController) Handle(ctx *caesar.CaesarCtx) error {
 		return ctx.Render(authPages.ForgotPasswordSuccessAlert())
 	}
 
+	claims := jwt.MapClaims{
+		"user_id": user.ID,
+		"exp":     time.Now().Add(time.Minute * 30).Unix(),
+	}
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	tokenString, err := token.SignedString([]byte(os.Getenv("APP_KEY")))
+	if err != nil {
+		return err
+	}
+
 	var buf bytes.Buffer
-	res := mails.ForgotPasswordMail(data.Email, "http://localhost:3000/reset-password")
+	res := mails.ForgotPasswordMail(user.FullName, os.Getenv("APP_URL")+"/auth/reset_password/"+tokenString)
 	if err := res.Render(ctx.Context(), &buf); err != nil {
 		slog.Error("Failed to render email", "err", err)
 		return ctx.Render(authPages.ForgotPasswordSuccessAlert())
@@ -55,5 +68,5 @@ func (c *ForgotPwdController) Handle(ctx *caesar.CaesarCtx) error {
 		slog.Error("Failed to send email", "err", err)
 	}
 
-	return ctx.Render(authPages.ForgotPasswordPage())
+	return ctx.Render(authPages.ForgotPasswordSuccessAlert())
 }

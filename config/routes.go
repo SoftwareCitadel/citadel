@@ -20,6 +20,7 @@ func RegisterRoutes(
 	signInController *authControllers.SignInController,
 	signOutController *authControllers.SignOutController,
 	forgotPwdController *authControllers.ForgotPwdController,
+	resetPwdController *authControllers.ResetPwdController,
 	authGithubController *authControllers.GithubController,
 	logsController *controllers.LogsController,
 	appsController *controllers.AppsController,
@@ -75,8 +76,8 @@ func RegisterRoutes(
 	router.Post("/auth/forgot_password", forgotPwdController.Handle)
 
 	// Reset password routes
-	router.Get("/auth/reset_password/{jwt}", forgotPwdController.Show)
-	router.Post("/auth/reset_password/{jwt}", forgotPwdController.Handle)
+	router.Get("/auth/reset_password/{jwt}", resetPwdController.Show)
+	router.Post("/auth/reset_password/{jwt}", resetPwdController.Handle)
 
 	// Apps CRUD routes
 	router.Get("/apps", appsController.Index).Use(auth.AuthMiddleware)

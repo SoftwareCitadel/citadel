@@ -30,7 +30,7 @@ func ProvideApp(env *EnvironmentVariables) *core.App {
 		controllers.NewDatabasesController,
 		controllers.NewStripeController,
 		authControllers.NewCliController,
-		authControllers.NewResetPasswordController,
+		authControllers.NewResetPwdController,
 		controllers.NewGithubController,
 		controllers.NewDeploymentsController,
 		controllers.NewEnvController,

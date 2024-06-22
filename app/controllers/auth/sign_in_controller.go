@@ -53,5 +53,9 @@ func (c *SignInController) Handle(ctx *caesar.CaesarCtx) error {
 		))
 	}
 
-	return ctx.Redirect("/applications")
+	if err := c.auth.Authenticate(ctx, *user); err != nil {
+		return err
+	}
+
+	return ctx.Redirect("/apps")
 }
