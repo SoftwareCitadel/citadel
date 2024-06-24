@@ -20,7 +20,7 @@ func NewSignInController(auth *caesarAuth.Auth, usersRepository *repositories.Us
 	}
 }
 
-func (c *SignInController) Show(ctx *caesar.CaesarCtx) error {
+func (c *SignInController) Show(ctx *caesar.Context) error {
 	return ctx.Render(authPages.SignInPage())
 }
 
@@ -29,7 +29,7 @@ type SignInValidator struct {
 	Password string `form:"password" validate:"required,min=8"`
 }
 
-func (c *SignInController) Handle(ctx *caesar.CaesarCtx) error {
+func (c *SignInController) Handle(ctx *caesar.Context) error {
 	data, errors, ok := caesar.Validate[SignInValidator](ctx)
 	if !ok {
 		return ctx.Render(authPages.SignInForm(

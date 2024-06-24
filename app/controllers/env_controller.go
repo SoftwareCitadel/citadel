@@ -19,7 +19,7 @@ func NewEnvController(appsService *services.AppsService, repo *repositories.Appl
 	return &EnvController{appsService, repo}
 }
 
-func (c *EnvController) Edit(ctx *caesar.CaesarCtx) error {
+func (c *EnvController) Edit(ctx *caesar.Context) error {
 	app, err := c.appsService.GetAppOwnedByCurrentUser(ctx)
 	if err != nil {
 		return err
@@ -28,7 +28,7 @@ func (c *EnvController) Edit(ctx *caesar.CaesarCtx) error {
 	return ctx.Render(appsPages.EnvPage(*app))
 }
 
-func (c *EnvController) Update(ctx *caesar.CaesarCtx) error {
+func (c *EnvController) Update(ctx *caesar.Context) error {
 	app, err := c.appsService.GetAppOwnedByCurrentUser(ctx)
 	if err != nil {
 		return err

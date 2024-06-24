@@ -19,11 +19,11 @@ func NewGithubController(auth *auth.Auth, repo *repositories.UsersRepository, se
 	return &GithubController{auth, repo, service}
 }
 
-func (c *GithubController) Redirect(ctx *caesar.CaesarCtx) error {
+func (c *GithubController) Redirect(ctx *caesar.Context) error {
 	return c.auth.Social.Use("github").Redirect(ctx)
 }
 
-func (c *GithubController) Callback(ctx *caesar.CaesarCtx) error {
+func (c *GithubController) Callback(ctx *caesar.Context) error {
 	oauthUser, err := c.auth.Social.Use("github").Callback(ctx)
 	if err != nil {
 		return caesar.NewError(400)

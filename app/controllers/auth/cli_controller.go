@@ -20,7 +20,7 @@ func NewCliController(redisClient *redis.Client, auth *auth.Auth) *CliController
 	return &CliController{redisClient, auth}
 }
 
-func (c *CliController) GetSession(ctx *caesar.CaesarCtx) error {
+func (c *CliController) GetSession(ctx *caesar.Context) error {
 	sessionId := xid.New().String()
 
 	thirtyMinutes := time.Duration(30) * time.Minute
@@ -32,7 +32,7 @@ func (c *CliController) GetSession(ctx *caesar.CaesarCtx) error {
 	})
 }
 
-func (c *CliController) Show(ctx *caesar.CaesarCtx) error {
+func (c *CliController) Show(ctx *caesar.Context) error {
 	sessionId := ctx.PathValue("sessionId")
 	sessionState := c.redisClient.Get(ctx.Context(), sessionId)
 	if sessionState == nil {
@@ -47,7 +47,7 @@ func (c *CliController) Show(ctx *caesar.CaesarCtx) error {
 
 }
 
-func (c *CliController) Handle(ctx *caesar.CaesarCtx) error {
+func (c *CliController) Handle(ctx *caesar.Context) error {
 	sessionId := ctx.PathValue("sessionId")
 	sessionState := c.redisClient.Get(ctx.Context(), sessionId)
 	if sessionState == nil {
@@ -74,7 +74,7 @@ func (c *CliController) Handle(ctx *caesar.CaesarCtx) error {
 	return ctx.Render(authPages.CliSuccessAlert())
 }
 
-func (c *CliController) Wait(ctx *caesar.CaesarCtx) error {
+func (c *CliController) Wait(ctx *caesar.Context) error {
 	sessionId := ctx.PathValue("sessionId")
 	sessionState := c.redisClient.Get(ctx.Context(), sessionId)
 	if sessionState == nil {
@@ -96,7 +96,7 @@ func (c *CliController) Wait(ctx *caesar.CaesarCtx) error {
 	})
 }
 
-func (c *CliController) Check(ctx *caesar.CaesarCtx) error {
+func (c *CliController) Check(ctx *caesar.Context) error {
 	user, err := auth.RetrieveUserFromCtx[models.User](ctx)
 	return ctx.SendJSON(map[string]any{
 		"authenticated": err == nil && user != nil,

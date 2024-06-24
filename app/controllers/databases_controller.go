@@ -20,7 +20,7 @@ func NewDatabasesController(dbRepo *repositories.DatabasesRepository, driver dri
 	return &DatabasesController{dbRepo, driver}
 }
 
-func (c *DatabasesController) Index(ctx *caesar.CaesarCtx) error {
+func (c *DatabasesController) Index(ctx *caesar.Context) error {
 	user, err := auth.RetrieveUserFromCtx[models.User](ctx)
 	if err != nil {
 		return err
@@ -41,7 +41,7 @@ type StoreDatabaseValidator struct {
 	Password string      `form:"password"`
 }
 
-func (c *DatabasesController) Store(ctx *caesar.CaesarCtx) error {
+func (c *DatabasesController) Store(ctx *caesar.Context) error {
 	user, err := auth.RetrieveUserFromCtx[models.User](ctx)
 	if err != nil {
 		return err
@@ -71,7 +71,7 @@ func (c *DatabasesController) Store(ctx *caesar.CaesarCtx) error {
 	return ctx.Redirect("/databases")
 }
 
-func (c *DatabasesController) Delete(ctx *caesar.CaesarCtx) error {
+func (c *DatabasesController) Delete(ctx *caesar.Context) error {
 	user, err := auth.RetrieveUserFromCtx[models.User](ctx)
 	if err != nil {
 		return err

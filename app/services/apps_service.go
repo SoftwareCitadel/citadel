@@ -19,7 +19,7 @@ func NewAppsService(usersRepo *repositories.UsersRepository, appsRepo *repositor
 	return &AppsService{usersRepo, appsRepo, emitter}
 }
 
-func (s *AppsService) GetAppOwnedByCurrentUser(ctx *caesar.CaesarCtx) (*models.Application, error) {
+func (s *AppsService) GetAppOwnedByCurrentUser(ctx *caesar.Context) (*models.Application, error) {
 	user, err := auth.RetrieveUserFromCtx[models.User](ctx)
 	if err != nil {
 		return nil, err

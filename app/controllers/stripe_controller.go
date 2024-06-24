@@ -21,7 +21,7 @@ func NewStripeController(usersRepo *repositories.UsersRepository) *StripeControl
 	return &StripeController{usersRepo}
 }
 
-func (c *StripeController) HandleWebhook(ctx *caesar.CaesarCtx) error {
+func (c *StripeController) HandleWebhook(ctx *caesar.Context) error {
 	const MaxBodyBytes = int64(65536)
 	ctx.Request.Body = http.MaxBytesReader(ctx.ResponseWriter, ctx.Request.Body, MaxBodyBytes)
 	payload, err := io.ReadAll(ctx.Request.Body)
@@ -53,7 +53,7 @@ func (c *StripeController) HandleWebhook(ctx *caesar.CaesarCtx) error {
 	return nil
 }
 
-func (c *StripeController) handlePaymentMethodAttached(ctx *caesar.CaesarCtx, paymentMethod stripe.PaymentMethod) error {
+func (c *StripeController) handlePaymentMethodAttached(ctx *caesar.Context, paymentMethod stripe.PaymentMethod) error {
 	user, err := c.usersRepo.FindOneBy(ctx.Context(), "stripe_customer_id", paymentMethod.Customer.ID)
 	if err != nil {
 		return err
@@ -70,7 +70,7 @@ func (c *StripeController) handlePaymentMethodAttached(ctx *caesar.CaesarCtx, pa
 	return nil
 }
 
-func (c *StripeController) handlePaymentMethodDetached(ctx *caesar.CaesarCtx, stripeCustomerId string) error {
+func (c *StripeController) handlePaymentMethodDetached(ctx *caesar.Context, stripeCustomerId string) error {
 	user, err := c.usersRepo.FindOneBy(ctx.Context(), "stripe_customer_id", stripeCustomerId)
 	if err != nil {
 		return err

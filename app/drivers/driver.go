@@ -19,7 +19,7 @@ type Driver interface {
 	IgniteBuilder(app models.Application, depl models.Deployment) error
 	IgniteApplication(app models.Application, depl models.Deployment) error
 
-	StreamLogs(ctx *caesar.CaesarCtx, app models.Application) error
+	StreamLogs(ctx *caesar.Context, app models.Application) error
 
 	// Database-related methods
 	CreateDatabase(db models.Database) error

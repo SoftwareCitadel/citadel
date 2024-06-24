@@ -23,7 +23,7 @@ func NewForgotPwdController(mailer *mailer.Mailer, repo *repositories.UsersRepos
 	return &ForgotPwdController{mailer, repo}
 }
 
-func (c *ForgotPwdController) Show(ctx *caesar.CaesarCtx) error {
+func (c *ForgotPwdController) Show(ctx *caesar.Context) error {
 	return ctx.Render(authPages.ForgotPasswordPage())
 }
 
@@ -31,7 +31,7 @@ type ForgotPwdValidator struct {
 	Email string `form:"email" validate:"required,email"`
 }
 
-func (c *ForgotPwdController) Handle(ctx *caesar.CaesarCtx) error {
+func (c *ForgotPwdController) Handle(ctx *caesar.Context) error {
 	data, _, ok := caesar.Validate[ForgotPwdValidator](ctx)
 	if !ok {
 		return ctx.Render(authPages.ForgotPasswordSuccessAlert())

@@ -7,7 +7,7 @@ import (
 )
 
 func ProvideErrorHandler() *core.ErrorHandler {
-	return &core.ErrorHandler{Handle: func(ctx *core.CaesarCtx, err error) {
+	return &core.ErrorHandler{Handle: func(ctx *core.Context, err error) {
 		code := core.RetrieveErrorCode(err)
 		if code == 404 {
 			ctx.WithStatus(404).Render(errors.NotFoundPage())

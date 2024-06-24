@@ -20,11 +20,11 @@ func NewBillingController(stripeClientApi *client.API) *BillingController {
 	return &BillingController{stripeClientApi}
 }
 
-func (c *BillingController) Show(ctx *caesar.CaesarCtx) error {
+func (c *BillingController) Show(ctx *caesar.Context) error {
 	return ctx.Render(pages.BillingPage())
 }
 
-func (c *BillingController) Manage(ctx *caesar.CaesarCtx) error {
+func (c *BillingController) Manage(ctx *caesar.Context) error {
 	user, err := auth.RetrieveUserFromCtx[models.User](ctx)
 	if err != nil {
 		return err
@@ -41,7 +41,7 @@ func (c *BillingController) Manage(ctx *caesar.CaesarCtx) error {
 	return ctx.Redirect(s.URL)
 }
 
-func (c *BillingController) InitiatePaymentMethodChange(ctx *caesar.CaesarCtx) error {
+func (c *BillingController) InitiatePaymentMethodChange(ctx *caesar.Context) error {
 	user, err := auth.RetrieveUserFromCtx[models.User](ctx)
 	if err != nil {
 		return err

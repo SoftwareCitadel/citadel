@@ -21,7 +21,7 @@ func NewSettingsController(emitter *events.EventsEmitter, repo *repositories.Use
 	return &SettingsController{emitter, repo}
 }
 
-func (c *SettingsController) Edit(ctx *caesar.CaesarCtx) error {
+func (c *SettingsController) Edit(ctx *caesar.Context) error {
 	return ctx.Render(pages.SettingsPage())
 }
 
@@ -32,7 +32,7 @@ type SettingsValidator struct {
 	ConfirmPassword string `form:"confirm_password" validate:"eqfield=NewPassword"`
 }
 
-func (c *SettingsController) Update(ctx *caesar.CaesarCtx) error {
+func (c *SettingsController) Update(ctx *caesar.Context) error {
 	user, err := caesarAuth.RetrieveUserFromCtx[models.User](ctx)
 	if err != nil {
 		return caesar.NewError(400)
@@ -63,7 +63,7 @@ func (c *SettingsController) Update(ctx *caesar.CaesarCtx) error {
 	return ctx.Render(pages.SettingsForm(nil))
 }
 
-func (c *SettingsController) Delete(ctx *caesar.CaesarCtx) error {
+func (c *SettingsController) Delete(ctx *caesar.Context) error {
 	user, err := caesarAuth.RetrieveUserFromCtx[models.User](ctx)
 	if err != nil {
 		return caesar.NewError(400)

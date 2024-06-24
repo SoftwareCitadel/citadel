@@ -10,7 +10,7 @@ import (
 
 // PaymentMethodMiddleware is a middleware that checks if the user has a payment method set.
 func PaymentMethodMiddleware(vexillum *vexillum.Vexillum) caesar.Handler {
-	return func(ctx *caesar.CaesarCtx) error {
+	return func(ctx *caesar.Context) error {
 		user, err := caesarAuth.RetrieveUserFromCtx[models.User](ctx)
 		if err != nil {
 			return err

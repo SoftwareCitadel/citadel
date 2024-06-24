@@ -21,7 +21,7 @@ func NewMailApiKeysController(
 	return &MailApiKeysController{mailDomainsRepo: mailDomainsRepo, mailApiKeysRepo: mailApiKeysRepo}
 }
 
-func (c *MailApiKeysController) Index(ctx *caesar.CaesarCtx) error {
+func (c *MailApiKeysController) Index(ctx *caesar.Context) error {
 	user, err := caesarAuth.RetrieveUserFromCtx[models.User](ctx)
 	if err != nil {
 		return err
@@ -45,7 +45,7 @@ type StoreMailApiKeyValidator struct {
 	DomainID string `form:"domain_id"`
 }
 
-func (c *MailApiKeysController) Store(ctx *caesar.CaesarCtx) error {
+func (c *MailApiKeysController) Store(ctx *caesar.Context) error {
 	user, err := caesarAuth.RetrieveUserFromCtx[models.User](ctx)
 	if err != nil {
 		return err
@@ -76,7 +76,7 @@ func (c *MailApiKeysController) Store(ctx *caesar.CaesarCtx) error {
 	return ctx.Redirect("/mails/api_keys")
 }
 
-func (c *MailApiKeysController) Update(ctx *caesar.CaesarCtx) error {
+func (c *MailApiKeysController) Update(ctx *caesar.Context) error {
 	user, err := caesarAuth.RetrieveUserFromCtx[models.User](ctx)
 	if err != nil {
 		return err
@@ -118,7 +118,7 @@ func (c *MailApiKeysController) Update(ctx *caesar.CaesarCtx) error {
 	return ctx.Redirect("/mails/api_keys")
 }
 
-func (c *MailApiKeysController) Delete(ctx *caesar.CaesarCtx) error {
+func (c *MailApiKeysController) Delete(ctx *caesar.Context) error {
 	user, err := caesarAuth.RetrieveUserFromCtx[models.User](ctx)
 	if err != nil {
 		return err

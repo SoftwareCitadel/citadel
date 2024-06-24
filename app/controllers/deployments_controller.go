@@ -27,7 +27,7 @@ func NewDeploymentsController(appsService *services.AppsService, appsRepo *repos
 	return &DeploymentsController{appsService: appsService, appsRepo: appsRepo, deplRepo: deplRepo, drive: drive, emitter: emitter}
 }
 
-func (c *DeploymentsController) Index(ctx *caesar.CaesarCtx) error {
+func (c *DeploymentsController) Index(ctx *caesar.Context) error {
 	app, err := c.appsService.GetAppOwnedByCurrentUser(ctx)
 	if err != nil {
 		return err
@@ -36,7 +36,7 @@ func (c *DeploymentsController) Index(ctx *caesar.CaesarCtx) error {
 	return ctx.Render(appsPages.DeploymentsPage(*app))
 }
 
-func (c *DeploymentsController) Store(ctx *caesar.CaesarCtx) error {
+func (c *DeploymentsController) Store(ctx *caesar.Context) error {
 	app, err := c.appsService.GetAppOwnedByCurrentUser(ctx)
 	if err != nil {
 		return err
@@ -76,7 +76,7 @@ func (c *DeploymentsController) Store(ctx *caesar.CaesarCtx) error {
 	return ctx.SendText("Deployment created")
 }
 
-func (c *DeploymentsController) List(ctx *caesar.CaesarCtx) error {
+func (c *DeploymentsController) List(ctx *caesar.Context) error {
 	app, err := c.appsService.GetAppOwnedByCurrentUser(ctx)
 	if err != nil {
 		slog.Warn("Failed to get app", "err", err, "slug", ctx.PathValue("slug"))

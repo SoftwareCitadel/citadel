@@ -23,6 +23,9 @@ func ProvideApp(env *EnvironmentVariables) *core.App {
 	})
 
 	app.RegisterProviders(
+		repositories.NewWebsiteVisitsRepository,
+		controllers.NewAnalyticsWebsitesController,
+		repositories.NewAnalyticsWebsitesRepository,
 		apiControllers.NewEmailsController,
 		controllers.NewMailDomainsController,
 		controllers.NewMailApiKeysController,

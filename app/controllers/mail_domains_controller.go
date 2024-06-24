@@ -18,7 +18,7 @@ func NewMailDomainsController(mailDomainsRepo *repositories.MailDomainsRepositor
 	return &MailDomainsController{mailDomainsRepo}
 }
 
-func (c *MailDomainsController) Index(ctx *caesar.CaesarCtx) error {
+func (c *MailDomainsController) Index(ctx *caesar.Context) error {
 	user, err := caesarAuth.RetrieveUserFromCtx[models.User](ctx)
 	if err != nil {
 		return caesar.NewError(400)
@@ -36,7 +36,7 @@ type StoreMailDomainValidator struct {
 	Domain string `form:"domain" validate:"required"`
 }
 
-func (c *MailDomainsController) Store(ctx *caesar.CaesarCtx) error {
+func (c *MailDomainsController) Store(ctx *caesar.Context) error {
 	user, err := caesarAuth.RetrieveUserFromCtx[models.User](ctx)
 	if err != nil {
 		return caesar.NewError(400)
@@ -58,7 +58,7 @@ func (c *MailDomainsController) Store(ctx *caesar.CaesarCtx) error {
 	return ctx.Redirect("/mails/domains")
 }
 
-func (c *MailDomainsController) Show(ctx *caesar.CaesarCtx) error {
+func (c *MailDomainsController) Show(ctx *caesar.Context) error {
 	user, err := caesarAuth.RetrieveUserFromCtx[models.User](ctx)
 	if err != nil {
 		return caesar.NewError(400)
@@ -76,7 +76,7 @@ func (c *MailDomainsController) Show(ctx *caesar.CaesarCtx) error {
 	return ctx.Render(mailsPages.ShowDomainPage(*domain))
 }
 
-func (c *MailDomainsController) Delete(ctx *caesar.CaesarCtx) error {
+func (c *MailDomainsController) Delete(ctx *caesar.Context) error {
 	user, err := caesarAuth.RetrieveUserFromCtx[models.User](ctx)
 	if err != nil {
 		return caesar.NewError(400)

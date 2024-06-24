@@ -16,7 +16,7 @@ func NewSignOutController(auth *auth.Auth) *SignOutController {
 	}
 }
 
-func (c *SignOutController) Handle(ctx *caesar.CaesarCtx) error {
+func (c *SignOutController) Handle(ctx *caesar.Context) error {
 	if err := c.auth.SignOut(ctx); err != nil {
 		return err
 	}

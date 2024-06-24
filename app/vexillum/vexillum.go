@@ -29,7 +29,7 @@ func (v *Vexillum) Deactivate(feature string) {
 }
 
 func (v *Vexillum) Middleware(feature string) caesar.Handler {
-	return func(ctx *caesar.CaesarCtx) error {
+	return func(ctx *caesar.Context) error {
 		if v.IsActive(feature) {
 			ctx.Next()
 			return nil

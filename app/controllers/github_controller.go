@@ -26,7 +26,7 @@ func NewGithubController(repo *repositories.UsersRepository) *GithubController {
 	return &GithubController{repo}
 }
 
-func (c *GithubController) HandleWebhook(ctx *caesar.CaesarCtx) error {
+func (c *GithubController) HandleWebhook(ctx *caesar.Context) error {
 	payload, err := github.ValidatePayload(ctx.Request, []byte(os.Getenv("GITHUB_APP_WEBHOOK_SECRET")))
 	if err != nil {
 		return err
@@ -47,7 +47,7 @@ func (c *GithubController) HandleWebhook(ctx *caesar.CaesarCtx) error {
 	return nil
 }
 
-func (c *GithubController) processPushEvent(ctx *caesar.CaesarCtx, event *github.PushEvent) error {
+func (c *GithubController) processPushEvent(ctx *caesar.Context, event *github.PushEvent) error {
 	ghRepo := event.Repo.Owner.GetLogin() + "/" + event.Repo.GetName()
 
 	// TODO: Retrrigger the deployment for the given repository.
@@ -68,7 +68,7 @@ func (c *GithubController) processPushEvent(ctx *caesar.CaesarCtx, event *github
 	return nil
 }
 
-func (c *GithubController) processInstallationEvent(ctx *caesar.CaesarCtx, event *github.InstallationEvent) error {
+func (c *GithubController) processInstallationEvent(ctx *caesar.Context, event *github.InstallationEvent) error {
 	user, _ := c.repo.FindOneBy(ctx.Context(), "github_user_id", event.Sender.ID)
 	if user == nil {
 		return nil
@@ -89,7 +89,7 @@ func (c *GithubController) processInstallationEvent(ctx *caesar.CaesarCtx, event
 	return nil
 }
 
-func (c *GithubController) ListRepositories(ctx *caesar.CaesarCtx) error {
+func (c *GithubController) ListRepositories(ctx *caesar.Context) error {
 	reposMap := make(map[string][]*github.Repository)
 	owners := []types.GithubOwner{}
 

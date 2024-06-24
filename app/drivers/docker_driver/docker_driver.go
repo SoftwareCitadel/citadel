@@ -198,7 +198,7 @@ func (d *DockerDriver) IgniteApplication(app models.Application, depl models.Dep
 	return nil
 }
 
-func (d *DockerDriver) StreamLogs(ctx *caesar.CaesarCtx, app models.Application) error {
+func (d *DockerDriver) StreamLogs(ctx *caesar.Context, app models.Application) error {
 	if !d.ContainerExists(app.ID) {
 		return nil
 	}

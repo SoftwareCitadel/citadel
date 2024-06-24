@@ -24,7 +24,7 @@ func NewAppsController(appsService *services.AppsService, appsRepo *repositories
 	return &AppsController{appsService, appsRepo, driver}
 }
 
-func (c *AppsController) Index(ctx *caesar.CaesarCtx) error {
+func (c *AppsController) Index(ctx *caesar.Context) error {
 	user, err := auth.RetrieveUserFromCtx[models.User](ctx)
 	if err != nil {
 		return err
@@ -52,7 +52,7 @@ type StoreAppValidator struct {
 	GitHubBranch         string `form:"github_branch"`
 }
 
-func (c *AppsController) Store(ctx *caesar.CaesarCtx) error {
+func (c *AppsController) Store(ctx *caesar.Context) error {
 	user, err := auth.RetrieveUserFromCtx[models.User](ctx)
 	if err != nil {
 		return err
@@ -94,7 +94,7 @@ func (c *AppsController) Store(ctx *caesar.CaesarCtx) error {
 	return ctx.Redirect("/apps/" + app.Slug)
 }
 
-func (c *AppsController) Show(ctx *caesar.CaesarCtx) error {
+func (c *AppsController) Show(ctx *caesar.Context) error {
 	app, err := c.appsService.GetAppOwnedByCurrentUser(ctx)
 	if err != nil {
 		return err
@@ -103,7 +103,7 @@ func (c *AppsController) Show(ctx *caesar.CaesarCtx) error {
 	return ctx.Render(appsPages.ShowPage(*app))
 }
 
-func (c *AppsController) Edit(ctx *caesar.CaesarCtx) error {
+func (c *AppsController) Edit(ctx *caesar.Context) error {
 	user, err := auth.RetrieveUserFromCtx[models.User](ctx)
 	if err != nil {
 		return err
@@ -128,7 +128,7 @@ type UpdateApplicationValidator struct {
 	RamConfig      string `form:"ram_config" validate:"required"`
 }
 
-func (c *AppsController) Update(ctx *caesar.CaesarCtx) error {
+func (c *AppsController) Update(ctx *caesar.Context) error {
 	app, err := c.appsService.GetAppOwnedByCurrentUser(ctx)
 	if err != nil {
 		return err
@@ -159,7 +159,7 @@ type ConnectGitHubValidator struct {
 	GitHubBranch         string `form:"github_branch" validate:"required"`
 }
 
-func (c *AppsController) ConnectGitHub(ctx *caesar.CaesarCtx) error {
+func (c *AppsController) ConnectGitHub(ctx *caesar.Context) error {
 	app, err := c.appsService.GetAppOwnedByCurrentUser(ctx)
 	if err != nil {
 		return err
@@ -181,7 +181,7 @@ func (c *AppsController) ConnectGitHub(ctx *caesar.CaesarCtx) error {
 	return ctx.Redirect("/apps/" + app.Slug + "/edit")
 }
 
-func (c *AppsController) DisconnectGitHub(ctx *caesar.CaesarCtx) error {
+func (c *AppsController) DisconnectGitHub(ctx *caesar.Context) error {
 	app, err := c.appsService.GetAppOwnedByCurrentUser(ctx)
 	if err != nil {
 		return err
@@ -198,7 +198,7 @@ func (c *AppsController) DisconnectGitHub(ctx *caesar.CaesarCtx) error {
 	return ctx.Redirect("/apps/" + app.Slug + "/edit")
 }
 
-func (c *AppsController) Delete(ctx *caesar.CaesarCtx) error {
+func (c *AppsController) Delete(ctx *caesar.Context) error {
 	app, err := c.appsService.GetAppOwnedByCurrentUser(ctx)
 	if err != nil {
 		return err

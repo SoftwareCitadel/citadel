@@ -19,7 +19,7 @@ func NewResetPwdController(usersRepo *repositories.UsersRepository) *ResetPwdCon
 	return &ResetPwdController{usersRepo}
 }
 
-func (c *ResetPwdController) Show(ctx *caesar.CaesarCtx) error {
+func (c *ResetPwdController) Show(ctx *caesar.Context) error {
 	return ctx.Render(authPages.ResetPasswordPage())
 }
 
@@ -28,7 +28,7 @@ type ResetPwdValidator struct {
 	ConfirmPassword string `form:"confirm_password" validate:"required,eqfield=Password"`
 }
 
-func (c *ResetPwdController) Handle(ctx *caesar.CaesarCtx) error {
+func (c *ResetPwdController) Handle(ctx *caesar.Context) error {
 	// Fetch the JWT token from the URL parameter
 	tokenString := ctx.PathValue("jwt")
 

@@ -12,7 +12,7 @@ import (
 // ViewMiddleware is a middleware that injects data into the context
 // (so that it can be used in the views).
 func ViewMiddleware(vexillum *vexillum.Vexillum) caesar.Handler {
-	return func(ctx *caesar.CaesarCtx) error {
+	return func(ctx *caesar.Context) error {
 		handlePaymentMethodDialog(vexillum, ctx)
 
 		ctx.Request = ctx.Request.WithContext(
@@ -35,7 +35,7 @@ func ViewMiddleware(vexillum *vexillum.Vexillum) caesar.Handler {
 
 // handlePaymentMethodDialog sets the "SHOW_PAYMENT_METHOD_DIALOG" param in the context,
 // if the user has no active payment method and the billing feature is active.
-func handlePaymentMethodDialog(vexillum *vexillum.Vexillum, ctx *caesar.CaesarCtx) {
+func handlePaymentMethodDialog(vexillum *vexillum.Vexillum, ctx *caesar.Context) {
 	if !vexillum.IsActive("billing") {
 		ctx.Request = ctx.Request.WithContext(
 			context.WithValue(ctx.Request.Context(), "SHOW_PAYMENT_METHOD_DIALOG", false),

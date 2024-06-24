@@ -23,7 +23,7 @@ func NewCertsController(auth *auth.Auth, appsRepo *repositories.ApplicationsRepo
 	return &CertsController{auth, appsRepo, certsRepo, driver, appsService}
 }
 
-func (c *CertsController) Index(ctx *caesar.CaesarCtx) error {
+func (c *CertsController) Index(ctx *caesar.Context) error {
 	app, err := c.appsService.GetAppOwnedByCurrentUser(ctx)
 	if err != nil {
 		return err
@@ -41,7 +41,7 @@ type StoreCertInput struct {
 	Domain string `form:"domain" validate:"required"`
 }
 
-func (c *CertsController) Store(ctx *caesar.CaesarCtx) error {
+func (c *CertsController) Store(ctx *caesar.Context) error {
 	app, err := c.appsService.GetAppOwnedByCurrentUser(ctx)
 	if err != nil {
 		return err
@@ -74,7 +74,7 @@ func (c *CertsController) Store(ctx *caesar.CaesarCtx) error {
 	return ctx.RedirectBack()
 }
 
-func (c *CertsController) Delete(ctx *caesar.CaesarCtx) error {
+func (c *CertsController) Delete(ctx *caesar.Context) error {
 	app, err := c.appsService.GetAppOwnedByCurrentUser(ctx)
 	if err != nil {
 		return err
@@ -96,7 +96,7 @@ func (c *CertsController) Delete(ctx *caesar.CaesarCtx) error {
 	return ctx.RedirectBack()
 }
 
-func (c *CertsController) Check(ctx *caesar.CaesarCtx) error {
+func (c *CertsController) Check(ctx *caesar.Context) error {
 	app, err := c.appsService.GetAppOwnedByCurrentUser(ctx)
 	if err != nil {
 		return err

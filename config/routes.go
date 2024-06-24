@@ -37,6 +37,7 @@ func RegisterRoutes(
 	mailApiKeysController *controllers.MailApiKeysController,
 	storageController *controllers.StorageController,
 	emailsController *apiControllers.EmailsController,
+	analyticsWebsitesController *controllers.AnalyticsWebsitesController,
 	emitter *events.EventsEmitter,
 	vexillum *vexillum.Vexillum,
 ) *caesar.Router {
@@ -47,7 +48,7 @@ func RegisterRoutes(
 	router.Use(middleware.ViewMiddleware(vexillum))
 
 	// Home route
-	router.Get("/", func(ctx *caesar.CaesarCtx) error {
+	router.Get("/", func(ctx *caesar.Context) error {
 		return ctx.Redirect("/apps")
 	})
 
@@ -230,6 +231,12 @@ func RegisterRoutes(
 
 	// API-related routes
 	router.Get("/api/v1/emails", emailsController.Send).Use(auth.AuthMiddleware)
+
+	// Analytics-related routes
+	router.
+		Resource("/analytics/websites", analyticsWebsitesController).
+		Use(auth.AuthMiddleware).
+		Exclude(caesar.MethodCreate)
 
 	return router
 }

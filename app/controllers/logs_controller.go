@@ -19,7 +19,7 @@ func NewLogsController(driver drivers.Driver, appsRepo *repositories.Application
 	return &LogsController{driver, appsRepo}
 }
 
-func (c *LogsController) Index(ctx *caesar.CaesarCtx) error {
+func (c *LogsController) Index(ctx *caesar.Context) error {
 	user, err := auth.RetrieveUserFromCtx[models.User](ctx)
 	if err != nil {
 		return err
@@ -37,7 +37,7 @@ func (c *LogsController) Index(ctx *caesar.CaesarCtx) error {
 	return ctx.Render(appsPages.LogsPage(*app))
 }
 
-func (c *LogsController) Stream(ctx *caesar.CaesarCtx) error {
+func (c *LogsController) Stream(ctx *caesar.Context) error {
 	user, err := auth.RetrieveUserFromCtx[models.User](ctx)
 	if err != nil {
 		return err

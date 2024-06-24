@@ -23,7 +23,7 @@ func NewStorageController(storageBucketsRepo *repositories.StorageBucketsReposit
 	return &StorageController{storageBucketsRepo, driver}
 }
 
-func (c *StorageController) Index(ctx *caesar.CaesarCtx) error {
+func (c *StorageController) Index(ctx *caesar.Context) error {
 	user, err := auth.RetrieveUserFromCtx[models.User](ctx)
 	if err != nil {
 		return err
@@ -45,7 +45,7 @@ type StoreStorageBucketValidator struct {
 	Name string `form:"name" validate:"required,min=3,lowercase"`
 }
 
-func (c *StorageController) Store(ctx *caesar.CaesarCtx) error {
+func (c *StorageController) Store(ctx *caesar.Context) error {
 	user, err := auth.RetrieveUserFromCtx[models.User](ctx)
 	if err != nil {
 		return err
@@ -77,7 +77,7 @@ func (c *StorageController) Store(ctx *caesar.CaesarCtx) error {
 	return ctx.Redirect("/storage/" + bucket.Slug)
 }
 
-func (c *StorageController) Show(ctx *caesar.CaesarCtx) error {
+func (c *StorageController) Show(ctx *caesar.Context) error {
 	user, err := auth.RetrieveUserFromCtx[models.User](ctx)
 	if err != nil {
 		return err
@@ -100,7 +100,7 @@ func (c *StorageController) Show(ctx *caesar.CaesarCtx) error {
 	return ctx.Render(storagePages.Show(*bucket, storageFiles, bucketSize))
 }
 
-func (c *StorageController) Edit(ctx *caesar.CaesarCtx) error {
+func (c *StorageController) Edit(ctx *caesar.Context) error {
 	user, err := auth.RetrieveUserFromCtx[models.User](ctx)
 	if err != nil {
 		return err
@@ -118,7 +118,7 @@ func (c *StorageController) Edit(ctx *caesar.CaesarCtx) error {
 	return ctx.Render(storagePages.Edit(*bucket))
 }
 
-func (c *StorageController) Update(ctx *caesar.CaesarCtx) error {
+func (c *StorageController) Update(ctx *caesar.Context) error {
 	user, err := auth.RetrieveUserFromCtx[models.User](ctx)
 	if err != nil {
 		return err
@@ -148,7 +148,7 @@ func (c *StorageController) Update(ctx *caesar.CaesarCtx) error {
 	return ctx.Render(storagePages.EditForm(*bucket))
 }
 
-func (c *StorageController) Delete(ctx *caesar.CaesarCtx) error {
+func (c *StorageController) Delete(ctx *caesar.Context) error {
 	user, err := auth.RetrieveUserFromCtx[models.User](ctx)
 	if err != nil {
 		return err
@@ -174,7 +174,7 @@ func (c *StorageController) Delete(ctx *caesar.CaesarCtx) error {
 	return ctx.Redirect("/storage")
 }
 
-func (c *StorageController) UploadFile(ctx *caesar.CaesarCtx) error {
+func (c *StorageController) UploadFile(ctx *caesar.Context) error {
 	// Retrieve the bucket owned by the current user
 	user, err := auth.RetrieveUserFromCtx[models.User](ctx)
 	if err != nil {

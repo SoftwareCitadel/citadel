@@ -10,6 +10,6 @@ func NewEmailsController() *EmailsController {
 	return &EmailsController{}
 }
 
-func (c *EmailsController) Send(ctx *caesar.CaesarCtx) error {
+func (c *EmailsController) Send(ctx *caesar.Context) error {
 	return nil
 }
