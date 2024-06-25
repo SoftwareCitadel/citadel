@@ -18,14 +18,14 @@ import (
 )
 
 func ProvideApp(env *EnvironmentVariables) *core.App {
-	app := core.NewApp(&core.AppConfig{
-		Addr: os.Getenv("ADDR"),
-	})
+	app := core.NewApp(&core.AppConfig{Addr: os.Getenv("ADDR")})
 
 	app.RegisterProviders(
+		repositories.NewOrganizationsRepository,
 		repositories.NewWebsiteVisitsRepository,
-		controllers.NewAnalyticsWebsitesController,
 		repositories.NewAnalyticsWebsitesRepository,
+
+		controllers.NewAnalyticsWebsitesController,
 		apiControllers.NewEmailsController,
 		controllers.NewMailDomainsController,
 		controllers.NewMailApiKeysController,

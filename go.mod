@@ -10,7 +10,7 @@ require (
 	github.com/bradleyfalzon/ghinstallation v1.1.1
 	github.com/bradleyfalzon/ghinstallation/v2 v2.11.0
 	github.com/caesar-rocks/auth v0.0.6
-	github.com/caesar-rocks/core v0.0.10
+	github.com/caesar-rocks/core v0.0.13
 	github.com/caesar-rocks/drive v0.0.5
 	github.com/caesar-rocks/events v0.0.1
 	github.com/caesar-rocks/mail v0.0.2

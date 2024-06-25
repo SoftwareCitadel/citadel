@@ -6,6 +6,7 @@ import (
 	"github.com/caesar-rocks/auth"
 	"citadel/app/models"
 	"citadel/views/util"
+	"citadel/views/ui"
 )
 
 type DashboardLayoutProps struct {
@@ -42,6 +43,19 @@ templ DashboardLayout(props DashboardLayoutProps) {
 						<span class="font-clash text-xl font-medium text-white">Software Citadel</span>
 					</div>
 					<nav class="flex flex-1 flex-col">
+						@ui.SelectField(ui.SelectFieldProps{
+							DivClass: "px-5 mb-5",
+							Options: []ui.SelectFieldOption{
+								{
+									Label: retrieveInitials(ctx),
+									Value: "myorgid",
+								},
+								{
+									Label: "Create New Organization",
+									Value: "",
+								},
+							},
+						})
 						<ul role="list" class="flex flex-1 flex-col gap-y-3">
 							<li class="px-6">
 								<ul role="list" class="-mx-2 space-y-2">
@@ -71,7 +85,7 @@ templ DashboardLayout(props DashboardLayoutProps) {
 									@sidebarItem(sidebarItemProps{
 										label: "Analytics",
 										icon:  "fa-chart-simple",
-										href:  "/analytics",
+										href:  "/analytics_websites",
 									})
 									if util.IsFeatureActive(ctx, "billing") {
 										@sidebarItem(sidebarItemProps{

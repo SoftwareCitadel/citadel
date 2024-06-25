@@ -1,0 +1,29 @@
+package components
+
+import (
+	"citadel/app/models"
+	"citadel/views/util"
+)
+
+templ Tabs(website models.AnalyticsWebsite) {
+	<nav class="flex overflow-x-auto border-b border-zinc-300/20 py-4 px-12">
+		<ul class="flex min-w-full flex-none gap-x-6 text-sm leading-6 text-zinc-300">
+			<li>
+				<a
+					class={ util.GetClassForTab("/analytics_websites/"+website.ID, util.RetrievePath(ctx)) }
+					href={ templ.SafeURL("/analytics_websites/" + website.ID) }
+				>
+					Overview
+				</a>
+			</li>
+			<li>
+				<a
+					class={ util.GetClassForTab("/analytics_websites/"+website.ID+"/edit", util.RetrievePath(ctx)) }
+					href={ templ.SafeURL("/analytics_websites/" + website.ID + "/edit") }
+				>
+					Settings
+				</a>
+			</li>
+		</ul>
+	</nav>
+}

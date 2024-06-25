@@ -3,6 +3,7 @@ package ui
 type CardProps struct {
 	Header      templ.Component
 	Title       string
+	TitleIcon   string
 	Description string
 	Class       string
 	DivClass    string
@@ -24,8 +25,13 @@ templ Card(props CardProps) {
 					@props.Header
 				}
 				if props.Title != "" {
-					<h3 class="font-semibold leading-none tracking-tight text-xl text-white">
-						{ props.Title }
+					<h3 class="flex items-center font-semibold leading-none tracking-tight text-xl text-white">
+						if props.TitleIcon != "" {
+							<i class={ "!mr-2 !pl-0 !ml-0 w-4 h-4 " + props.TitleIcon }></i>
+						}
+						<span>
+							{ props.Title }
+						</span>
 					</h3>
 				}
 				if props.Description != "" {

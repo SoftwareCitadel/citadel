@@ -229,14 +229,17 @@ func RegisterRoutes(
 	router.Post("/webhooks/github", githubController.HandleWebhook)
 	router.Post("/webhooks/stripe", stripeController.HandleWebhook)
 
+	// Analytics-related routes
+	router.Get("/analytics_websites", analyticsWebsitesController.Index).Use(auth.AuthMiddleware)
+	router.Post("/analytics_websites", analyticsWebsitesController.Store).Use(auth.AuthMiddleware)
+	router.Get("/analytics_websites/{id}", analyticsWebsitesController.Show).Use(auth.AuthMiddleware)
+	router.Get("/analytics_websites/{id}/edit", analyticsWebsitesController.Edit).Use(auth.AuthMiddleware)
+	router.Patch("/analytics_websites/{id}", analyticsWebsitesController.Update).Use(auth.AuthMiddleware)
+	router.Delete("/analytics_websites/{id}", analyticsWebsitesController.Delete).Use(auth.AuthMiddleware)
+
 	// API-related routes
 	router.Get("/api/v1/emails", emailsController.Send).Use(auth.AuthMiddleware)
-
-	// Analytics-related routes
-	router.
-		Resource("/analytics/websites", analyticsWebsitesController).
-		Use(auth.AuthMiddleware).
-		Exclude(caesar.MethodCreate)
+	router.Post("/api/v1/analytics_websites/{id}/track", analyticsWebsitesController.Track)
 
 	return router
 }

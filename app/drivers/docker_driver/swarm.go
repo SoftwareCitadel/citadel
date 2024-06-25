@@ -14,10 +14,9 @@ func (driver *DockerDriver) initializeSwarm() error {
 		return err
 	}
 
-	_, err := driver.Client.SwarmInit(context.Background(), swarm.InitRequest{
+	if _, err := driver.Client.SwarmInit(context.Background(), swarm.InitRequest{
 		ListenAddr: "192.168.65.4:2377",
-	})
-	if err == nil {
+	}); err == nil {
 		return err
 	}
 

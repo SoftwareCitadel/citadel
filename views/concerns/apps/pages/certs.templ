@@ -104,7 +104,7 @@ templ dnsEntry(id string, dnsEntry models.DnsEntry) {
 			<input value={ dnsEntry.Hostname } class="base-input !rounded-l-none !rounded-r-none" readonly/>
 			<button
 				class="bg-zinc-900 hover:opacity-75 transition text-white px-4 py-[11px] text-sm rounded-r border-l-0 border-zinc-300/20 border duration-200 flex items-center justify-center"
-				onClick={ copyValueToClipboard("hostname-icon-"+id, dnsEntry.Hostname) }
+				onClick={ ui.CopyValueToClipboard("hostname-icon-"+id, dnsEntry.Hostname) }
 			>
 				<i class="fa-regular fa-copy" id={ "hostname-icon-" + id }></i>
 			</button>
@@ -114,25 +114,10 @@ templ dnsEntry(id string, dnsEntry models.DnsEntry) {
 			<input value={ dnsEntry.Value } class="base-input !rounded-r-none" readonly/>
 			<button
 				class="bg-zinc-900 hover:opacity-75 transition text-white px-4 py-[11px] text-sm rounded-r border-l-0 border-zinc-300/20 border duration-200 flex items-center justify-center"
-				onClick={ copyValueToClipboard("value-icon-"+id, dnsEntry.Value) }
+				onClick={ ui.CopyValueToClipboard("value-icon-"+id, dnsEntry.Value) }
 			>
 				<i class="fa-regular fa-copy" id={ "value-icon-" + id }></i>
 			</button>
 		</div>
 	</div>
-}
-
-script copyValueToClipboard(id string, value string) {
-	navigator.clipboard.writeText(value)
-
-	const icon = document.getElementById(id)
-	icon.classList.add("fa-check")
-	icon.classList.remove("fa-copy")
-
-	setTimeout(() => {
-		const icon = document.getElementById(id)
-		icon.classList.remove("fa-check")
-		icon.classList.add("fa-regular")
-		icon.classList.add("fa-copy")
-	}, 3 * 1000)
 }

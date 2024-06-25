@@ -1,0 +1,129 @@
+package analyticsWebsitesPages
+
+import (
+	"citadel/app/models"
+	"citadel/views/layouts"
+	"citadel/views/concerns/analytics_websites/components"
+	"citadel/views/ui"
+)
+
+templ ShowPage(website models.AnalyticsWebsite) {
+	@layouts.DashboardLayout(layouts.DashboardLayoutProps{
+		Class: "!p-0",
+	}) {
+		@components.Breadcrumbs(website)
+		@components.Tabs(website)
+		@websiteInfo(website)
+		<div class="pb-6 px-12 gap-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+			@ui.Card(ui.CardProps{
+				Title:     "Pages",
+				TitleIcon: "fa-solid fa-file",
+			})
+			@ui.Card(ui.CardProps{
+				Title:     "Referrers",
+				TitleIcon: "fa-solid fa-link",
+			})
+			@ui.Card(ui.CardProps{
+				Title:     "Browsers",
+				TitleIcon: "fa-solid fa-globe",
+			})
+			@ui.Card(ui.CardProps{
+				Title:     "OS",
+				TitleIcon: "fa-solid fa-laptop",
+			})
+			@ui.Card(ui.CardProps{
+				Title:     "Devices",
+				TitleIcon: "fa-solid fa-mobile",
+			})
+			@ui.Card(ui.CardProps{
+				Title:     "Countries",
+				TitleIcon: "fa-solid fa-flag",
+			})
+		</div>
+	}
+}
+
+templ websiteInfo(website models.AnalyticsWebsite) {
+	<div class="py-6 px-12 border-b border-zinc-300/20">
+		<div class="flex space-x-2 justify-between items-center">
+			<div>
+				<div class="flex space-x-4">
+					<h2 class="text-3xl text-gradient font-semibold font-clash">
+						Web Analytics
+					</h2>
+					@ui.Button(ui.ButtonProps{
+						Variant: ui.ButtonVariantPrimary,
+						OnClick: ui.OpenDialog("add-tracking-code-dialog"),
+						Icon:    "fa-code",
+					}) {
+						Add Tracking Code
+					}
+				</div>
+				<a
+					class="flex mt-1 space-x-2 items-center text-zinc-100 hover:opacity-75 transition-opacity"
+					href={ templ.URL("https://" + website.Domain) }
+					target="_blank"
+				>
+					<img src={ string(templ.URL("https://icons.duckduckgo.com/ip3/" + website.Domain + ".ico")) } class="w-4 h-4"/>
+					<span class="text-sm font-semibold">{ website.Domain }</span>
+					<i class="fa-solid fa-arrow-up-right-from-square w-3 h-3"></i>
+				</a>
+			</div>
+			@ui.SelectField(ui.SelectFieldProps{
+				Options: []ui.SelectFieldOption{
+					{
+						Label: "Last 24 hours",
+						Value: "24h",
+					}, {
+						Label: "Last 7 days",
+						Value: "7d",
+					}, {
+						Label: "Last 30 days",
+						Value: "30d",
+					},
+				},
+				Value: "7d",
+				Class: "pr-8",
+				Extra: map[string]any{
+					"x-model": "selectedOwner",
+				},
+			})
+		</div>
+	</div>
+	@addTrackingCodeDialog()
+}
+
+templ addTrackingCodeDialog() {
+	<script type="module">
+	import { codeToHtml } from 'https://esm.sh/shiki@1.0.0'
+
+	const scriptTag = '<' +`script defer src="https://cloud.umami.is/script.js" data-website-id="276800de-8036-4ce5-9003-ce5a0b7f8dc8"></script` + '>'
+
+	const codeSnippet = document.getElementById('tracking-code-snippet')
+	codeSnippet.innerHTML = await codeToHtml(scriptTag, {
+		lang: 'html',
+		theme: 'monokai'
+	})
+  	</script>
+	@ui.Dialog(ui.DialogProps{
+		Id:    "add-tracking-code-dialog",
+		Title: "Add Tracking Code",
+	}) {
+		<p class="text-sm text-zinc-300 leading-loose">
+			Copy the code below and paste it before the closing <code class="bg-white/7.5 rounded-lg py-1 px-2">&lt;/head&gt;</code>.
+		</p>
+		<br/>
+		<div class="flex">
+			<code
+				class="block p-4 border border-zinc-300/20 !bg-white/2.5 w-full h-full [&>pre]:!bg-transparent overflow-x-auto rounded-lg !rounded-r-none text-sm"
+				id="tracking-code-snippet"
+			></code>
+			<button
+				class="bg-zinc-900 hover:opacity-75 transition text-white px-4 py-[11px] text-sm rounded-r border-l-0 border-zinc-300/20 border duration-200 flex items-center justify-center"
+				onClick={ ui.CopyValueToClipboard("tracking-code-snippet-content", "Tracking code copied!") }
+			>
+				<i class="fa-regular fa-copy" id={ "tracking-code-snippet-content" }></i>
+			</button>
+		</div>
+	}
+}

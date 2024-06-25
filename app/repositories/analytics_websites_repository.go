@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"citadel/app/models"
+	"context"
 
 	"github.com/caesar-rocks/orm"
 )
@@ -14,4 +15,15 @@ func NewAnalyticsWebsitesRepository(db *orm.Database) *AnalyticsWebsitesReposito
 	return &AnalyticsWebsitesRepository{Repository: &orm.Repository[models.AnalyticsWebsite]{
 		Database: db,
 	}}
+}
+
+func (r AnalyticsWebsitesRepository) FindAllFromUser(ctx context.Context, userId string) ([]models.AnalyticsWebsite, error) {
+	var items []models.AnalyticsWebsite = make([]models.AnalyticsWebsite, 0)
+
+	err := r.NewSelect().Model((*models.AnalyticsWebsite)(nil)).Where("user_id = ?", userId).Scan(ctx, &items)
+	if err != nil {
+		return nil, err
+	}
+
+	return items, nil
 }

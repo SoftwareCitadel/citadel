@@ -10,6 +10,7 @@ type SelectFieldProps struct {
 	Label       string
 	LabelRight  func() templ.Component
 	DivClass    string
+	Class       string
 	Id          string
 	Error       string
 	Options     []SelectFieldOption
@@ -31,7 +32,7 @@ templ SelectField(props SelectFieldProps) {
 		}
 		<div class="mt-1 flex w-full">
 			<select
-				class="flex h-10 w-full bg-white/5 text-white rounded-md border border-zinc-300/20 px-2 text-sm focus:ring-2 focus:ring-inset focus:ring-yellow-500 disabled:cursor-not-allowed disabled:opacity-50"
+				class={ "flex h-10 w-full bg-white/5 text-white rounded-md accent-white border border-zinc-300/20 px-2 text-sm focus:ring-2 focus:ring-inset focus:ring-yellow-500 disabled:cursor-not-allowed disabled:opacity-50 " + props.Class }
 				readonly?={ props.Readonly }
 				required?={ props.Required }
 				id={ props.Id }

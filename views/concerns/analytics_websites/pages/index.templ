@@ -1,0 +1,81 @@
+package analyticsWebsitesPages
+
+import (
+	"citadel/views/layouts"
+	"citadel/views/ui"
+	"citadel/app/models"
+)
+
+templ IndexPage(websites []models.AnalyticsWebsite) {
+	@layouts.DashboardLayout(layouts.DashboardLayoutProps{}) {
+		<div class="flex items-center space-x-8">
+			<h2 class="text-3xl text-gradient font-semibold font-clash">
+				Analytics
+			</h2>
+			@ui.Button(ui.ButtonProps{
+				Icon:    "fa-solid fa-plus",
+				OnClick: ui.OpenDialog("create_analytics_website"),
+			}) {
+				Add Website
+			}
+			@createAnalyticsWebsiteDialog()
+		</div>
+		<br/>
+		<div class="gap-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+			for _, website := range websites {
+				@websiteCard(website)
+			}
+		</div>
+	}
+}
+
+templ createAnalyticsWebsiteDialog() {
+	<form hx-post="/analytics_websites">
+		@ui.Dialog(ui.DialogProps{
+			Id:    "create_analytics_website",
+			Title: "Add Website",
+			Class: "!px-0",
+		}) {
+			<div class="space-y-4 px-6 pb-4">
+				@ui.InputField(ui.InputFieldProps{
+					Label:       "Name",
+					Id:          "name",
+					Placeholder: "Website Name",
+					Type:        "text",
+					Extra:       map[string]any{"minlength": "3"},
+				})
+				@ui.InputField(ui.InputFieldProps{
+					Label:       "Domain",
+					Type:        "domain",
+					Id:          "domain",
+					Placeholder: "example.com",
+					Extra:       map[string]any{"minlength": "3"},
+				})
+			</div>
+			<div class="px-6 pt-4 border-t border-zinc-300/10">
+				@ui.Button(ui.ButtonProps{
+					OnClick: ui.CloseDialog("create_analytics_website"),
+					Type:    "submit",
+				}) {
+					Add Website
+				}
+			</div>
+		}
+	</form>
+}
+
+templ websiteCard(website models.AnalyticsWebsite) {
+	<a class="hover:opacity-75 transition-opacity" href={ templ.SafeURL("/analytics_websites/" + website.ID) }>
+		<div class="rounded-md border bg-zinc-900 text-white shadow border-zinc-300/20">
+			<div class="p-6">
+				<h3 class="font-semibold leading-none tracking-tight text-xl text-white !text-lg">
+					{ website.Name }
+				</h3>
+				<p class="text-sm text-white">
+					{ website.Domain }
+				</p>
+				<i class="fa-solid fa-chart-simple w-4 h-4 mt-2 text-white"></i>
+			</div>
+		</div>
+	</a>
+}

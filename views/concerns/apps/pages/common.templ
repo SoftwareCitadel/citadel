@@ -6,6 +6,7 @@ import (
 	"citadel/views/ui"
 	"github.com/google/go-github/v62/github"
 	"citadel/app/types"
+	"citadel/views/util"
 )
 
 templ breadcrumbs(app models.Application) {
@@ -32,7 +33,7 @@ templ tabs(app models.Application) {
 		<ul class="flex min-w-full flex-none gap-x-6 text-sm leading-6 text-zinc-300">
 			<li>
 				<a
-					class={ getClassForTab("/apps/"+app.Slug, retrievePath(ctx)) }
+					class={ util.GetClassForTab("/apps/"+app.Slug, util.RetrievePath(ctx)) }
 					href={ templ.SafeURL("/apps/" + app.Slug) }
 				>
 					Overview
@@ -40,7 +41,7 @@ templ tabs(app models.Application) {
 			</li>
 			<li>
 				<a
-					class={ getClassForTab("/apps/"+app.Slug+"/logs", retrievePath(ctx)) }
+					class={ util.GetClassForTab("/apps/"+app.Slug+"/logs", util.RetrievePath(ctx)) }
 					href={ templ.SafeURL("/apps/" + app.Slug + "/logs") }
 				>
 					Logs
@@ -48,7 +49,7 @@ templ tabs(app models.Application) {
 			</li>
 			<li>
 				<a
-					class={ getClassForTab("/apps/"+app.Slug+"/deployments", retrievePath(ctx)) }
+					class={ util.GetClassForTab("/apps/"+app.Slug+"/deployments", util.RetrievePath(ctx)) }
 					href={ templ.SafeURL("/apps/" + app.Slug + "/deployments") }
 				>
 					Deployments
@@ -56,7 +57,7 @@ templ tabs(app models.Application) {
 			</li>
 			<li>
 				<a
-					class={ getClassForTab("/apps/"+app.Slug+"/env", retrievePath(ctx)) }
+					class={ util.GetClassForTab("/apps/"+app.Slug+"/env", util.RetrievePath(ctx)) }
 					href={ templ.SafeURL("/apps/" + app.Slug + "/env") }
 				>
 					Environment variables
@@ -64,7 +65,7 @@ templ tabs(app models.Application) {
 			</li>
 			<li>
 				<a
-					class={ getClassForTab("/apps/"+app.Slug+"/certs", retrievePath(ctx)) }
+					class={ util.GetClassForTab("/apps/"+app.Slug+"/certs", util.RetrievePath(ctx)) }
 					href={ templ.SafeURL("/apps/" + app.Slug + "/certs") }
 				>
 					Certificates
@@ -72,7 +73,7 @@ templ tabs(app models.Application) {
 			</li>
 			<li>
 				<a
-					class={ getClassForTab("/apps/"+app.Slug+"/edit", retrievePath(ctx)) }
+					class={ util.GetClassForTab("/apps/"+app.Slug+"/edit", util.RetrievePath(ctx)) }
 					href={ templ.SafeURL("/apps/" + app.Slug + "/edit") }
 				>
 					Settings
@@ -80,27 +81,6 @@ templ tabs(app models.Application) {
 			</li>
 		</ul>
 	</nav>
-}
-
-func getClassForTab(tabPath string, currentPath string) string {
-	if tabPath == currentPath {
-		return "text-yellow-300 whitespace-nowrap"
-	}
-
-	return "hover:text-yellow-300 transition-colors whitespace-nowrap"
-}
-
-func retrievePath(ctx context.Context) string {
-	ctxValue := ctx.Value("path")
-	if ctxValue == nil {
-		return ""
-	}
-	path, ok := ctxValue.(string)
-	if !ok {
-		return ""
-	}
-
-	return path
 }
 
 templ computingSpecsFormPart(app *models.Application) {
