@@ -977,6 +977,10 @@ select{
   margin-bottom: 1rem;
 }
 
+.mb-5{
+  margin-bottom: 1.25rem;
+}
+
 .mb-6{
   margin-bottom: 1.5rem;
 }
@@ -1027,14 +1031,6 @@ select{
 
 .mt-auto{
   margin-top: auto;
-}
-
-.mb-2{
-  margin-bottom: 0.5rem;
-}
-
-.mb-5{
-  margin-bottom: 1.25rem;
 }
 
 .block{
@@ -1143,6 +1139,10 @@ select{
 
 .max-h-\[50vh\]{
   max-height: 50vh;
+}
+
+.max-h-96{
+  max-height: 24rem;
 }
 
 .min-h-72{
@@ -1865,6 +1865,11 @@ select{
   padding-right: 1rem;
 }
 
+.px-5{
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
+}
+
 .px-6{
   padding-left: 1.5rem;
   padding-right: 1.5rem;
@@ -1923,11 +1928,6 @@ select{
 .py-\[6px\]{
   padding-top: 6px;
   padding-bottom: 6px;
-}
-
-.px-5{
-  padding-left: 1.25rem;
-  padding-right: 1.25rem;
 }
 
 .\!pb-6{

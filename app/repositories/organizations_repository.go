@@ -23,17 +23,16 @@ func (r OrganizationsRepository) Create(ctx context.Context, org *models.Organiz
 	slug := slug.Make(org.Name)
 
 	for {
-		_, err := r.FindOneBy(ctx, "slug", slug)
-		if err != nil {
+		if _, err := r.FindOneBy(ctx, "slug", slug); err != nil {
 			break
 		}
 
 		slug = slug + "-" + randomizer.Noun()
 	}
+
 	org.Slug = slug
 
-	_, err := r.NewInsert().Model(org).Exec(ctx)
-	if err != nil {
+	if _, err := r.NewInsert().Model(org).Exec(ctx); err != nil {
 		return err
 	}
 

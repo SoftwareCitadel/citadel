@@ -44,6 +44,30 @@ templ ShowPage(website models.AnalyticsWebsite) {
 }
 
 templ websiteInfo(website models.AnalyticsWebsite) {
+	<script type="module">
+	import { Chart, registerables } from 'https://cdn.jsdelivr.net/npm/chart.js@4.4.3/+esm'
+
+	Chart.register(...registerables);
+
+	new Chart(document.getElementById('myChart'), {
+		type: 'bar',
+		data: {
+			labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+			datasets: [{
+				label: '# of Votes',
+				data: [12, 19, 3, 5, 2, 3],
+				borderWidth: 1
+			}]
+		},
+		options: {
+			scales: {
+				y: {
+					beginAtZero: true
+				}
+			}
+		}
+	});
+	</script>
 	<div class="py-6 px-12 border-b border-zinc-300/20">
 		<div class="flex space-x-2 justify-between items-center">
 			<div>
@@ -89,6 +113,11 @@ templ websiteInfo(website models.AnalyticsWebsite) {
 				},
 			})
 		</div>
+		@ui.Card(ui.CardProps{}) {
+			<div class="max-h-96 flex justify-center">
+				<canvas id="myChart"></canvas>
+			</div>
+		}
 	</div>
 	@addTrackingCodeDialog()
 }
