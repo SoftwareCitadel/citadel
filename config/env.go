@@ -85,6 +85,12 @@ type EnvironmentVariables struct {
 
 	// DB_HOST is the host for the database.
 	DB_HOST string
+
+	// SMTP_ADDR is the address for the SMTP server.
+	SMTP_ADDR string
+
+	// SMTP_DOMAIN is the domain for the SMTP server.
+	SMTP_DOMAIN string
 }
 
 func ProvideEnvironmentVariables() *EnvironmentVariables {

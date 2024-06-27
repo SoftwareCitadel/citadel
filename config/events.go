@@ -1,7 +1,7 @@
 package config
 
 import (
-	"citadel/app/listeners"
+	"citadel/internal/listeners"
 
 	"github.com/caesar-rocks/events"
 )

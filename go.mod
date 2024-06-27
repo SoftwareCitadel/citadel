@@ -9,6 +9,7 @@ require (
 	github.com/alevinval/sse v1.0.2
 	github.com/bradleyfalzon/ghinstallation v1.1.1
 	github.com/bradleyfalzon/ghinstallation/v2 v2.11.0
+	github.com/caddyserver/certmagic v0.21.3
 	github.com/caesar-rocks/auth v0.0.6
 	github.com/caesar-rocks/core v0.0.13
 	github.com/caesar-rocks/drive v0.0.5
@@ -16,11 +17,15 @@ require (
 	github.com/caesar-rocks/mail v0.0.2
 	github.com/caesar-rocks/orm v0.0.2
 	github.com/caesar-rocks/ui v0.0.3
+	github.com/caesar-rocks/vexillum v0.0.2
 	github.com/charmbracelet/bubbletea v0.26.3
 	github.com/charmbracelet/huh/spinner v0.0.0-20240608175402-5b41f0b45136
 	github.com/charmbracelet/log v0.4.0
 	github.com/creativeprojects/go-selfupdate v1.2.0
 	github.com/docker/docker v26.1.4+incompatible
+	github.com/emersion/go-msgauth v0.6.8
+	github.com/emersion/go-sasl v0.0.0-20231106173351-e73c9f7bad43
+	github.com/emersion/go-smtp v0.21.2
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/google/go-github/v62 v62.0.0
 	github.com/gosimple/slug v1.14.0
@@ -40,6 +45,7 @@ require (
 	github.com/Masterminds/semver/v3 v3.2.1 // indirect
 	github.com/Microsoft/hcsshim v0.12.4 // indirect
 	github.com/atotto/clipboard v0.1.4 // indirect
+	github.com/caddyserver/zerossl v0.1.3 // indirect
 	github.com/charmbracelet/x/ansi v0.1.1 // indirect
 	github.com/charmbracelet/x/input v0.1.1 // indirect
 	github.com/charmbracelet/x/term v0.1.1 // indirect
@@ -58,11 +64,14 @@ require (
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/klauspost/compress v1.17.8 // indirect
-	github.com/klauspost/cpuid/v2 v2.2.6 // indirect
+	github.com/klauspost/cpuid/v2 v2.2.7 // indirect
+	github.com/libdns/libdns v0.2.2 // indirect
 	github.com/lufia/plan9stats v0.0.0-20230110061619-bbe2e5e100de // indirect
 	github.com/magiconair/properties v1.8.7 // indirect
 	github.com/mattn/go-localereader v0.0.1 // indirect
 	github.com/matttproud/golang_protobuf_extensions v1.0.4 // indirect
+	github.com/mholt/acmez/v2 v2.0.1 // indirect
+	github.com/miekg/dns v1.1.59 // indirect
 	github.com/minio/md5-simd v1.1.2 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/moby/patternmatcher v0.6.0 // indirect
@@ -97,7 +106,9 @@ require (
 	github.com/xanzy/go-gitlab v0.100.0 // indirect
 	github.com/xo/terminfo v0.0.0-20220910002029-abceb7e1c41e // indirect
 	github.com/yusufpapurcu/wmi v1.2.3 // indirect
+	github.com/zeebo/blake3 v0.2.3 // indirect
 	golang.org/x/sync v0.7.0 // indirect
+	golang.org/x/tools v0.21.1-0.20240508182429-e35e4ccd0d2d // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
@@ -202,13 +213,13 @@ require (
 	go.opentelemetry.io/otel/sdk v1.27.0 // indirect
 	go.opentelemetry.io/otel/trace v1.27.0 // indirect
 	go.uber.org/dig v1.17.1 // indirect
-	go.uber.org/fx v1.22.0 // indirect
+	go.uber.org/fx v1.22.0
 	go.uber.org/multierr v1.11.0 // indirect
 	go.uber.org/zap v1.27.0 // indirect
 	golang.org/x/crypto v0.24.0 // indirect
 	golang.org/x/exp v0.0.0-20231108232855-2478ac86f678 // indirect
 	golang.org/x/mod v0.17.0 // indirect
-	golang.org/x/net v0.26.0 // indirect
+	golang.org/x/net v0.26.0
 	golang.org/x/oauth2 v0.18.0 // indirect
 	golang.org/x/sys v0.21.0 // indirect
 	golang.org/x/text v0.16.0 // indirect

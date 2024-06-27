@@ -1,7 +1,7 @@
 package migrations
 
 import (
-	"citadel/app/models"
+	"citadel/internal/models"
 	"context"
 
 	"github.com/uptrace/bun"

@@ -1,17 +1,17 @@
 package config
 
 import (
-	"citadel/app/controllers"
-	apiControllers "citadel/app/controllers/api"
-	authControllers "citadel/app/controllers/auth"
-	"citadel/app/middleware"
-	"citadel/app/vexillum"
+	"citadel/internal/controllers"
+	apiControllers "citadel/internal/controllers/api"
+	authControllers "citadel/internal/controllers/auth"
+	"citadel/internal/middleware"
 
 	mailsPages "citadel/views/concerns/mails/pages"
 
 	caesarAuth "github.com/caesar-rocks/auth"
 	caesar "github.com/caesar-rocks/core"
 	"github.com/caesar-rocks/events"
+	"github.com/caesar-rocks/vexillum"
 )
 
 func RegisterRoutes(
@@ -138,6 +138,7 @@ func RegisterRoutes(
 	router.
 		Delete("/mails/domains/{id}", mailDomainsController.Delete).
 		Use(auth.AuthMiddleware)
+	router.Post("/mails/domains/check_dns/{id}", mailDomainsController.CheckDNS).Use(auth.AuthMiddleware)
 
 	router.
 		Get("/mails/api_keys", mailApiKeysController.Index).
@@ -198,15 +199,15 @@ func RegisterRoutes(
 	router.
 		Get("/billing", billingController.Show).
 		Use(auth.AuthMiddleware).
-		Use(vexillum.Middleware("billing"))
+		Use(vexillum.EnsureFeatureEnabledMiddleware("billing"))
 	router.
 		Get("/billing/manage", billingController.Manage).
 		Use(auth.AuthMiddleware).
-		Use(vexillum.Middleware("billing"))
+		Use(vexillum.EnsureFeatureEnabledMiddleware("billing"))
 	router.
 		Get("/billing/payment_method", billingController.InitiatePaymentMethodChange).
 		Use(auth.AuthMiddleware).
-		Use(vexillum.Middleware("billing"))
+		Use(vexillum.EnsureFeatureEnabledMiddleware("billing"))
 
 	// Settings-related routes
 	router.Get("/settings", settingsController.Edit).Use(auth.AuthMiddleware)

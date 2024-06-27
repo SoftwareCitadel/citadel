@@ -1,9 +1,9 @@
 package config
 
 import (
-	"citadel/app/drivers"
-	dockerDriver "citadel/app/drivers/docker_driver"
-	"citadel/app/repositories"
+	"citadel/internal/drivers"
+	dockerDriver "citadel/internal/drivers/docker_driver"
+	"citadel/internal/repositories"
 )
 
 func ProvideDriver(appsRepo *repositories.ApplicationsRepository, deplsRepo *repositories.DeploymentsRepository) drivers.Driver {

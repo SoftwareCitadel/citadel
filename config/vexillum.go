@@ -1,6 +1,8 @@
 package config
 
-import "citadel/app/vexillum"
+import (
+	"github.com/caesar-rocks/vexillum"
+)
 
 func ProvideVexillum(env *EnvironmentVariables) *vexillum.Vexillum {
 	v := vexillum.New()

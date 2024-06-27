@@ -1,7 +1,7 @@
 package config
 
 import (
-	"citadel/app/repositories"
+	"citadel/internal/repositories"
 	"context"
 	"time"
 

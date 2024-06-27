@@ -2,8 +2,8 @@ package api
 
 import (
 	"bytes"
-	"citadel/app/models"
 	"citadel/cmd/citadel/util"
+	"citadel/internal/models"
 	"encoding/json"
 	"errors"
 	"fmt"

@@ -1,7 +1,7 @@
 package mailsPages
 
 import (
-	"citadel/app/models"
+	"citadel/internal/models"
 	"citadel/views/layouts"
 	"citadel/views/ui"
 	"citadel/views/concerns/mails/components"
@@ -72,7 +72,7 @@ templ domainsTableItem(domain models.MailDomain) {
 			</a>
 		</td>
 		<td class="whitespace-nowrap px-3 py-4 text-sm text-zinc-300">
-			if domain.IsVerified {
+			if domain.DNSVerified {
 				<span class="success-btn !hover:text-emerald-400 !hover:ring-emerald-400/20">
 					Verified
 				</span>

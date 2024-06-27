@@ -1,14 +1,14 @@
 package config
 
 import (
-	"citadel/app/controllers"
-	apiControllers "citadel/app/controllers/api"
-	authControllers "citadel/app/controllers/auth"
-	"citadel/app/drivers"
-	dockerDriver "citadel/app/drivers/docker_driver"
-	"citadel/app/listeners"
-	"citadel/app/repositories"
-	"citadel/app/services"
+	"citadel/internal/controllers"
+	apiControllers "citadel/internal/controllers/api"
+	authControllers "citadel/internal/controllers/auth"
+	"citadel/internal/drivers"
+	dockerDriver "citadel/internal/drivers/docker_driver"
+	"citadel/internal/listeners"
+	"citadel/internal/repositories"
+	"citadel/internal/services"
 	"citadel/public"
 	"log/slog"
 	"os"
