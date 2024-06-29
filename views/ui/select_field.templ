@@ -10,6 +10,7 @@ type SelectFieldProps struct {
 	Label       string
 	LabelRight  func() templ.Component
 	DivClass    string
+	SubDivClass string
 	Class       string
 	Id          string
 	Error       string
@@ -19,6 +20,7 @@ type SelectFieldProps struct {
 	Required    bool
 	Value       string
 	Extra       map[string]interface{}
+	OnChange    templ.ComponentScript
 }
 
 templ SelectField(props SelectFieldProps) {
@@ -30,7 +32,7 @@ templ SelectField(props SelectFieldProps) {
 				LabelRight: props.LabelRight,
 			})
 		}
-		<div class="mt-1 flex w-full">
+		<div class={ "mt-1 flex w-full " + props.SubDivClass }>
 			<select
 				class={ "flex h-10 w-full bg-white/5 text-white rounded-md accent-white border border-zinc-300/20 px-2 text-sm focus:ring-2 focus:ring-inset focus:ring-yellow-500 disabled:cursor-not-allowed disabled:opacity-50 " + props.Class }
 				readonly?={ props.Readonly }
@@ -38,6 +40,7 @@ templ SelectField(props SelectFieldProps) {
 				id={ props.Id }
 				name={ props.Id }
 				placeholder={ props.Placeholder }
+				onChange={ props.OnChange }
 				{ props.Extra... }
 			>
 				for _, option := range props.Options {

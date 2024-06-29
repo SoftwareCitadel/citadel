@@ -55,7 +55,7 @@ func (c *MailDomainsController) Store(ctx *caesar.Context) error {
 
 	toast.Success(ctx, "Mail domain created successfully.")
 
-	return ctx.Redirect("/mails/domains")
+	return ctx.Redirect("/mails/domains/" + domain.ID)
 }
 
 func (c *MailDomainsController) Show(ctx *caesar.Context) error {

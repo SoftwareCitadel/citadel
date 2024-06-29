@@ -6,6 +6,6 @@ func ProvideDatabase(env *EnvironmentVariables) *orm.Database {
 	return orm.NewDatabase(&orm.DatabaseConfig{
 		DBMS:  orm.DBMS(env.DBMS),
 		DSN:   env.DSN,
-		Debug: false,
+		Debug: true,
 	})
 }

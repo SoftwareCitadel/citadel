@@ -10,16 +10,28 @@ import (
 )
 
 type UsersService struct {
-	repo    *repositories.UsersRepository
-	emitter *events.EventsEmitter
+	usersRepo      *repositories.UsersRepository
+	orgsRepo       *repositories.OrganizationsRepository
+	orgMembersRepo *repositories.OrganizationMembersRepository
+	emitter        *events.EventsEmitter
 }
 
-func NewUsersService(repo *repositories.UsersRepository, emitter *events.EventsEmitter) *UsersService {
-	return &UsersService{repo, emitter}
+func NewUsersService(usersRepo *repositories.UsersRepository, orgsRepo *repositories.OrganizationsRepository, orgMembersRepo *repositories.OrganizationMembersRepository, emitter *events.EventsEmitter) *UsersService {
+	return &UsersService{usersRepo, orgsRepo, orgMembersRepo, emitter}
 }
 
 func (s *UsersService) CreateAndEmitEvent(ctx context.Context, user *models.User) error {
-	if err := s.repo.Create(ctx, user); err != nil {
+	if err := s.usersRepo.Create(ctx, user); err != nil {
+		return err
+	}
+
+	org := &models.Organization{Name: user.FullName}
+	if err := s.orgsRepo.Create(ctx, org); err != nil {
+		return err
+	}
+
+	member := &models.OrganizationMember{UserID: user.ID, OrganizationID: org.ID, Role: models.OrganizationMemberRoleOwner}
+	if err := s.orgMembersRepo.Create(ctx, member); err != nil {
 		return err
 	}
 

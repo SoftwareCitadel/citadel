@@ -31,7 +31,7 @@ templ DatabasesPage(dbs []models.Database) {
 }
 
 templ createDatabaseDialog() {
-	<form hx-post="/databases" x-data="{ dbms: 'postgres' }" hx-swap="outerHTML">
+	<form hx-post x-data="{ dbms: 'postgres' }" hx-swap="outerHTML">
 		@ui.SteppedDialog(ui.SteppedDialogProps{
 			Id:           "create_database",
 			Title:        "New Database",

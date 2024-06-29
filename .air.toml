@@ -6,7 +6,7 @@ tmp_dir = "tmp"
   cmd="go build -o ./tmp/caesar ./cmd/caesar"
 
   delay = 20
-  exclude_dir = ["public/assets", "tmp", "node_modules"]
+  exclude_dir = ["public/assets", "tmp", "node_modules", "vendor"]
   exclude_file = []
   exclude_regex = [".*_templ.go"]
   exclude_unchanged = false

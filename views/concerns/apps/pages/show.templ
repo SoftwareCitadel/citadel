@@ -20,7 +20,7 @@ templ ShowPage(app models.Application) {
 						<dd class="mt-1 text-sm text-blue-100">
 							<a
 								class="font-medium text-yellow-300 hover:text-yellow-200 transition-colors"
-								href={ templ.SafeURL("https://" + app.Slug + ".softwarecitadel.app") }
+								href={ templ.URL("https://" + app.Slug + ".softwarecitadel.app") }
 								target="_blank"
 							>
 								https://{ app.Slug }.softwarecitadel.app

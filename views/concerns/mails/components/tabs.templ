@@ -1,30 +1,33 @@
 package mailsComponents
 
-import "citadel/views/util"
+import (
+	"citadel/internal/middleware"
+	"citadel/views/util"
+)
 
 templ Tabs() {
 	<nav class="flex overflow-x-auto border-b border-zinc-300/20 py-4 px-12">
 		<ul class="flex min-w-full flex-none gap-x-6 text-sm leading-6 text-zinc-300">
 			<li>
 				<a
-					class={ util.GetClassForTab("/mails", util.RetrievePath(ctx)) }
-					href={ templ.SafeURL("/mails") }
+					class={ util.GetClassForTab("/orgs/"+ctx.Value(middleware.CTX_KEY_ORG_ID).(string)+"/mails", util.RetrievePath(ctx)) }
+					href={ templ.URL("/orgs/" + ctx.Value(middleware.CTX_KEY_ORG_ID).(string) + "/mails") }
 				>
 					Overview
 				</a>
 			</li>
 			<li>
 				<a
-					class={ util.GetClassForTab("/mails/domains", util.RetrievePath(ctx)) }
-					href={ templ.SafeURL("/mails/domains") }
+					class={ util.GetClassForTab("/orgs/"+ctx.Value(middleware.CTX_KEY_ORG_ID).(string)+"/mails/domains", util.RetrievePath(ctx)) }
+					href={ templ.URL("/orgs/" + ctx.Value(middleware.CTX_KEY_ORG_ID).(string) + "/mails/domains") }
 				>
 					Domains
 				</a>
 			</li>
 			<li>
 				<a
-					class={ util.GetClassForTab("/mails/api_keys", util.RetrievePath(ctx)) }
-					href={ templ.SafeURL("/mails/api_keys") }
+					class={ util.GetClassForTab("/orgs/"+ctx.Value(middleware.CTX_KEY_ORG_ID).(string)+"/mails/api_keys", util.RetrievePath(ctx)) }
+					href={ templ.URL("/orgs/" + ctx.Value(middleware.CTX_KEY_ORG_ID).(string) + "/mails/api_keys") }
 				>
 					API Keys
 				</a>

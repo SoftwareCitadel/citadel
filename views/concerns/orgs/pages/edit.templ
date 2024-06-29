@@ -1,0 +1,93 @@
+package orgsPages
+
+import (
+	"citadel/views/layouts"
+	"citadel/internal/middleware"
+	"citadel/internal/models"
+	"citadel/views/ui"
+)
+
+templ Edit(org models.Organization, currentMember models.OrganizationMember) {
+	@layouts.DashboardLayout(layouts.DashboardLayoutProps{}) {
+		<h2 class="text-3xl text-gradient font-semibold font-clash">
+			Organization Settings
+		</h2>
+		if currentMember.Role == models.OrganizationMemberRoleOwner {
+			@UpdateOrgForm(org, nil)
+			@ui.Card(ui.CardProps{
+				Title:       "Delete Organization",
+				Description: "Deleting your organization will delete everything associated with it.",
+			}) {
+				@ui.Button(ui.ButtonProps{
+					Variant: ui.ButtonVariantDanger,
+					OnClick: ui.OpenDialog("delete_organization"),
+				}) {
+					Delete Organization
+				}
+			}
+			@ui.Dialog(ui.DialogProps{
+				Id:          "delete_organization",
+				Title:       "Delete Organization",
+				Description: "Are you sure you want to delete your organization? Everything associated with this organization will be deleted.",
+			}) {
+				@ui.Button(ui.ButtonProps{
+					Variant:  ui.ButtonVariantDanger,
+					HxDelete: "/orgs/" + ctx.Value(middleware.CTX_KEY_ORG_ID).(string),
+				}) {
+					Delete Organization
+				}
+			}
+		} else {
+			@ui.Card(ui.CardProps{
+				Title:       "Leave Organization",
+				Description: "Deleting your organization will delete everything associated with it.",
+			}) {
+				@ui.Button(ui.ButtonProps{
+					Variant: ui.ButtonVariantDanger,
+					OnClick: ui.OpenDialog("delete_organization"),
+				}) {
+					Leave Organization
+				}
+			}
+			@ui.Dialog(ui.DialogProps{
+				Id:          "delete_organization",
+				Title:       "Leave Organization",
+				Description: "Are you sure you want to delete your organization? Everything associated with this organization will be deleted.",
+			}) {
+				@ui.Button(ui.ButtonProps{
+					Variant:  ui.ButtonVariantDanger,
+					HxDelete: "/orgs/" + ctx.Value(middleware.CTX_KEY_ORG_ID).(string),
+				}) {
+					Leave Organization
+				}
+			}
+		}
+	}
+}
+
+templ UpdateOrgForm(org models.Organization, errors map[string]string) {
+	<form hx-patch>
+		@ui.Card(ui.CardProps{
+			Title: "Organization settings",
+			Class: "!p-0",
+		}) {
+			<div class="px-6 mb-4">
+				@ui.InputField(ui.InputFieldProps{
+					Label:       "Name",
+					Id:          "name",
+					Placeholder: "Organization Name",
+					Value:       org.Name,
+					Error:       errors["Name"],
+					Extra: map[string]any{
+						"minlength": "3",
+					},
+				})
+			</div>
+			<div class="px-6 py-4 border-t border-zinc-300/20">
+				@ui.Button(ui.ButtonProps{Variant: ui.ButtonVariantPrimary}) {
+					Save Changes
+				}
+			</div>
+		}
+	</form>
+}

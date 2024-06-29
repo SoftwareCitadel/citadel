@@ -11,7 +11,7 @@ templ Tabs(website models.AnalyticsWebsite) {
 			<li>
 				<a
 					class={ util.GetClassForTab("/analytics_websites/"+website.ID, util.RetrievePath(ctx)) }
-					href={ templ.SafeURL("/analytics_websites/" + website.ID) }
+					href={ templ.URL("/analytics_websites/" + website.ID) }
 				>
 					Overview
 				</a>
@@ -19,7 +19,7 @@ templ Tabs(website models.AnalyticsWebsite) {
 			<li>
 				<a
 					class={ util.GetClassForTab("/analytics_websites/"+website.ID+"/edit", util.RetrievePath(ctx)) }
-					href={ templ.SafeURL("/analytics_websites/" + website.ID + "/edit") }
+					href={ templ.URL("/analytics_websites/" + website.ID + "/edit") }
 				>
 					Settings
 				</a>

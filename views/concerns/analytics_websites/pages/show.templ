@@ -14,7 +14,7 @@ templ ShowPage(website models.AnalyticsWebsite) {
 		@components.Breadcrumbs(website)
 		@components.Tabs(website)
 		@websiteInfo(website)
-		<div class="pb-6 px-12 gap-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+		<div class="pb-6 px-12 gap-4 grid grid-cols-1 sm:grid-cols-2">
 			@ui.Card(ui.CardProps{
 				Title:     "Pages",
 				TitleIcon: "fa-solid fa-file",
@@ -69,7 +69,7 @@ templ websiteInfo(website models.AnalyticsWebsite) {
 	});
 	</script>
 	<div class="py-6 px-12 border-b border-zinc-300/20">
-		<div class="flex space-x-2 justify-between items-center">
+		<div class="flex space-x-2 justify-between items-start">
 			<div>
 				<div class="flex space-x-4">
 					<h2 class="text-3xl text-gradient font-semibold font-clash">
@@ -106,8 +106,9 @@ templ websiteInfo(website models.AnalyticsWebsite) {
 						Value: "30d",
 					},
 				},
-				Value: "7d",
-				Class: "pr-8",
+				Value:       "7d",
+				Class:       "pr-8",
+				SubDivClass: "!mt-0",
 				Extra: map[string]any{
 					"x-model": "selectedOwner",
 				},
@@ -126,7 +127,7 @@ templ addTrackingCodeDialog() {
 	<script type="module">
 	import { codeToHtml } from 'https://esm.sh/shiki@1.0.0'
 
-	const scriptTag = '<' +`script defer src="https://cloud.umami.is/script.js" data-website-id="276800de-8036-4ce5-9003-ce5a0b7f8dc8"></script` + '>'
+	const scriptTag = '<' +`script defer src="https://console.softwarecitadel.com/script.js" data-website-id="276800de-8036-4ce5-9003-ce5a0b7f8dc8"></script` + '>'
 
 	const codeSnippet = document.getElementById('tracking-code-snippet')
 	codeSnippet.innerHTML = await codeToHtml(scriptTag, {

@@ -21,10 +21,6 @@ func ProvideApp(env *EnvironmentVariables) *core.App {
 	app := core.NewApp(&core.AppConfig{Addr: os.Getenv("ADDR")})
 
 	app.RegisterProviders(
-		repositories.NewOrganizationsRepository,
-		repositories.NewWebsiteVisitsRepository,
-		repositories.NewAnalyticsWebsitesRepository,
-
 		controllers.NewAnalyticsWebsitesController,
 		apiControllers.NewEmailsController,
 		controllers.NewMailDomainsController,
@@ -47,6 +43,7 @@ func ProvideApp(env *EnvironmentVariables) *core.App {
 		authControllers.NewForgotPwdController,
 		authControllers.NewSignInController,
 		authControllers.NewSignUpController,
+		controllers.NewOrganizationsController,
 	)
 
 	app.RegisterProviders(
@@ -69,6 +66,10 @@ func ProvideApp(env *EnvironmentVariables) *core.App {
 		repositories.NewDatabasesRepository,
 		repositories.NewMailDomainsRepository,
 		repositories.NewMailApiKeysRepository,
+		repositories.NewOrganizationMembersRepository,
+		repositories.NewOrganizationsRepository,
+		repositories.NewWebsiteVisitsRepository,
+		repositories.NewAnalyticsWebsitesRepository,
 	)
 
 	app.RegisterProviders(

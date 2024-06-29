@@ -13,7 +13,7 @@ templ CertsPage(app models.Application, certs []models.Certificate) {
 		@tabs(app)
 		<main class="px-12">
 			@ui.Card(ui.CardProps{Title: "Certificates", Class: "!px-0"}) {
-				<form class="flex items-start px-6" hx-post={ "/apps/" + app.Slug + "/certs" }>
+				<form class="flex items-start px-6 mb-0" hx-post={ "/apps/" + app.Slug + "/certs" }>
 					<span class="flex rounded-l-md border-r-0 border border-zinc-300/20 bg-white/5 text-zinc-300/90 font-medium px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 rounded-r-none">
 						https://
 					</span>
@@ -51,7 +51,7 @@ templ certCard(app models.Application, cert models.Certificate) {
 
 templ certCardHeader(app models.Application, cert models.Certificate) {
 	<div class="flex justify-between items-center">
-		<a class="hover:opacity-75 transition-opacity text-zinc-100" href={ "https://" + templ.SafeURL(cert.Domain) } target="_blank">
+		<a class="hover:opacity-75 transition-opacity text-zinc-100" href={ "https://" + templ.URL(cert.Domain) } target="_blank">
 			<div class="flex items-center space-x-2">
 				<span class="font-semibold">{ cert.Domain }</span>
 				<svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">

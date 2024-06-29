@@ -1,12 +1,14 @@
 package layouts
 
 import (
+	"fmt"
 	"strings"
 	"citadel/views/components"
 	"github.com/caesar-rocks/auth"
 	"citadel/internal/models"
 	"citadel/views/util"
 	"citadel/views/ui"
+	"citadel/internal/middleware"
 )
 
 type DashboardLayoutProps struct {
@@ -45,16 +47,10 @@ templ DashboardLayout(props DashboardLayoutProps) {
 					<nav class="flex flex-1 flex-col">
 						@ui.SelectField(ui.SelectFieldProps{
 							DivClass: "px-5 mb-5",
-							Options: []ui.SelectFieldOption{
-								{
-									Label: retrieveInitials(ctx),
-									Value: "myorgid",
-								},
-								{
-									Label: "Create New Organization",
-									Value: "",
-								},
-							},
+							Options:  getSelectOrgOptions(ctx),
+							OnChange: onSelectOrgChange(ctx.Value(middleware.CTX_KEY_ORG_ID).(string)),
+							Id:       "select_org",
+							Value:    ctx.Value(middleware.CTX_KEY_ORG_ID).(string),
 						})
 						<ul role="list" class="flex flex-1 flex-col gap-y-3">
 							<li class="px-6">
@@ -62,42 +58,39 @@ templ DashboardLayout(props DashboardLayoutProps) {
 									@sidebarItem(sidebarItemProps{
 										label: "Applications",
 										icon:  "fa-terminal",
-										href:  "/apps",
+										href:  "/orgs/" + ctx.Value(middleware.CTX_KEY_ORG_ID).(string) + "/apps",
 									})
 									@sidebarItem(sidebarItemProps{
-										label:      "Databases",
-										icon:       "fa-database",
-										href:       "/databases",
-										comingSoon: true,
+										label: "Databases",
+										icon:  "fa-database",
+										href:  "/orgs/" + ctx.Value(middleware.CTX_KEY_ORG_ID).(string) + "/databases",
 									})
 									@sidebarItem(sidebarItemProps{
-										label:      "Storage",
-										icon:       "fa-hard-drive",
-										href:       "/storage",
-										comingSoon: true,
+										label: "Storage",
+										icon:  "fa-hard-drive",
+										href:  "/orgs/" + ctx.Value(middleware.CTX_KEY_ORG_ID).(string) + "/storage",
 									})
 									@sidebarItem(sidebarItemProps{
-										label:      "Mails",
-										icon:       "fa-envelope",
-										href:       "/mails",
-										comingSoon: true,
+										label: "Mails",
+										icon:  "fa-envelope",
+										href:  "/orgs/" + ctx.Value(middleware.CTX_KEY_ORG_ID).(string) + "/mails",
 									})
 									@sidebarItem(sidebarItemProps{
 										label: "Analytics",
 										icon:  "fa-chart-simple",
-										href:  "/analytics_websites",
+										href:  "/orgs/" + ctx.Value(middleware.CTX_KEY_ORG_ID).(string) + "/analytics_websites",
 									})
 									if util.IsFeatureActive(ctx, "billing") {
 										@sidebarItem(sidebarItemProps{
 											label: "Billing",
 											icon:  "fa-money-bill",
-											href:  "/billing",
+											href:  "/orgs/" + ctx.Value(middleware.CTX_KEY_ORG_ID).(string) + "/billing",
 										})
 									}
 									@sidebarItem(sidebarItemProps{
-										label: "Settings",
+										label: "Organization Settings",
 										icon:  "fa-gear",
-										href:  "/settings",
+										href:  "/orgs/" + ctx.Value(middleware.CTX_KEY_ORG_ID).(string) + "/edit",
 									})
 								</ul>
 							</li>
@@ -135,6 +128,7 @@ templ DashboardLayout(props DashboardLayoutProps) {
 					if util.ShowPaymentMethodDialog(ctx) {
 						@components.PaymentMethodDialog()
 					}
+					@createOrganizationDialog()
 					<div>
 						{ children... }
 					</div>
@@ -144,7 +138,37 @@ templ DashboardLayout(props DashboardLayoutProps) {
 	}
 }
 
-func retrieveEmail(ctx context.Context) string {
+script onSelectOrgChange(orgId string) {
+	const select = document.getElementById("select_org")
+	if (select.value) {
+		window.location.replace("/orgs/" + select.value + "/apps")
+	} else {
+		document.getElementById("create_org").showModal()
+
+		document.getElementById("create_org").addEventListener("close", () => {
+			document.getElementById("select_org").value = orgId
+		})
+	}
+}
+
+func getSelectOrgOptions(ctx context.Context) []ui.SelectFieldOption {
+	orgs, ok := ctx.Value(middleware.CTX_KEY_ORGS).([]models.Organization)
+	if !ok {
+		return []ui.SelectFieldOption{{Label: "Create Organization", Value: ""}}
+	}
+
+	var options []ui.SelectFieldOption
+
+	for _, org := range orgs {
+		options = append(options, ui.SelectFieldOption{Label: fmt.Sprintf("%s (%s)", org.Name, org.Slug), Value: org.ID})
+	}
+
+	options = append(options, ui.SelectFieldOption{Label: "Create Organization", Value: ""})
+
+	return options
+}
+
+func retrieveName(ctx context.Context) string {
 	ctxValue := ctx.Value(auth.USER_CONTEXT_KEY)
 	if ctxValue == nil {
 		return ""
@@ -154,7 +178,7 @@ func retrieveEmail(ctx context.Context) string {
 		return ""
 	}
 
-	return user.Email
+	return user.FullName
 }
 
 func retrieveInitials(ctx context.Context) string {
@@ -189,7 +213,7 @@ type sidebarItemProps struct {
 templ sidebarItem(props sidebarItemProps) {
 	<li>
 		<a
-			if ctx.Value("url").(string) == props.href {
+			if ctx.Value(middleware.CTX_KEY_URL).(string) == props.href {
 				class="bg-zinc-800 hover:text-white text-white group flex items-center gap-x-3 rounded-md p-2 text-sm leading-6"
 			}
 			else
@@ -202,7 +226,7 @@ templ sidebarItem(props sidebarItemProps) {
 				aria-disabled="true"
 				disabled
 			} else {
-				href={ templ.SafeURL(props.href) }
+				href={ templ.URL(props.href) }
 			}
 		>
 			<i class={ "btn-icon fa-solid w-4 h-4 " + props.icon }></i>
@@ -241,7 +265,7 @@ templ accountMenu() {
 		x-id="['dropdown-button']"
 	>
 		<button
-			class="flex items-center gap-x-4 py-3 text-sm leading-6 font-normal text-white hover:opacity-75 transition"
+			class="flex items-center gap-x-4 py-3 text-sm leading-6 font-normal text-white hover:opacity-75 transition w-full"
 			type="button"
 			x-ref="button"
 			x-on:click="toggle()"
@@ -252,7 +276,7 @@ templ accountMenu() {
 			<div class="flex h-8 w-8 items-center justify-center rounded-full bg-zinc-800 border-zinc-700 border text-zinc-200">
 				<span class="font-medium">{ retrieveInitials(ctx) }</span>
 			</div>
-			<span aria-hidden="true">{ retrieveEmail(ctx) }</span>
+			<span aria-hidden="true">{ retrieveName(ctx) }</span>
 		</button>
 		<!-- Panel -->
 		<div
@@ -269,7 +293,7 @@ templ accountMenu() {
 			<div role="group" class="flex flex-col">
 				<a
 					class="px-3 py-2 relative flex cursor-default select-none items-center rounded-sm text-sm outline-none transition-colors focus:bg-zinc-300/10 focus:text-zinc-300-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 hover:opacity-75 transition cursor-pointer"
-					href="/settings"
+					href={ templ.URL("/orgs/" + ctx.Value(middleware.CTX_KEY_ORG_ID).(string) + "/settings") }
 				>
 					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2 h-4 w-4"><path d="M10.325 4.317c.426 -1.756 2.924 -1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543 -.94 3.31 .826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c1.756 .426 1.756 2.924 0 3.35a1.724 1.724 0 0 0 -1.066 2.573c.94 1.543 -.826 3.31 -2.37 2.37a1.724 1.724 0 0 0 -2.572 1.065c-.426 1.756 -2.924 1.756 -3.35 0a1.724 1.724 0 0 0 -2.573 -1.066c-1.543 .94 -3.31 -.826 -2.37 -2.37a1.724 1.724 0 0 0 -1.065 -2.572c-1.756 -.426 -1.756 -2.924 0 -3.35a1.724 1.724 0 0 0 1.066 -2.573c-.94 -1.543 .826 -3.31 2.37 -2.37c1 .608 2.296 .07 2.572 -1.065z"></path><path d="M9 12a3 3 0 1 0 6 0a3 3 0 0 0 -6 0"></path></svg>
 					<span>Settings</span>
@@ -284,4 +308,34 @@ templ accountMenu() {
 			</div>
 		</div>
 	</li>
+}
+
+templ createOrganizationDialog() {
+	@ui.Dialog(ui.DialogProps{
+		Id:      "create_org",
+		Title:   "Create Organization",
+		Class:   "!px-0 !py-0 !p-0 !pt-4",
+		Open:    ctx.Value(middleware.CTX_KEY_ORG_ID).(string) == "no_org",
+		NoClose: ctx.Value(middleware.CTX_KEY_ORG_ID).(string) == "no_org",
+	}) {
+		<form hx-post="/orgs">
+			<div class="space-y-4 px-6 pb-4">
+				@ui.InputField(ui.InputFieldProps{
+					Label:       "Name",
+					Id:          "name",
+					Placeholder: "Organization Name",
+					Type:        "text",
+					Extra:       map[string]any{"minlength": "3"},
+				})
+			</div>
+			<div class="px-6 pt-4 border-t border-zinc-300/10">
+				@ui.Button(ui.ButtonProps{
+					OnClick: ui.CloseDialog("create_org"),
+					Type:    "submit",
+				}) {
+					Create Organization
+				}
+			</div>
+		</form>
+	}
 }

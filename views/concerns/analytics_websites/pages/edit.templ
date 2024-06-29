@@ -33,8 +33,8 @@ templ EditPage(website models.AnalyticsWebsite) {
 			Description: "All analytics data will be lost forever.",
 		}) {
 			@ui.Button(ui.ButtonProps{
-				Variant:  ui.ButtonVariantDanger,
-				HxDelete: "/analytics_websites/" + website.ID,
+				Variant:     ui.ButtonVariantDanger,
+				UseHxDelete: true,
 			}) {
 				Remove website
 			}

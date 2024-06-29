@@ -63,5 +63,5 @@ func (c *SignUpController) Handle(ctx *caesar.Context) error {
 		return caesar.NewError(400)
 	}
 
-	return ctx.Redirect("/applications")
+	return ctx.Redirect("/apps")
 }

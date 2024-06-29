@@ -5,6 +5,8 @@ import (
 	apiControllers "citadel/internal/controllers/api"
 	authControllers "citadel/internal/controllers/auth"
 	"citadel/internal/middleware"
+	"citadel/internal/models"
+	"citadel/internal/repositories"
 
 	mailsPages "citadel/views/concerns/mails/pages"
 
@@ -38,6 +40,8 @@ func RegisterRoutes(
 	storageController *controllers.StorageController,
 	emailsController *apiControllers.EmailsController,
 	analyticsWebsitesController *controllers.AnalyticsWebsitesController,
+	orgsRepository *repositories.OrganizationsRepository,
+	orgsController *controllers.OrganizationsController,
 	emitter *events.EventsEmitter,
 	vexillum *vexillum.Vexillum,
 ) *caesar.Router {
@@ -45,11 +49,22 @@ func RegisterRoutes(
 
 	// Middleware
 	router.Use(auth.SilentMiddleware)
-	router.Use(middleware.ViewMiddleware(vexillum))
+	router.Use(middleware.ViewMiddleware(vexillum, orgsRepository))
 
 	// Home route
 	router.Get("/", func(ctx *caesar.Context) error {
-		return ctx.Redirect("/apps")
+		user, err := caesarAuth.RetrieveUserFromCtx[models.User](ctx)
+		if err != nil {
+			return ctx.Redirect("/auth/sign_in")
+		}
+
+		// Redirect to owned organization if user has one
+		org, err := orgsRepository.FindFirstOwnedByUser(ctx.Context(), user.ID)
+		if err == nil {
+			return ctx.Redirect("/orgs/" + org.ID + "/apps")
+		}
+
+		return ctx.Redirect("/orgs/no_org/apps")
 	})
 
 	// Auth routes
@@ -81,119 +96,121 @@ func RegisterRoutes(
 	router.Post("/auth/reset_password/{jwt}", resetPwdController.Handle)
 
 	// Apps CRUD routes
-	router.Get("/apps", appsController.Index).Use(auth.AuthMiddleware)
+	router.Get("/orgs/{orgId}/apps", appsController.Index).Use(auth.AuthMiddleware)
 	router.
-		Post("/apps", appsController.Store).
+		Post("/orgs/{orgId}/apps", appsController.Store).
 		Use(auth.AuthMiddleware).
 		Use(middleware.PaymentMethodMiddleware(vexillum))
-	router.Get("/apps/{slug}", appsController.Show).Use(auth.AuthMiddleware)
-	router.Get("/apps/{slug}/edit", appsController.Edit).Use(auth.AuthMiddleware)
+	router.Get("/orgs/{orgId}/apps/{slug}", appsController.Show).Use(auth.AuthMiddleware)
+	router.Get("/orgs/{orgId}/apps/{slug}/edit", appsController.Edit).Use(auth.AuthMiddleware)
 	router.
-		Patch("/apps/{slug}", appsController.Update).
+		Patch("/orgs/{orgId}/apps/{slug}", appsController.Update).
 		Use(auth.AuthMiddleware).
 		Use(middleware.PaymentMethodMiddleware(vexillum))
 	router.
-		Delete("/apps/{slug}", appsController.Delete).
+		Delete("/orgs/{orgId}/apps/{slug}", appsController.Delete).
 		Use(auth.AuthMiddleware).
 		Use(middleware.PaymentMethodMiddleware(vexillum))
 
 	// Apps-related routes
-	router.Get("/apps/{slug}/certs", certsController.Index).Use(auth.AuthMiddleware)
+	router.Get("/orgs/{orgId}/apps/{slug}/certs", certsController.Index).Use(auth.AuthMiddleware)
 	router.
-		Post("/apps/{slug}/certs", certsController.Store).
+		Post("/orgs/{orgId}/apps/{slug}/certs", certsController.Store).
 		Use(auth.AuthMiddleware).
 		Use(middleware.PaymentMethodMiddleware(vexillum))
 	router.
-		Post("/apps/{slug}/certs/{id}/check", certsController.Check).
+		Post("/orgs/{orgId}/apps/{slug}/certs/{id}/check", certsController.Check).
 		Use(auth.AuthMiddleware).
 		Use(middleware.PaymentMethodMiddleware(vexillum))
 	router.
-		Delete("/apps/{slug}/certs/{id}", certsController.Delete).
+		Delete("/orgs/{orgId}/apps/{slug}/certs/{id}", certsController.Delete).
 		Use(auth.AuthMiddleware).
 		Use(middleware.PaymentMethodMiddleware(vexillum))
 
 	// Databases-related routes
 	router.
-		Get("/databases", databasesController.Index).
+		Get("/orgs/{orgId}/databases", databasesController.Index).
 		Use(auth.AuthMiddleware).
 		Use(middleware.PaymentMethodMiddleware(vexillum))
 	router.
-		Post("/databases", databasesController.Store).
+		Post("/orgs/{orgId}/databases", databasesController.Store).
 		Use(auth.AuthMiddleware).
 		Use(middleware.PaymentMethodMiddleware(vexillum))
 	router.
-		Delete("/databases/{slug}", databasesController.Delete).
+		Delete("/orgs/{orgId}/databases/{slug}", databasesController.Delete).
 		Use(auth.AuthMiddleware).
 		Use(middleware.PaymentMethodMiddleware(vexillum))
 
 	// Mails-related routes
-	router.Render("/mails", mailsPages.OverviewPage())
+	router.Render("/orgs/{orgId}/mails", mailsPages.OverviewPage())
 	router.
-		Get("/mails/domains", mailDomainsController.Index).
+		Get("/orgs/{orgId}/mails/domains", mailDomainsController.Index).
 		Use(auth.AuthMiddleware)
 	router.
-		Get("/mails/domains/{id}", mailDomainsController.Show).
+		Get("/orgs/{orgId}/mails/domains/{id}", mailDomainsController.Show).
 		Use(auth.AuthMiddleware)
-	router.Post("/mails/domains", mailDomainsController.Store).Use(auth.AuthMiddleware)
+	router.Post("/orgs/{orgId}/mails/domains", mailDomainsController.Store).Use(auth.AuthMiddleware)
 	router.
-		Delete("/mails/domains/{id}", mailDomainsController.Delete).
+		Delete("/orgs/{orgId}/mails/domains/{id}", mailDomainsController.Delete).
 		Use(auth.AuthMiddleware)
-	router.Post("/mails/domains/check_dns/{id}", mailDomainsController.CheckDNS).Use(auth.AuthMiddleware)
+	router.Post("/orgs/{orgId}/mails/domains/check_dns/{id}", mailDomainsController.CheckDNS).Use(auth.AuthMiddleware)
 
 	router.
-		Get("/mails/api_keys", mailApiKeysController.Index).
+		Get("/orgs/{orgId}/mails/api_keys", mailApiKeysController.Index).
 		Use(auth.AuthMiddleware)
 	router.
-		Post("/mails/api_keys", mailApiKeysController.Store).
+		Post("/orgs/{orgId}/mails/api_keys", mailApiKeysController.Store).
 		Use(auth.AuthMiddleware)
 	router.
-		Patch("/mails/api_keys/{id}", mailApiKeysController.Update).
+		Patch("/orgs/{orgId}/mails/api_keys/{id}", mailApiKeysController.Update).
 		Use(auth.AuthMiddleware)
 	router.
-		Delete("/mails/api_keys/{id}", mailApiKeysController.Delete).
+		Delete("/orgs/{orgId}/mails/api_keys/{id}", mailApiKeysController.Delete).
 		Use(auth.AuthMiddleware)
 
 	// Logs-related routes
-	router.Get("/apps/{slug}/logs", logsController.Index).Use(auth.AuthMiddleware)
-	router.Get("/apps/{slug}/logs/stream", logsController.Stream).Use(auth.AuthMiddleware)
+	router.Get("/orgs/{orgId}/apps/{slug}/logs", logsController.Index).
+		Use(auth.AuthMiddleware)
+	router.Get("/orgs/{orgId}/apps/{slug}/logs/stream", logsController.Stream).
+		Use(auth.AuthMiddleware)
 
 	// Storage-related routes
 	router.
-		Get("/storage", storageController.Index).
+		Get("/orgs/{orgId}/storage", storageController.Index).
 		Use(auth.AuthMiddleware)
 	router.
-		Post("/storage", storageController.Store).
+		Post("/orgs/{orgId}/storage", storageController.Store).
 		Use(auth.AuthMiddleware)
 	router.
-		Get("/storage/{slug}", storageController.Show).
+		Get("/orgs/{orgId}/storage/{slug}", storageController.Show).
 		Use(auth.AuthMiddleware)
 	router.
-		Get("/storage/{slug}/edit", storageController.Edit).
+		Get("/orgs/{orgId}/storage/{slug}/edit", storageController.Edit).
 		Use(auth.AuthMiddleware)
 	router.
-		Put("/storage/{slug}/edit", storageController.Update).
+		Put("/orgs/{orgId}/storage/{slug}/edit", storageController.Update).
 		Use(auth.AuthMiddleware)
 	router.
-		Delete("/storage/{slug}", storageController.Delete).
+		Delete("/orgs/{orgId}/storage/{slug}", storageController.Delete).
 		Use(auth.AuthMiddleware)
 	router.
-		Post("/storage/{slug}/upload", storageController.UploadFile).
+		Post("/orgs/{orgId}/storage/{slug}/upload", storageController.UploadFile).
 		Use(auth.AuthMiddleware)
 
 	// Environment variables-related routes
-	router.Get("/apps/{slug}/env", envController.Edit).Use(auth.AuthMiddleware)
+	router.Get("/orgs/{orgId}/apps/{slug}/env", envController.Edit).Use(auth.AuthMiddleware)
 	router.
-		Patch("/apps/{slug}/env", envController.Update).
+		Patch("/orgs/{orgId}/apps/{slug}/env", envController.Update).
 		Use(auth.AuthMiddleware).
 		Use(middleware.PaymentMethodMiddleware(vexillum))
 
 	// Deployments-related routes
-	router.Get("/apps/{slug}/deployments", deploymentsController.Index).Use(auth.AuthMiddleware)
+	router.Get("/orgs/{orgId}/apps/{slug}/deployments", deploymentsController.Index).Use(auth.AuthMiddleware)
 	router.
-		Post("/apps/{slug}/deployments", deploymentsController.Store).
+		Post("/orgs/{orgId}/apps/{slug}/deployments", deploymentsController.Store).
 		Use(auth.AuthMiddleware).
 		Use(middleware.PaymentMethodMiddleware(vexillum))
-	router.Get("/apps/{slug}/deployments/list", deploymentsController.List).Use(auth.AuthMiddleware)
+	router.Get("/orgs/{orgId}/apps/{slug}/deployments/list", deploymentsController.List).Use(auth.AuthMiddleware)
 
 	// Billing-related routes
 	router.
@@ -209,34 +226,48 @@ func RegisterRoutes(
 		Use(auth.AuthMiddleware).
 		Use(vexillum.EnsureFeatureEnabledMiddleware("billing"))
 
-	// Settings-related routes
-	router.Get("/settings", settingsController.Edit).Use(auth.AuthMiddleware)
+	// Organizations-related routes
 	router.
-		Patch("/settings", settingsController.Update).
+		Post("/orgs", orgsController.Store).
+		Use(auth.AuthMiddleware)
+	router.
+		Get("/orgs/{orgId}/edit", orgsController.Edit).
+		Use(auth.AuthMiddleware)
+	router.
+		Patch("/orgs/{orgId}", orgsController.Update).
+		Use(auth.AuthMiddleware)
+	router.
+		Delete("/orgs/{orgId}", orgsController.Delete).
+		Use(auth.AuthMiddleware)
+
+	// Settings-related routes
+	router.Get("/orgs/{orgId}/settings", settingsController.Edit).Use(auth.AuthMiddleware)
+	router.
+		Patch("/orgs/{orgId}/settings", settingsController.Update).
 		Use(auth.AuthMiddleware).
 		Use(middleware.PaymentMethodMiddleware(vexillum))
 	router.
-		Delete("/settings", settingsController.Delete).
+		Delete("/orgs/{orgId}/settings", settingsController.Delete).
 		Use(auth.AuthMiddleware).
 		Use(middleware.PaymentMethodMiddleware(vexillum))
 
 	// GitHub-related routes
 	router.Get("/github/repositories", githubController.ListRepositories).Use(auth.AuthMiddleware)
 
-	router.Post("/apps/{slug}/connect_github", appsController.ConnectGitHub).Use(auth.AuthMiddleware)
-	router.Post("/apps/{slug}/disconnect_github", appsController.DisconnectGitHub).Use(auth.AuthMiddleware)
+	router.Post("/orgs/{orgId}/apps/{slug}/connect_github", appsController.ConnectGitHub).Use(auth.AuthMiddleware)
+	router.Post("/orgs/{orgId}/apps/{slug}/disconnect_github", appsController.DisconnectGitHub).Use(auth.AuthMiddleware)
 
 	// Webhooks routes
 	router.Post("/webhooks/github", githubController.HandleWebhook)
 	router.Post("/webhooks/stripe", stripeController.HandleWebhook)
 
 	// Analytics-related routes
-	router.Get("/analytics_websites", analyticsWebsitesController.Index).Use(auth.AuthMiddleware)
-	router.Post("/analytics_websites", analyticsWebsitesController.Store).Use(auth.AuthMiddleware)
-	router.Get("/analytics_websites/{id}", analyticsWebsitesController.Show).Use(auth.AuthMiddleware)
-	router.Get("/analytics_websites/{id}/edit", analyticsWebsitesController.Edit).Use(auth.AuthMiddleware)
-	router.Patch("/analytics_websites/{id}", analyticsWebsitesController.Update).Use(auth.AuthMiddleware)
-	router.Delete("/analytics_websites/{id}", analyticsWebsitesController.Delete).Use(auth.AuthMiddleware)
+	router.Get("/orgs/{orgId}/analytics_websites", analyticsWebsitesController.Index).Use(auth.AuthMiddleware)
+	router.Post("/orgs/{orgId}/analytics_websites", analyticsWebsitesController.Store).Use(auth.AuthMiddleware)
+	router.Get("/orgs/{orgId}/analytics_websites/{id}", analyticsWebsitesController.Show).Use(auth.AuthMiddleware)
+	router.Get("/orgs/{orgId}/analytics_websites/{id}/edit", analyticsWebsitesController.Edit).Use(auth.AuthMiddleware)
+	router.Patch("/orgs/{orgId}/analytics_websites/{id}", analyticsWebsitesController.Update).Use(auth.AuthMiddleware)
+	router.Delete("/orgs/{orgId}/analytics_websites/{id}", analyticsWebsitesController.Delete).Use(auth.AuthMiddleware)
 
 	// API-related routes
 	router.Get("/api/v1/emails", emailsController.Send).Use(auth.AuthMiddleware)

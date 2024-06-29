@@ -1,13 +1,13 @@
 package ui
 
 type DialogProps struct {
-	Id            string
-	Title         string
-	Description   string
-	Class         string
-	MainClass     string
-	Open          bool
-	HideCloseIcon bool
+	Id          string
+	Title       string
+	Description string
+	Class       string
+	MainClass   string
+	Open        bool
+	NoClose     bool
 }
 
 script OpenDialog(id string) {
@@ -30,13 +30,15 @@ templ Dialog(props DialogProps) {
 	>
 		<div
 			class="fixed inset-0 backdrop-filter backdrop-blur-sm bg-zinc-900/50 z-40 transition"
-			onClick={ CloseDialog(props.Id) }
+			if !props.NoClose {
+				onClick={ CloseDialog(props.Id) }
+			}
 		></div>
 		<main class={ "min-w-96 lg:max-w-96 mx-12 bg-zinc-900 rounded-md border border-zinc-300/10 shadow-sm z-50 relative " + props.MainClass }>
 			<div class="px-6 py-4">
 				<div class="flex items-start justify-between gap-x-2">
 					<h3 class="text-lg font-bold text-white">{ props.Title }</h3>
-					if !props.HideCloseIcon {
+					if !props.NoClose {
 						<button
 							class="text-zinc-500 hover:text-zinc-700 transition focus:outline-none focus:ring-2 focus:ring-zinc-500 rounded-md px-1"
 							onClick={ CloseDialog(props.Id) }

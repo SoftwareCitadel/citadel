@@ -19,7 +19,7 @@ func NewStorageBucketsRepository(db *orm.Database) *StorageBucketsRepository {
 	}}
 }
 
-func (r StorageBucketsRepository) FindAllFromUser(ctx context.Context, userId string) ([]models.StorageBucket, error) {
+func (r *StorageBucketsRepository) FindAllFromUser(ctx context.Context, userId string) ([]models.StorageBucket, error) {
 	var items []models.StorageBucket = make([]models.StorageBucket, 0)
 
 	err := r.NewSelect().Model((*models.StorageBucket)(nil)).Where("user_id = ?", userId).Scan(ctx, &items)
@@ -30,7 +30,7 @@ func (r StorageBucketsRepository) FindAllFromUser(ctx context.Context, userId st
 	return items, nil
 }
 
-func (r StorageBucketsRepository) Create(ctx context.Context, storageBucket *models.StorageBucket) error {
+func (r *StorageBucketsRepository) Create(ctx context.Context, storageBucket *models.StorageBucket) error {
 	slug := slug.Make(storageBucket.Name)
 
 	for {

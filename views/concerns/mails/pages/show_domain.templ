@@ -1,13 +1,118 @@
 package mailsPages
 
 import (
+	"fmt"
+
 	"citadel/internal/models"
 	"citadel/views/layouts"
+	"citadel/views/ui"
 	"citadel/views/concerns/mails/components"
 )
 
 templ ShowDomainPage(domain models.MailDomain) {
 	@layouts.DashboardLayout(layouts.DashboardLayoutProps{Class: "!p-0"}) {
 		@mailsComponents.Tabs()
+		<main class="py-4 px-12">
+			<a
+				class="text-sm leading-7 text-yellow-300 hover:text-yellow-50 transition-colors"
+				href="/mails/domains"
+			>
+				Domains
+			</a>
+			<div>
+				<div class="sm:flex sm:items-center">
+					<div class="sm:flex-auto">
+						<h2 class="text-3xl text-gradient font-semibold font-clash">
+							{ domain.Domain }
+						</h2>
+					</div>
+					<div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
+						@ui.Button(ui.ButtonProps{
+							Variant: ui.ButtonVariantPrimary,
+							Icon:    "fa-magnifying-glass",
+						}) {
+							Check
+						}
+					</div>
+				</div>
+				if domain.DNSVerified {
+					<div
+						class="mt-8 px-6 flex items-center space-x-4 py-4 rounded-lg 3 bg-emerald-400/10 text-emerald-400 ring-1 ring-inset ring-emerald-400/20"
+					>
+						<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+							<path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"></path>
+						</svg>
+						<p class="text-emerald-50 text-sm">
+							Valid DNS records
+						</p>
+					</div>
+				} else {
+					<div
+						class="mt-8 px-6 flex items-center space-x-4 py-4 rounded-lg 3 bg-red-400/10 text-red-400 ring-1 ring-inset ring-red-400/20"
+					>
+						<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+							<path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"></path>
+						</svg>
+						<p class="text-red-50 text-sm">
+							Configure the following DNS records to verify your domain.
+						</p>
+					</div>
+				}
+				<div class="mt-8 flow-root">
+					<div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+						<div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+							<div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg border border-zinc-700">
+								<table class="min-w-full divide-y divide-zinc-700">
+									<thead class="bg-zinc-900">
+										<tr class="bg-zinc-900">
+											<th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-white sm:pl-6">
+												Type
+											</th>
+											<th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-white">
+												Hostname
+											</th>
+											<th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-white">
+												Value
+											</th>
+										</tr>
+									</thead>
+									<tbody class="divide-y divide-zinc-700 bg-white/2.5">
+										for i, dnsRecord := range domain.GetExpectedDNSRecords() {
+											<tr>
+												<td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-zinc-300 sm:pl-6">
+													{ string(dnsRecord.Type) }
+												</td>
+												<td class="whitespace-nowrap px-3 pl-4 py-4 text-sm text-zinc-300">
+													<div class="flex items-start">
+														<input value={ dnsRecord.Host } class="base-input !rounded-r-none" readonly/>
+														<button
+															class="bg-zinc-900 hover:opacity-75 transition text-white px-4 py-[11px] text-sm rounded-r border-l-0 border-zinc-300/20 border duration-200 flex items-center justify-center"
+															onClick={ ui.CopyValueToClipboard(fmt.Sprintf("hostname-icon-%d", i), dnsRecord.Host) }
+														>
+															<i class="fa-regular fa-copy" id={ fmt.Sprintf("hostname-icon-%d", i) }></i>
+														</button>
+													</div>
+												</td>
+												<td class="whitespace-nowrap pl-4 px-3 py-4 text-sm text-zinc-300">
+													<div class="flex items-start">
+														<input value={ dnsRecord.Value } class="base-input !rounded-r-none" readonly/>
+														<button
+															class="bg-zinc-900 hover:opacity-75 transition text-white px-4 py-[11px] text-sm rounded-r border-l-0 border-zinc-300/20 border duration-200 flex items-center justify-center"
+															onClick={ ui.CopyValueToClipboard(fmt.Sprintf("value-icon-%d", i), dnsRecord.Value) }
+														>
+															<i class="fa-regular fa-copy" id={ fmt.Sprintf("value-icon-%d", i) }></i>
+														</button>
+													</div>
+												</td>
+											</tr>
+										}
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</main>
 	}
 }

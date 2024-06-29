@@ -1,6 +1,9 @@
 package util
 
-import "context"
+import (
+	"citadel/internal/middleware"
+	"context"
+)
 
 func GetClassForTab(tabPath string, currentPath string) string {
 	if tabPath == currentPath {
@@ -11,7 +14,7 @@ func GetClassForTab(tabPath string, currentPath string) string {
 }
 
 func RetrievePath(ctx context.Context) string {
-	ctxValue := ctx.Value("path")
+	ctxValue := ctx.Value(middleware.CTX_KEY_PATH)
 	if ctxValue == nil {
 		return ""
 	}

@@ -21,3 +21,5 @@ database.sqlite
 # Extra
 private-key.pem
 .DS_Store
+
+vendor

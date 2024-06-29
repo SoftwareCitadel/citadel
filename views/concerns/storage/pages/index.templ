@@ -30,7 +30,7 @@ templ Index(storageBuckets []models.StorageBucket) {
 }
 
 templ storageBucketCard(storageBucket models.StorageBucket) {
-	<a class="hover:opacity-75 transition-opacity" href={ templ.SafeURL("/storage/" + storageBucket.Slug) }>
+	<a class="hover:opacity-75 transition-opacity" href={ templ.URL("/storage/" + storageBucket.Slug) }>
 		<div class="rounded-md border bg-zinc-900 text-white shadow border-zinc-300/20">
 			<div class="p-6">
 				<h3 class="font-semibold leading-none tracking-tight text-xl text-white !text-lg">
@@ -46,7 +46,7 @@ templ storageBucketCard(storageBucket models.StorageBucket) {
 }
 
 templ createStorageBucketDialog() {
-	<form hx-post="/storage">
+	<form hx-post>
 		@ui.Dialog(ui.DialogProps{
 			Id:    "create_storage_bucket",
 			Title: "Create Storage Bucket",

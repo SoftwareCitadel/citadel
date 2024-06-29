@@ -30,7 +30,7 @@ templ tabs(storageBucket models.StorageBucket) {
 			<li>
 				<a
 					class={ util.GetClassForTab("/storage/"+storageBucket.Slug, util.RetrievePath(ctx)) }
-					href={ templ.SafeURL("/storage/" + storageBucket.Slug) }
+					href={ templ.URL("/storage/" + storageBucket.Slug) }
 				>
 					Overview
 				</a>
@@ -38,7 +38,7 @@ templ tabs(storageBucket models.StorageBucket) {
 			<li>
 				<a
 					class={ util.GetClassForTab("/storage/"+storageBucket.Slug+"/edit", util.RetrievePath(ctx)) }
-					href={ templ.SafeURL("/storage/" + storageBucket.Slug + "/edit") }
+					href={ templ.URL("/storage/" + storageBucket.Slug + "/edit") }
 				>
 					Settings
 				</a>

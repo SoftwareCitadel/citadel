@@ -20,7 +20,6 @@ templ ListDomainsPage(domains []models.MailDomain) {
 					Add Domain
 				}
 			</div>
-			@addDomainDialog()
 			<h3 class="mt-2 text-zinc-300 text-sm">Use your own domains to send your emails.</h3>
 			<div class="mt-8 flow-root">
 				<div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
@@ -59,6 +58,7 @@ templ ListDomainsPage(domains []models.MailDomain) {
 			</div>
 		</div>
 	}
+	@addDomainDialog()
 }
 
 templ domainsTableItem(domain models.MailDomain) {
@@ -66,7 +66,7 @@ templ domainsTableItem(domain models.MailDomain) {
 		<td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-zinc-300 sm:pl-6 max-w-[100vw] ">
 			<a
 				class="underline text-zinc-300 hover:text-zinc-100 transition-colors"
-				href={ templ.SafeURL("/mails/domains/" + domain.ID) }
+				href={ templ.URL("/mails/domains/" + domain.ID) }
 			>
 				{ domain.Domain }
 			</a>
@@ -93,7 +93,7 @@ templ domainsTableItem(domain models.MailDomain) {
 						OnClick: ui.OpenDialog("delete_mail_domain_" + domain.ID),
 					},
 				},
-				ButtonClass:   "flex items-center gap-x-4 py-3 text-sm leading-6 font-normal text-white hover:opacity-75 transition",
+				ButtonClass:   "flex items-center gap-x-4 py-3 text-sm leading-6 font-normal text-white hover:opacity-75 transition -mt-1",
 				DropdownClass: "-mt-2 -right-4 top-4 bg-zinc-900 text-white border border-zinc-300/20",
 			})
 			@ui.Dialog(ui.DialogProps{
@@ -113,7 +113,7 @@ templ domainsTableItem(domain models.MailDomain) {
 }
 
 templ addDomainDialog() {
-	<form hx-post="/mails/domains">
+	<form hx-post>
 		@ui.Dialog(ui.DialogProps{
 			Id:    "add_domain",
 			Title: "Add Domain",

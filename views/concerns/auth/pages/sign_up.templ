@@ -22,7 +22,7 @@ templ SignUpPage() {
 }
 
 templ SignUpForm(input SignUpInput, errors map[string]string) {
-	<form class="space-y-4" hx-post="/auth/sign_up">
+	<form class="space-y-4" hx-post>
 		@ui.InputField(ui.InputFieldProps{
 			Label:       "Full Name",
 			Type:        "text",

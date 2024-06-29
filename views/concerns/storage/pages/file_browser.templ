@@ -102,7 +102,7 @@ templ uploadFileForm(bucket models.StorageBucket) {
 		class="mt-3"
 		id="upload-form"
 		encType="multipart/form-data"
-		action={ templ.SafeURL("/storage/" + bucket.Slug + "/upload") }
+		action={ templ.URL("/storage/" + bucket.Slug + "/upload") }
 		method="POST"
 	>
 		<label class="primary-btn ml-4" for="file">

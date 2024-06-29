@@ -13,6 +13,8 @@ type Organization struct {
 	Name string `bun:"name,notnull"`
 	Slug string `bun:"slug,notnull"`
 
+	OrganizationMembers []*OrganizationMember `bun:"rel:has-many,join:id=organization_id"`
+
 	CreatedAt time.Time `bun:"created_at,notnull,default:current_timestamp"`
 	UpdatedAt time.Time `bun:"updated_at,notnull,default:current_timestamp"`
 }

@@ -921,6 +921,11 @@ select{
   margin-right: 3rem;
 }
 
+.mx-4{
+  margin-left: 1rem;
+  margin-right: 1rem;
+}
+
 .mx-6{
   margin-left: 1.5rem;
   margin-right: 1.5rem;
@@ -967,6 +972,10 @@ select{
 
 .-mt-2{
   margin-top: -0.5rem;
+}
+
+.mb-0{
+  margin-bottom: 0px;
 }
 
 .mb-1{
@@ -1137,12 +1146,12 @@ select{
   max-height: 18rem;
 }
 
-.max-h-\[50vh\]{
-  max-height: 50vh;
-}
-
 .max-h-96{
   max-height: 24rem;
+}
+
+.max-h-\[50vh\]{
+  max-height: 50vh;
 }
 
 .min-h-72{
@@ -1825,6 +1834,11 @@ select{
   padding-right: 1.5rem !important;
 }
 
+.\!py-0{
+  padding-top: 0px !important;
+  padding-bottom: 0px !important;
+}
+
 .\!py-2{
   padding-top: 0.5rem !important;
   padding-bottom: 0.5rem !important;
@@ -1936,6 +1950,10 @@ select{
 
 .\!pl-0{
   padding-left: 0px !important;
+}
+
+.\!pt-4{
+  padding-top: 1rem !important;
 }
 
 .pb-2{
@@ -2136,6 +2154,11 @@ select{
   color: rgb(52 211 153 / var(--tw-text-opacity));
 }
 
+.text-emerald-50{
+  --tw-text-opacity: 1;
+  color: rgb(236 253 245 / var(--tw-text-opacity));
+}
+
 .text-emerald-500{
   --tw-text-opacity: 1;
   color: rgb(16 185 129 / var(--tw-text-opacity));
@@ -2154,6 +2177,11 @@ select{
 .text-red-400{
   --tw-text-opacity: 1;
   color: rgb(248 113 113 / var(--tw-text-opacity));
+}
+
+.text-red-50{
+  --tw-text-opacity: 1;
+  color: rgb(254 242 242 / var(--tw-text-opacity));
 }
 
 .text-red-500{
@@ -2704,6 +2732,11 @@ select{
   color: rgb(253 224 71 / var(--tw-text-opacity));
 }
 
+.hover\:text-yellow-50:hover{
+  --tw-text-opacity: 1;
+  color: rgb(254 252 232 / var(--tw-text-opacity));
+}
+
 .hover\:text-yellow-500:hover{
   --tw-text-opacity: 1;
   color: rgb(234 179 8 / var(--tw-text-opacity));
@@ -2837,8 +2870,16 @@ select{
     margin-right: auto;
   }
 
+  .sm\:ml-16{
+    margin-left: 4rem;
+  }
+
   .sm\:mt-0{
     margin-top: 0px;
+  }
+
+  .sm\:flex{
+    display: flex;
   }
 
   .sm\:w-full{
@@ -2847,6 +2888,14 @@ select{
 
   .sm\:max-w-sm{
     max-width: 24rem;
+  }
+
+  .sm\:flex-auto{
+    flex: 1 1 auto;
+  }
+
+  .sm\:flex-none{
+    flex: none;
   }
 
   .sm\:grid-cols-2{
@@ -2868,6 +2917,10 @@ select{
   .sm\:gap-x-6{
     -moz-column-gap: 1.5rem;
          column-gap: 1.5rem;
+  }
+
+  .sm\:rounded-lg{
+    border-radius: 0.5rem;
   }
 
   .sm\:px-6{
@@ -2894,10 +2947,6 @@ select{
 }
 
 @media (min-width: 768px){
-  .md\:max-w-\[420px\]{
-    max-width: 420px;
-  }
-
   .md\:grid-cols-5{
     grid-template-columns: repeat(5, minmax(0, 1fr));
   }
@@ -2916,6 +2965,11 @@ select{
   .lg\:-mx-8{
     margin-left: -2rem;
     margin-right: -2rem;
+  }
+
+  .lg\:mx-auto{
+    margin-left: auto;
+    margin-right: auto;
   }
 
   .lg\:flex{
@@ -2944,6 +2998,10 @@ select{
 
   .lg\:max-w-\[32rem\]{
     max-width: 32rem;
+  }
+
+  .lg\:max-w-\[420px\]{
+    max-width: 420px;
   }
 
   .lg\:grid-cols-3{

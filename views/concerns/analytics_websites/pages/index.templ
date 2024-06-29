@@ -30,7 +30,7 @@ templ IndexPage(websites []models.AnalyticsWebsite) {
 }
 
 templ createAnalyticsWebsiteDialog() {
-	<form hx-post="/analytics_websites">
+	<form hx-post>
 		@ui.Dialog(ui.DialogProps{
 			Id:    "create_analytics_website",
 			Title: "Add Website",
@@ -65,7 +65,7 @@ templ createAnalyticsWebsiteDialog() {
 }
 
 templ websiteCard(website models.AnalyticsWebsite) {
-	<a class="hover:opacity-75 transition-opacity" href={ templ.SafeURL("/analytics_websites/" + website.ID) }>
+	<a class="hover:opacity-75 transition-opacity" href={ templ.URL("/analytics_websites/" + website.ID) }>
 		<div class="rounded-md border bg-zinc-900 text-white shadow border-zinc-300/20">
 			<div class="p-6">
 				<h3 class="font-semibold leading-none tracking-tight text-xl text-white !text-lg">

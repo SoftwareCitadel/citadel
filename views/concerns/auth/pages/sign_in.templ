@@ -39,7 +39,7 @@ templ passwordFieldLabelRight() {
 }
 
 templ SignInForm(input SignInInput, errors map[string]string) {
-	<form class="space-y-4" hx-post="/auth/sign_in">
+	<form class="space-y-4" hx-post>
 		@ui.InputField(ui.InputFieldProps{
 			Label:       "Email",
 			Type:        "email",

@@ -34,7 +34,7 @@ templ EditPage(app models.Application) {
 						<div class="flex flex-col space-y-2 !mr-8">
 							<a
 								class="flex space-x-2 text-white items-center hover:opacity-75 transition-opacity"
-								href={ templ.SafeURL("https://github.com/" + app.GitHubRepository) }
+								href={ templ.URL("https://github.com/" + app.GitHubRepository) }
 								target="_blank"
 							>
 								<span class="text-sm font-semibold">{ app.GitHubRepository }</span>
@@ -85,7 +85,7 @@ templ EditPage(app models.Application) {
 				x-data
 				id="connect_github_form"
 				method="post"
-				action={ templ.SafeURL("/apps/" + app.Slug + "/connect_github") }
+				action={ templ.URL("/apps/" + app.Slug + "/connect_github") }
 				@connect-repository="
 				    document.getElementById('github_installation_id').value = $event.detail.installationId;
 					document.getElementById('github_repository').value = $event.detail.repository;

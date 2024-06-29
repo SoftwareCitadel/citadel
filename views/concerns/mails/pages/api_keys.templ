@@ -2,6 +2,7 @@ package mailsPages
 
 import (
 	"citadel/internal/models"
+	"citadel/internal/middleware"
 	"citadel/views/layouts"
 	"citadel/views/ui"
 	"citadel/views/concerns/mails/components"
@@ -82,7 +83,6 @@ templ apiKeysTableItem(apiKey models.MailApiKey) {
 			} else {
 				{ apiKey.MailDomain.Domain }
 			}
-			//   {{ apiKey.domain?.domain || t('dashboard.ALL_DOMAINS') }}
 		</td>
 		<td class="whitespace-nowrap px-3 py-4 text-sm text-zinc-300 flex">
 			<div class="flex !w-full">
@@ -129,7 +129,7 @@ templ apiKeysTableItem(apiKey models.MailApiKey) {
 }
 
 templ addApiKeyDialog(mailDomains []models.MailDomain) {
-	<form hx-post="/mails/api_keys">
+	<form hx-post={ "/orgs/" + ctx.Value(middleware.CTX_KEY_ORG_ID).(string) + "/mails/api_keys" }>
 		@ui.Dialog(ui.DialogProps{
 			Id:    "add_api_key",
 			Title: "Add API Key",

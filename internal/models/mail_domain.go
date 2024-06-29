@@ -121,22 +121,22 @@ func (d *MailDomain) assignExpectedDNSRecords() error {
 	records := []ExpectedDNSRecord{
 		{
 			Type:  ExpectedDNSRecordTypeTXT,
-			Host:  "mail._domainkey",
+			Host:  "mail._domainkey." + d.Domain,
 			Value: fmt.Sprintf("v=DKIM1; k=rsa; p=%s", d.DKIMPublicKey),
 		},
 		{
 			Type:  ExpectedDNSRecordTypeTXT,
-			Host:  "_dmarc",
+			Host:  "_dmarc." + d.Domain,
 			Value: "v=DMARC1; p=none;",
 		},
 		{
 			Type:  ExpectedDNSRecordTypeTXT,
-			Host:  "",
+			Host:  d.Domain,
 			Value: fmt.Sprintf("v=spf1 mx a:%s -all", os.Getenv("SMTP_DOMAIN")),
 		},
 		{
 			Type:  ExpectedDNSRecordTypeMX,
-			Host:  "",
+			Host:  d.Domain,
 			Value: os.Getenv("SMTP_DOMAIN") + ".",
 		},
 	}
@@ -164,22 +164,18 @@ func (d *MailDomain) setExpectedDNSRecords(records []ExpectedDNSRecord) error {
 }
 
 // GetExpectedDNSRecords returns the expected DNS records for a domain
-func (d *MailDomain) GetExpectedDNSRecords() ([]ExpectedDNSRecord, error) {
+func (d *MailDomain) GetExpectedDNSRecords() []ExpectedDNSRecord {
 	var records []ExpectedDNSRecord
 	if err := json.Unmarshal(d.ExpectedDNSRecords, &records); err != nil {
-		return nil, err
+		return []ExpectedDNSRecord{}
 	}
-
-	return records, nil
+	return records
 }
 
 // CheckDNS checks the DNS records for a domain
 func (d *MailDomain) CheckDNS() error {
 	// Retrieve the expected DNS records
-	expectedRecords, err := d.GetExpectedDNSRecords()
-	if err != nil {
-		return err
-	}
+	expectedRecords := d.GetExpectedDNSRecords()
 
 	// Check the DNS records
 	for i, record := range expectedRecords {

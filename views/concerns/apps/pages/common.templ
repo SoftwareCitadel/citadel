@@ -34,7 +34,7 @@ templ tabs(app models.Application) {
 			<li>
 				<a
 					class={ util.GetClassForTab("/apps/"+app.Slug, util.RetrievePath(ctx)) }
-					href={ templ.SafeURL("/apps/" + app.Slug) }
+					href={ templ.URL("/apps/" + app.Slug) }
 				>
 					Overview
 				</a>
@@ -42,7 +42,7 @@ templ tabs(app models.Application) {
 			<li>
 				<a
 					class={ util.GetClassForTab("/apps/"+app.Slug+"/logs", util.RetrievePath(ctx)) }
-					href={ templ.SafeURL("/apps/" + app.Slug + "/logs") }
+					href={ templ.URL("/apps/" + app.Slug + "/logs") }
 				>
 					Logs
 				</a>
@@ -50,7 +50,7 @@ templ tabs(app models.Application) {
 			<li>
 				<a
 					class={ util.GetClassForTab("/apps/"+app.Slug+"/deployments", util.RetrievePath(ctx)) }
-					href={ templ.SafeURL("/apps/" + app.Slug + "/deployments") }
+					href={ templ.URL("/apps/" + app.Slug + "/deployments") }
 				>
 					Deployments
 				</a>
@@ -58,7 +58,7 @@ templ tabs(app models.Application) {
 			<li>
 				<a
 					class={ util.GetClassForTab("/apps/"+app.Slug+"/env", util.RetrievePath(ctx)) }
-					href={ templ.SafeURL("/apps/" + app.Slug + "/env") }
+					href={ templ.URL("/apps/" + app.Slug + "/env") }
 				>
 					Environment variables
 				</a>
@@ -66,7 +66,7 @@ templ tabs(app models.Application) {
 			<li>
 				<a
 					class={ util.GetClassForTab("/apps/"+app.Slug+"/certs", util.RetrievePath(ctx)) }
-					href={ templ.SafeURL("/apps/" + app.Slug + "/certs") }
+					href={ templ.URL("/apps/" + app.Slug + "/certs") }
 				>
 					Certificates
 				</a>
@@ -74,7 +74,7 @@ templ tabs(app models.Application) {
 			<li>
 				<a
 					class={ util.GetClassForTab("/apps/"+app.Slug+"/edit", util.RetrievePath(ctx)) }
-					href={ templ.SafeURL("/apps/" + app.Slug + "/edit") }
+					href={ templ.URL("/apps/" + app.Slug + "/edit") }
 				>
 					Settings
 				</a>
@@ -190,7 +190,7 @@ templ connectGitHubRepositoryListItem(repo *github.Repository) {
 			<div class="flex">
 				<a
 					class="flex space-x-2 items-center text-white hover:opacity-75 transition-opacity"
-					href={ templ.SafeURL("https://github.com/" + repo.GetFullName()) }
+					href={ templ.URL("https://github.com/" + repo.GetFullName()) }
 					target="_blank"
 				>
 					<span class="text-sm font-semibold">{ repo.GetName() }</span>
