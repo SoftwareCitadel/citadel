@@ -12,7 +12,7 @@ templ ListDomainsPage(domains []models.MailDomain) {
 		@mailsComponents.Tabs()
 		<div class="flex flex-col py-8 px-12">
 			<div class="flex space-x-4 items-center">
-				<h2 class="text-3xl text-gradient font-semibold font-clash">Domains</h2>
+				<h2 class="text-3xl text-gradient font-semibold ">Domains</h2>
 				@ui.Button(ui.ButtonProps{
 					Icon:    "fa-solid fa-plus",
 					OnClick: ui.OpenDialog("add_domain"),

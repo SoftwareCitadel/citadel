@@ -9,7 +9,7 @@ import (
 
 templ Edit(org models.Organization, currentMember models.OrganizationMember) {
 	@layouts.DashboardLayout(layouts.DashboardLayoutProps{}) {
-		<h2 class="text-3xl text-gradient font-semibold font-clash">
+		<h2 class="text-3xl text-gradient font-semibold ">
 			Organization Settings
 		</h2>
 		if currentMember.Role == models.OrganizationMemberRoleOwner {
