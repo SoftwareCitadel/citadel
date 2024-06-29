@@ -57,9 +57,17 @@ templ Dropdown(props DropdownProps) {
 			type="button"
 		>
 			if props.ButtonIcon != "" {
-				<i class={ "btn-icon fa-solid !mr-2 !pl-0 !ml-0 w-3 h-3 " + props.ButtonIcon }></i>
+				<i
+					if props.ButtonText != "" {
+						class={ "btn-icon fa-solid !mr-2 !pl-0 !ml-0 w-3 h-3 " + props.ButtonIcon }
+					} else {
+						class={ "btn-icon fa-solid !pl-0 !ml-0 w-3 h-3 " + props.ButtonIcon }
+					}
+				></i>
 			}
-			<span>{ props.ButtonText } </span>
+			if props.ButtonText != "" {
+				<span>{ props.ButtonText } </span>
+			}
 		</button>
 		// Actual dropdown
 		<div x-show="open" x-transition.origin.bottom.right x-on:click.outside="open = false" :id="$id('dropdown-button')" style="display: none;" class={ "absolute z-10 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 " + props.DropdownClass }>

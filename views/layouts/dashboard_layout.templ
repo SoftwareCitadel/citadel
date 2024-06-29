@@ -58,39 +58,39 @@ templ DashboardLayout(props DashboardLayoutProps) {
 									@sidebarItem(sidebarItemProps{
 										label: "Applications",
 										icon:  "fa-terminal",
-										href:  "/orgs/" + ctx.Value(middleware.CTX_KEY_ORG_ID).(string) + "/apps",
+										href:  util.Route(ctx, "/apps"),
 									})
 									@sidebarItem(sidebarItemProps{
 										label: "Databases",
 										icon:  "fa-database",
-										href:  "/orgs/" + ctx.Value(middleware.CTX_KEY_ORG_ID).(string) + "/databases",
+										href:  util.Route(ctx, "/databases"),
 									})
 									@sidebarItem(sidebarItemProps{
 										label: "Storage",
 										icon:  "fa-hard-drive",
-										href:  "/orgs/" + ctx.Value(middleware.CTX_KEY_ORG_ID).(string) + "/storage",
+										href:  util.Route(ctx, "/storage"),
 									})
 									@sidebarItem(sidebarItemProps{
 										label: "Mails",
 										icon:  "fa-envelope",
-										href:  "/orgs/" + ctx.Value(middleware.CTX_KEY_ORG_ID).(string) + "/mails",
+										href:  util.Route(ctx, "/mails"),
 									})
 									@sidebarItem(sidebarItemProps{
 										label: "Analytics",
 										icon:  "fa-chart-simple",
-										href:  "/orgs/" + ctx.Value(middleware.CTX_KEY_ORG_ID).(string) + "/analytics_websites",
+										href:  util.Route(ctx, "/analytics_websites"),
 									})
 									if util.IsFeatureActive(ctx, "billing") {
 										@sidebarItem(sidebarItemProps{
 											label: "Billing",
 											icon:  "fa-money-bill",
-											href:  "/orgs/" + ctx.Value(middleware.CTX_KEY_ORG_ID).(string) + "/billing",
+											href:  util.Route(ctx, "/billing"),
 										})
 									}
 									@sidebarItem(sidebarItemProps{
 										label: "Organization Settings",
 										icon:  "fa-gear",
-										href:  "/orgs/" + ctx.Value(middleware.CTX_KEY_ORG_ID).(string) + "/edit",
+										href:  util.Route(ctx, "/edit"),
 									})
 								</ul>
 							</li>
@@ -141,7 +141,8 @@ templ DashboardLayout(props DashboardLayoutProps) {
 script onSelectOrgChange(orgId string) {
 	const select = document.getElementById("select_org")
 	if (select.value) {
-		window.location.replace("/orgs/" + select.value + "/apps")
+		window.location.replace("/orgs/" + select.value+"/apps")
+
 	} else {
 		document.getElementById("create_org").showModal()
 

@@ -47,6 +47,9 @@ templ SelectField(props SelectFieldProps) {
 					<option
 						value={ option.Value }
 						selected?={ option.Selected }
+						if option.Value == props.Value {
+							selected="selected"
+						}
 					>
 						{ option.Label }
 					</option>

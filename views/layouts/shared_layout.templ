@@ -12,16 +12,22 @@ templ SharedLayout() {
 			<title>{ os.Getenv("APP_NAME") }</title>
 			<meta charset="UTF-8"/>
 			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			// Favicon
+			<link rel="icon" href="/assets/favicon.ico" type="image/x-icon"/>
 			// Styles
 			<link rel="stylesheet" href="/assets/styles.css"/>
 			// Font Awesome
-			<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js"></script>
+			<script src="/assets/scripts/fontawesome.js"></script>
 			// HTMX
-			<script defer src="https://unpkg.com/htmx.org@1.9.12"></script>
+			<script defer src="/assets/scripts/htmx.js"></script>
 			// HTMX SSE
-			<script src="https://unpkg.com/htmx.org@1.9.12/dist/ext/sse.js"></script>
+			<script defer src="/assets/scripts/htmx_sse.js"></script>
 			// Alpine.js 
-			<script defer src="https://unpkg.com/alpinejs@latest/dist/cdn.min.js"></script>
+			<script defer src="/assets/scripts/alpine.js"></script>
+			// Inter
+			<link hrel="stylesheet" href="/assets/fonts/inter/inter.css"/>
+			// Clash Display
+			<link hrel="stylesheet" href="/assets/fonts/clash_display/clash_display.css"/>
 		</head>
 		<body>
 			@ui.Toaster()

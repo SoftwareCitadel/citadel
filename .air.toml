@@ -3,7 +3,7 @@ tmp_dir = "tmp"
 
 [build]
   bin = "./tmp/caesar serve"
-  cmd="go build -o ./tmp/caesar ./cmd/caesar"
+  cmd="go build -p 4 -ldflags \"-s -w\" -o ./tmp/caesar ./cmd/caesar"
 
   delay = 20
   exclude_dir = ["public/assets", "tmp", "node_modules", "vendor"]

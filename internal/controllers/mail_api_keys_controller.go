@@ -41,7 +41,7 @@ func (c *MailApiKeysController) Index(ctx *caesar.Context) error {
 }
 
 type StoreMailApiKeyValidator struct {
-	Name     string `form:"name" validate:"required"`
+	Name     string `form:"name"`
 	DomainID string `form:"domain_id"`
 }
 
@@ -68,9 +68,20 @@ func (c *MailApiKeysController) Store(ctx *caesar.Context) error {
 		}
 	}
 
+	var onboarding bool
+
+	if data.Name == "" {
+		data.Name = "Onboarding"
+		onboarding = true
+	}
+
 	apiKey := &models.MailApiKey{Name: data.Name, UserID: user.ID, MailDomainID: data.DomainID}
 	if err := c.mailApiKeysRepo.Create(ctx.Context(), apiKey); err != nil {
 		return err
+	}
+
+	if onboarding {
+		return ctx.Render(mailsPages.AddApiKeyOnboarding(apiKey.Value))
 	}
 
 	return ctx.Redirect("/mails/api_keys")

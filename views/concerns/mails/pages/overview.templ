@@ -1,6 +1,7 @@
 package mailsPages
 
 import (
+	"citadel/views/util"
 	"citadel/views/layouts"
 	"citadel/views/ui"
 	"citadel/views/concerns/mails/components"
@@ -54,41 +55,45 @@ templ firstStep() {
 					<p class="mb-6 text-sm text-zinc-300 font-normal">
 						API Keys are used to access the Software Citadel mails API. You can create and revoke them at any time.
 					</p>
-					<div x-data="{ apiKey: '' }">
-						<template x-if="apiKey === ''">
-							@ui.Button(ui.ButtonProps{
-								Icon: "fa-key",
-								Extra: map[string]any{
-									"@click": "apiKey = 'key'",
-								},
-							}) {
-								Add
-							}
-						</template>
-						<template x-if="apiKey !== ''">
-							<div class="flex">
-								<div class="flex">
-									@ui.InputField(ui.InputFieldProps{
-										Class:       "!w-full !rounded-r-none !text-zinc-100",
-										DivClass:    "!w-full",
-										SubDivClass: "!mt-0",
-										Readonly:    true,
-										Extra:       map[string]any{"x-model": "apiKey"},
-									})
-									<button
-										class="bg-zinc-900 hover:opacity-75 transition text-white px-4 text-sm rounded-r border-l-0 border-zinc-300/20 border duration-200 flex items-center justify-center"
-										@click="copyValueToClipboard('api-key-icon', apiKey)"
-									>
-										<i class="fa-regular fa-copy" id={ "api-key-icon" }></i>
-									</button>
-								</div>
-							</div>
-						</template>
-					</div>
+					@AddApiKeyOnboarding("")
 				</div>
 			</div>
 		</div>
 	</div>
+}
+
+templ AddApiKeyOnboarding(apiKey string) {
+	<form hx-post={ util.Route(ctx, "/mails/api_keys") }>
+		if apiKey == "" {
+			@ui.Button(ui.ButtonProps{
+				Icon: "fa-key",
+				Extra: map[string]any{
+					"@click": "apiKey = 'key'",
+				},
+			}) {
+				Add
+			}
+		} else {
+			<div class="flex">
+				<div class="flex">
+					@ui.InputField(ui.InputFieldProps{
+						Class:       "!w-full !rounded-r-none !text-zinc-100",
+						DivClass:    "!w-full",
+						SubDivClass: "!mt-0",
+						Readonly:    true,
+						Value:       apiKey,
+					})
+					<button
+						class="bg-zinc-900 hover:opacity-75 transition text-white px-4 text-sm rounded-r border-l-0 border-zinc-300/20 border duration-200 flex items-center justify-center"
+						onClick={ ui.CopyValueToClipboard("api-key-icon", apiKey) }
+						type="button"
+					>
+						<i class="fa-regular fa-copy" id={ "api-key-icon" }></i>
+					</button>
+				</div>
+			</div>
+		}
+	</form>
 }
 
 templ secondStep() {

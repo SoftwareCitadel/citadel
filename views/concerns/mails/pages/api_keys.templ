@@ -89,9 +89,9 @@ templ apiKeysTableItem(apiKey models.MailApiKey) {
 				<input value={ apiKey.Value } class="base-input max-w-64 !rounded-r-none" readonly/>
 				<button
 					class="bg-zinc-900 hover:opacity-75 transition text-white px-4 py-[6px] text-sm rounded-r border-l-0 border-zinc-300/20 border duration-200 flex items-center justify-center"
-					onClick={ ui.CopyValueToClipboard("uri", apiKey.Value) }
+					onClick={ ui.CopyValueToClipboard("api-key-"+apiKey.ID, apiKey.Value) }
 				>
-					<i class="fa-regular fa-copy" id="uri"></i>
+					<i class="fa-regular fa-copy" id={ "api-key-" + apiKey.ID }></i>
 				</button>
 			</div>
 		</td>
