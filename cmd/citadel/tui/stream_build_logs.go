@@ -11,13 +11,13 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 )
 
-func StreamBuildLogs(appSlug string) {
+func StreamBuildLogs(orgId string, appSlug string) {
 	streamModel := NewStreamModel("Building...")
 
 	buildFailed := false
 
 	streamModel.Run(func(p *tea.Program) {
-		url := api.RetrieveApiBaseUrl() + "/apps/" + appSlug + "/logs/stream?scope=builder&previous=false"
+		url := api.RetrieveApiBaseUrl() + "/orgs/" + orgId + "/apps/" + appSlug + "/logs/stream?scope=builder&previous=false"
 
 		token, err := util.RetrieveTokenFromConfig()
 		if err != nil {
@@ -59,6 +59,6 @@ func StreamBuildLogs(appSlug string) {
 		os.Exit(1)
 	} else {
 		fmt.Println("🚀 Build succeeded. Deploying application...")
-		fmt.Println("\n🔗 Monitor the deployment at " + api.RetrieveApiBaseUrl() + "/apps/" + appSlug + "/logs\n")
+		fmt.Println("\n🔗 Monitor the deployment at " + api.RetrieveApiBaseUrl() + "/orgs/" + orgId + "/apps/" + appSlug + "/logs\n")
 	}
 }

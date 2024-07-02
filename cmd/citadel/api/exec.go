@@ -8,13 +8,13 @@ import (
 	"net/http"
 )
 
-func ExecuteCommand(appSlug string, command string) error {
+func ExecuteCommand(orgId, appSlug, command string) error {
 	token, err := util.RetrieveTokenFromConfig()
 	if err != nil {
 		return nil
 	}
 
-	url := RetrieveApiBaseUrl() + "/apps/" + appSlug + "/exec"
+	url := RetrieveApiBaseUrl() + "/orgs/" + orgId + "/apps/" + appSlug + "/exec"
 
 	payload := []byte(`{"command": "` + command + `"}`)
 	body := bytes.NewBuffer(payload)

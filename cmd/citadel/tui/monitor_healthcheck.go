@@ -11,11 +11,11 @@ import (
 	"github.com/charmbracelet/huh/spinner"
 )
 
-func MonitorHealtcheck(appSlug string) {
+func MonitorHealtcheck(orgId string, appSlug string) {
 	healthCheckStatus := "pending"
 
 	_ = spinner.New().Title("Waiting for healthcheck...").Action(func() {
-		url := api.RetrieveApiBaseUrl() + "/apps/" + appSlug + "/logs/stream?previous=false"
+		url := api.RetrieveApiBaseUrl() + "/orgs/" + orgId + "/apps/" + appSlug + "/logs/stream?previous=false"
 
 		token, err := util.RetrieveTokenFromConfig()
 		if err != nil {

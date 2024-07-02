@@ -11,7 +11,7 @@ import (
 	"citadel/cmd/citadel/util"
 )
 
-func DeployFromTarball(tarball io.ReadCloser, appSlug string, releaseCmd string) (bool, error) {
+func DeployFromTarball(tarball io.ReadCloser, orgId string, appSlug string, releaseCmd string) (bool, error) {
 	// Retrieve the token from the config file
 	token, err := util.RetrieveTokenFromConfig()
 	if err != nil {
@@ -19,7 +19,7 @@ func DeployFromTarball(tarball io.ReadCloser, appSlug string, releaseCmd string)
 	}
 
 	// Create a new HTTP request
-	url := RetrieveApiBaseUrl() + "/apps/" + appSlug + "/deployments"
+	url := RetrieveApiBaseUrl() + "/orgs/" + orgId + "/apps/" + appSlug + "/deployments"
 
 	// Create the request, sending the gzipBuf as a form data field named "tarball"
 	form := bytes.NewBuffer(nil)

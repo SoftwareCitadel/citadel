@@ -25,18 +25,19 @@ func RetrieveTokenFromConfig() (string, error) {
 	return token, nil
 }
 
-func RetrieveAppSlugFromConfig() (string, error) {
+func RetrieveOrgIdAppSlugFromConfig() (orgId string, appSlug string, err error) {
 	viper.SetConfigName("citadel")
 	viper.SetConfigType("toml")
 	viper.AddConfigPath(".")
 
-	if err := viper.ReadInConfig(); err != nil {
-		return "", err
+	if err = viper.ReadInConfig(); err != nil {
+		return
 	}
 
-	appSlug := viper.GetString("application_slug")
+	orgId = viper.GetString("organization_id")
+	appSlug = viper.GetString("application_slug")
 
-	return appSlug, nil
+	return
 }
 
 func IsAlreadyInitialized() bool {

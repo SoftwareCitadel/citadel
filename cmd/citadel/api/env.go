@@ -10,13 +10,13 @@ import (
 	"citadel/cmd/citadel/util"
 )
 
-func RetrieveEnvironmentVariables(appSlug string) (map[string]string, error) {
+func RetrieveEnvironmentVariables(orgId, appSlug string) (map[string]string, error) {
 	token, err := util.RetrieveTokenFromConfig()
 	if err != nil {
 		return nil, err
 	}
 
-	url := RetrieveApiBaseUrl() + "/apps/" + appSlug + "/env"
+	url := RetrieveApiBaseUrl() + "/orgs" + orgId + "/apps/" + appSlug + "/env"
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return nil, err
@@ -49,6 +49,7 @@ func RetrieveEnvironmentVariables(appSlug string) (map[string]string, error) {
 }
 
 func SetEnvironmentVariables(
+	orgId string,
 	appSlug string,
 	args []string,
 ) (bool, error) {
@@ -86,7 +87,7 @@ func SetEnvironmentVariables(
 
 	body := bytes.NewBufferString(data)
 
-	url := RetrieveApiBaseUrl() + "/apps/" + appSlug + "/env"
+	url := RetrieveApiBaseUrl() + "/orgs/" + orgId + "/apps/" + appSlug + "/env"
 	req, err := http.NewRequest("PATCH", url, body)
 	if err != nil {
 		return false, err

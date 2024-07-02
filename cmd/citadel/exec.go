@@ -22,7 +22,7 @@ func runExec(cmd *cobra.Command, args []string) {
 		os.Exit(1)
 	}
 
-	appSlug, err := util.RetrieveAppSlugFromConfig()
+	orgId, appSlug, err := util.RetrieveOrgIdAppSlugFromConfig()
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
@@ -35,7 +35,7 @@ func runExec(cmd *cobra.Command, args []string) {
 
 	command := args[0]
 
-	err = api.ExecuteCommand(appSlug, command)
+	err = api.ExecuteCommand(orgId, appSlug, command)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)

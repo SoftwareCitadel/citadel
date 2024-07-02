@@ -42,7 +42,7 @@ func runDeploy(cmd *cobra.Command, args []string) {
 		return
 	}
 
-	appSlug, err := util.RetrieveAppSlugFromConfig()
+	orgId, appSlug, err := util.RetrieveOrgIdAppSlugFromConfig()
 	if err != nil {
 		fmt.Println("Failed to retrieve application id")
 		os.Exit(1)
@@ -54,15 +54,15 @@ func runDeploy(cmd *cobra.Command, args []string) {
 		os.Exit(1)
 	}
 
-	shouldMonitorHealtcheck, err := api.DeployFromTarball(tarball, appSlug, releaseCmd)
+	shouldMonitorHealtcheck, err := api.DeployFromTarball(tarball, orgId, appSlug, releaseCmd)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
 
-	tui.StreamBuildLogs(appSlug)
+	tui.StreamBuildLogs(orgId, appSlug)
 
 	if shouldMonitorHealtcheck {
-		tui.MonitorHealtcheck(appSlug)
+		tui.MonitorHealtcheck(orgId, appSlug)
 	}
 }

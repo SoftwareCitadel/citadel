@@ -21,7 +21,7 @@ func init() {
 }
 
 func runOpen(cmd *cobra.Command, args []string) {
-	appSlug, err := util.RetrieveAppSlugFromConfig()
+	_, appSlug, err := util.RetrieveOrgIdAppSlugFromConfig()
 	if err != nil {
 		fmt.Println("Failed to retrieve application id")
 		os.Exit(1)

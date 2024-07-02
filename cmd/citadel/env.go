@@ -17,13 +17,13 @@ var envListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List environment variables",
 	Run: func(cmd *cobra.Command, args []string) {
-		appSlug, err := util.RetrieveAppSlugFromConfig()
+		orgId, appSlug, err := util.RetrieveOrgIdAppSlugFromConfig()
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(1)
 		}
 
-		envs, err := api.RetrieveEnvironmentVariables(appSlug)
+		envs, err := api.RetrieveEnvironmentVariables(orgId, appSlug)
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(1)
@@ -45,7 +45,7 @@ var envSetCmd = &cobra.Command{
 	Short:   "Set environment",
 	Example: "citadel set DATABASE_URL=postgresql://username:password@host:5432/mydb",
 	Run: func(cmd *cobra.Command, args []string) {
-		appSlug, err := util.RetrieveAppSlugFromConfig()
+		orgId, appSlug, err := util.RetrieveOrgIdAppSlugFromConfig()
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(1)
@@ -56,7 +56,7 @@ var envSetCmd = &cobra.Command{
 			os.Exit(1)
 		}
 
-		showRedeployChoice, err := api.SetEnvironmentVariables(appSlug, args)
+		showRedeployChoice, err := api.SetEnvironmentVariables(orgId, appSlug, args)
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(1)
@@ -88,7 +88,7 @@ var envLoadCmd = &cobra.Command{
 	Short:   "Load environment variables from file",
 	Example: "citadel load .env",
 	Run: func(cmd *cobra.Command, args []string) {
-		appSlug, err := util.RetrieveAppSlugFromConfig()
+		orgId, appSlug, err := util.RetrieveOrgIdAppSlugFromConfig()
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(1)
@@ -105,7 +105,7 @@ var envLoadCmd = &cobra.Command{
 			os.Exit(1)
 		}
 
-		showRedeployChoice, err := api.SetEnvironmentVariables(appSlug, vars)
+		showRedeployChoice, err := api.SetEnvironmentVariables(orgId, appSlug, vars)
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(1)
