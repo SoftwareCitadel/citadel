@@ -44,7 +44,6 @@ func (c *CliController) Show(ctx *caesar.Context) error {
 	}
 
 	return ctx.Render(authPages.CliPage(true))
-
 }
 
 func (c *CliController) Handle(ctx *caesar.Context) error {

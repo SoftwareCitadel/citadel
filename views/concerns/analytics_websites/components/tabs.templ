@@ -10,16 +10,16 @@ templ Tabs(website models.AnalyticsWebsite) {
 		<ul class="flex min-w-full flex-none gap-x-6 text-sm leading-6 text-zinc-300">
 			<li>
 				<a
-					class={ util.GetClassForTab("/analytics_websites/"+website.ID, util.RetrievePath(ctx)) }
-					href={ templ.URL("/analytics_websites/" + website.ID) }
+					class={ util.GetClassForTab(util.Route(ctx, "/analytics_websites/"+website.ID), util.RetrievePath(ctx)) }
+					href={ templ.URL(util.Route(ctx, "/analytics_websites/"+website.ID)) }
 				>
 					Overview
 				</a>
 			</li>
 			<li>
 				<a
-					class={ util.GetClassForTab("/analytics_websites/"+website.ID+"/edit", util.RetrievePath(ctx)) }
-					href={ templ.URL("/analytics_websites/" + website.ID + "/edit") }
+					class={ util.GetClassForTab(util.Route(ctx, "/analytics_websites/"+website.ID+"/edit"), util.RetrievePath(ctx)) }
+					href={ templ.URL(util.Route(ctx, "/analytics_websites/"+website.ID+"/edit")) }
 				>
 					Settings
 				</a>

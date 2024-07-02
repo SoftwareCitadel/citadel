@@ -13,22 +13,22 @@ import (
 )
 
 const (
-	version = "0.1.30"
+	version = "0.0.1"
 )
 
 func main() {
 	log.SetOutput(io.Discard)
 
-	if err := update(); err != nil {
-		fmt.Printf("error occurred while updating binary: %v\n", err)
-		os.Exit(1)
-	}
+	// if err := update(); err != nil {
+	// 	fmt.Printf("error occurred while updating binary: %v\n", err)
+	// 	os.Exit(1)
+	// }
 
 	execute(version)
 }
 
 func update() error {
-	latest, found, err := selfupdate.DetectLatest(context.Background(), selfupdate.ParseSlug("softwarecitadel/cli"))
+	latest, found, err := selfupdate.DetectLatest(context.Background(), selfupdate.ParseSlug("softwarecitadel/citadel"))
 	if err != nil {
 		return fmt.Errorf("error occurred while detecting version: %w", err)
 	}

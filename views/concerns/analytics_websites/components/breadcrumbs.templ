@@ -2,13 +2,14 @@ package components
 
 import (
 	"citadel/internal/models"
+	"citadel/views/util"
 )
 
 templ Breadcrumbs(website models.AnalyticsWebsite) {
 	<div class="flex flex-col items-start justify-between gap-x-8 gap-y-4 py-4 px-12 sm:flex-row sm:items-center border-b border-zinc-300/20">
 		<div class="flex items-center gap-x-3">
 			<h1 class="flex gap-x-3 text-base leading-7 items-center">
-				<a class="hover:opacity-75 transition" href="/analytics_websites">
+				<a class="hover:opacity-75 transition" href={ templ.URL(util.Route(ctx, "/analytics_websites")) }>
 					<i class="fa-solid fa-chart-simple w-4 h-4 text-zinc-300"></i>
 				</a>
 				<span class="!text-zinc-300">/</span>
