@@ -15,7 +15,7 @@ require (
 	github.com/caesar-rocks/drive v0.0.5
 	github.com/caesar-rocks/events v0.0.1
 	github.com/caesar-rocks/mail v0.0.2
-	github.com/caesar-rocks/orm v0.0.2
+	github.com/caesar-rocks/orm v0.0.4
 	github.com/caesar-rocks/ui v0.0.3
 	github.com/caesar-rocks/vexillum v0.0.2
 	github.com/charmbracelet/bubbletea v0.26.3

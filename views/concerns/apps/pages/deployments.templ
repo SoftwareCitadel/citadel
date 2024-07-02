@@ -4,6 +4,7 @@ import (
 	"citadel/views/layouts"
 	"citadel/internal/models"
 	"citadel/views/ui"
+	"citadel/views/util"
 	"time"
 	"strconv"
 )
@@ -18,7 +19,7 @@ templ DeploymentsPage(app models.Application) {
 				Class: "!p-0 !m-0",
 			}) {
 				<div
-					hx-get={ "/apps/" + app.Slug + "/deployments/list" }
+					hx-get={ util.Route(ctx, "/apps/"+app.Slug+"/deployments/list") }
 					hx-swap="innerHTML"
 					hx-trigger="load, every 1s"
 					hx-indicator="none"

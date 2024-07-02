@@ -40,10 +40,10 @@ func (r ApplicationsRepository) Create(ctx context.Context, app *models.Applicat
 	return nil
 }
 
-func (r ApplicationsRepository) FindAllFromUser(ctx context.Context, userId string) ([]models.Application, error) {
+func (r ApplicationsRepository) FindAllFromOrg(ctx context.Context, orgId string) ([]models.Application, error) {
 	var items []models.Application = make([]models.Application, 0)
 
-	err := r.NewSelect().Model((*models.Application)(nil)).Where("user_id = ?", userId).Scan(ctx, &items)
+	err := r.NewSelect().Model((*models.Application)(nil)).Where("organization_id = ?", orgId).Scan(ctx, &items)
 	if err != nil {
 		return nil, err
 	}

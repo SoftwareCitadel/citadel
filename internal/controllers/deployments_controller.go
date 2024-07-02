@@ -28,7 +28,7 @@ func NewDeploymentsController(appsService *services.AppsService, appsRepo *repos
 }
 
 func (c *DeploymentsController) Index(ctx *caesar.Context) error {
-	app, err := c.appsService.GetAppOwnedByCurrentUser(ctx)
+	app, err := c.appsService.GetAppOwnedByCurrentOrg(ctx)
 	if err != nil {
 		return err
 	}
@@ -37,7 +37,7 @@ func (c *DeploymentsController) Index(ctx *caesar.Context) error {
 }
 
 func (c *DeploymentsController) Store(ctx *caesar.Context) error {
-	app, err := c.appsService.GetAppOwnedByCurrentUser(ctx)
+	app, err := c.appsService.GetAppOwnedByCurrentOrg(ctx)
 	if err != nil {
 		return err
 	}
@@ -77,7 +77,7 @@ func (c *DeploymentsController) Store(ctx *caesar.Context) error {
 }
 
 func (c *DeploymentsController) List(ctx *caesar.Context) error {
-	app, err := c.appsService.GetAppOwnedByCurrentUser(ctx)
+	app, err := c.appsService.GetAppOwnedByCurrentOrg(ctx)
 	if err != nil {
 		slog.Warn("Failed to get app", "err", err, "slug", ctx.PathValue("slug"))
 		return err

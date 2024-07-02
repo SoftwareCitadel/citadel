@@ -2,7 +2,6 @@ package layouts
 
 import (
 	"fmt"
-	"strings"
 	"citadel/views/components"
 	"github.com/caesar-rocks/auth"
 	"citadel/internal/models"
@@ -143,12 +142,11 @@ script onSelectOrgChange(orgId string) {
 	const select = document.getElementById("select_org")
 	if (select.value) {
 		window.location.replace("/orgs/" + select.value+"/apps")
-
 	} else {
 		document.getElementById("create_org").showModal()
 
 		document.getElementById("create_org").addEventListener("close", () => {
-			document.getElementById("select_org").value = orgId
+			select.value = orgId
 		})
 	}
 }
@@ -181,28 +179,6 @@ func retrieveName(ctx context.Context) string {
 	}
 
 	return user.FullName
-}
-
-func retrieveInitials(ctx context.Context) string {
-	ctxValue := ctx.Value(auth.USER_CONTEXT_KEY)
-	if ctxValue == nil {
-		return ""
-	}
-	user, ok := ctxValue.(*models.User)
-	if !ok {
-		return ""
-	}
-
-	initials := ""
-
-	for _, part := range strings.Split(user.FullName, " ") {
-		if len(part) == 0 {
-			continue
-		}
-		initials += string(part[0])
-	}
-
-	return initials
 }
 
 type sidebarItemProps struct {
@@ -276,7 +252,7 @@ templ accountMenu() {
 			type="button"
 		>
 			<div class="flex h-8 w-8 items-center justify-center rounded-full bg-zinc-800 border-zinc-700 border text-zinc-200">
-				<span class="font-medium">{ retrieveInitials(ctx) }</span>
+				<span class="font-medium">{ util.RetrieveInitials(ctx) }</span>
 			</div>
 			<span aria-hidden="true">{ retrieveName(ctx) }</span>
 		</button>

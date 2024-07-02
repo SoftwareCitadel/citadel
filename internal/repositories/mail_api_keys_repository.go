@@ -15,12 +15,12 @@ func NewMailApiKeysRepository(db *orm.Database) *MailApiKeysRepository {
 	return &MailApiKeysRepository{Repository: &orm.Repository[models.MailApiKey]{Database: db}}
 }
 
-func (r MailApiKeysRepository) FindAllFromUserWithRelatedDomain(ctx context.Context, userId string) ([]models.MailApiKey, error) {
+func (r MailApiKeysRepository) FindAllFromOrgWithRelatedDomain(ctx context.Context, orgId string) ([]models.MailApiKey, error) {
 	var items []models.MailApiKey = make([]models.MailApiKey, 0)
 
 	err := r.NewSelect().Model((*models.MailApiKey)(nil)).
 		Relation("MailDomain").
-		Where("mail_api_key.user_id = ?", userId).Scan(ctx, &items)
+		Where("mail_api_key.organization_id = ?", orgId).Scan(ctx, &items)
 	if err != nil {
 		return nil, err
 	}

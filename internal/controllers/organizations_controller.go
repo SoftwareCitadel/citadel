@@ -76,7 +76,12 @@ func (c *OrganizationsController) Edit(ctx *caesar.Context) error {
 		return caesar.NewError(404)
 	}
 
-	return ctx.Render(orgsPages.Edit(org, *org.OrganizationMembers[0]))
+	members, err := c.orgMembersRepo.FindAllFromOrganizationWithUser(ctx.Request.Context(), org.ID)
+	if err != nil {
+		return err
+	}
+
+	return ctx.Render(orgsPages.Edit(org, members, *org.OrganizationMembers[0]))
 }
 
 type UpdateOrgValidator struct {
@@ -97,7 +102,7 @@ func (c *OrganizationsController) Update(ctx *caesar.Context) error {
 
 	// Update the organization
 	org.Name = data.Name
-	if err := c.orgsRepo.UpdateOneWhere(ctx.Request.Context(), "id", org.ID, org); err != nil {
+	if err := c.orgsRepo.UpdateOneWhere(ctx.Request.Context(), org, "id", org.ID); err != nil {
 		return err
 	}
 

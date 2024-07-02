@@ -2,6 +2,7 @@ package pages
 
 import (
 	"citadel/views/ui"
+	"citadel/views/util"
 	"citadel/views/layouts"
 	"citadel/internal/models"
 )
@@ -208,7 +209,7 @@ templ deleteDatabaseDialog(db models.Database) {
 	}) {
 		@ui.Button(ui.ButtonProps{
 			Variant:  ui.ButtonVariantDanger,
-			HxDelete: "/databases/" + db.Slug,
+			HxDelete: util.Route(ctx, "/databases/"+db.Slug),
 		}) {
 			Delete Database 
 		}

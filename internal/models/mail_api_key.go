@@ -14,8 +14,8 @@ type MailApiKey struct {
 	Name  string `bun:"name"`
 	Value string `bun:"value"`
 
-	User   *User  `bun:"rel:belongs-to,join:user_id=id"`
-	UserID string `bun:"user_id"`
+	Organization   *Organization `bun:"rel:belongs-to,join:organization_id=id"`
+	OrganizationID string        `bun:"organization_id"`
 
 	MailDomain   *MailDomain `bun:"rel:belongs-to,join:mail_domain_id=id"`
 	MailDomainID string      `bun:"mail_domain_id"`

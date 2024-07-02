@@ -56,12 +56,12 @@ func (driver *DockerDriver) handleEvent(event events.Message) error {
 
 		if event.Action == "die" {
 			depl.Status = models.DeploymentStatusDeployFailed
-			if err := driver.DeplsRepo.UpdateOneWhere(context.Background(), "id", depl.ID, depl); err != nil {
+			if err := driver.DeplsRepo.UpdateOneWhere(context.Background(), depl, "id", depl.ID); err != nil {
 				return err
 			}
 		} else if event.Action == "start" {
 			depl.Status = models.DeploymentStatusSuccess
-			if err := driver.DeplsRepo.UpdateOneWhere(context.Background(), "id", depl.ID, depl); err != nil {
+			if err := driver.DeplsRepo.UpdateOneWhere(context.Background(), depl, "id", depl.ID); err != nil {
 				return err
 			}
 		}
@@ -74,7 +74,7 @@ func (driver *DockerDriver) handleEvent(event events.Message) error {
 
 func (driver *DockerDriver) handleBuildFailed(depl *models.Deployment) error {
 	depl.Status = models.DeploymentStatusBuildFailed
-	if err := driver.DeplsRepo.UpdateOneWhere(context.Background(), "id", depl.ID, depl); err != nil {
+	if err := driver.DeplsRepo.UpdateOneWhere(context.Background(), depl, "id", depl.ID); err != nil {
 		return err
 	}
 
@@ -83,7 +83,7 @@ func (driver *DockerDriver) handleBuildFailed(depl *models.Deployment) error {
 
 func (driver *DockerDriver) handleBuildSuccess(depl *models.Deployment) error {
 	depl.Status = models.DeploymentStatusDeploying
-	if err := driver.DeplsRepo.UpdateOneWhere(context.Background(), "id", depl.ID, depl); err != nil {
+	if err := driver.DeplsRepo.UpdateOneWhere(context.Background(), depl, "id", depl.ID); err != nil {
 		return err
 	}
 

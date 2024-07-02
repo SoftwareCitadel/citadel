@@ -6,6 +6,7 @@ import (
 	"citadel/views/layouts"
 	"citadel/views/ui"
 	"citadel/views/concerns/mails/components"
+	"citadel/views/util"
 )
 
 templ APIKeysPage(mailDomains []models.MailDomain, apiKeys []models.MailApiKey) {
@@ -119,7 +120,7 @@ templ apiKeysTableItem(apiKey models.MailApiKey) {
 			}) {
 				@ui.Button(ui.ButtonProps{
 					Variant:  ui.ButtonVariantDanger,
-					HxDelete: "/mails/api_keys/" + apiKey.ID,
+					HxDelete: util.Route(ctx, "/mails/api_keys/"+apiKey.ID),
 				}) {
 					Delete API Key
 				}
@@ -155,7 +156,7 @@ templ addApiKeyDialog(mailDomains []models.MailDomain) {
 			<div class="px-6 pt-4 border-t border-zinc-300/10">
 				@ui.Button(ui.ButtonProps{
 					Icon:   "fa-solid fa-plus",
-					HxPost: "/mails/api_keys",
+					HxPost: util.Route(ctx, "/mails/api_keys"),
 				}) {
 					Add API Key
 				}

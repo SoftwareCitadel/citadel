@@ -7,6 +7,7 @@ import (
 	"citadel/views/layouts"
 	"citadel/views/ui"
 	"citadel/views/concerns/mails/components"
+	"citadel/views/util"
 )
 
 templ ShowDomainPage(domain models.MailDomain) {
@@ -15,7 +16,7 @@ templ ShowDomainPage(domain models.MailDomain) {
 		<main class="py-4 px-12">
 			<a
 				class="text-sm leading-7 text-yellow-300 hover:text-yellow-50 transition-colors"
-				href="/mails/domains"
+				href={ templ.URL(util.Route(ctx, "/mails/domains")) }
 			>
 				Domains
 			</a>
@@ -30,6 +31,7 @@ templ ShowDomainPage(domain models.MailDomain) {
 						@ui.Button(ui.ButtonProps{
 							Variant: ui.ButtonVariantPrimary,
 							Icon:    "fa-magnifying-glass",
+							HxPost:  util.Route(ctx, "/mails/domains/check_dns/"+domain.ID),
 						}) {
 							Check
 						}

@@ -65,7 +65,7 @@ func (c *ResetPwdController) Handle(ctx *caesar.Context) error {
 	}
 
 	user.Password = pwd
-	if err := c.usersRepo.UpdateOneWhere(ctx.Context(), "id", userID, user); err != nil {
+	if err := c.usersRepo.UpdateOneWhere(ctx.Context(), user, "id", userID); err != nil {
 		return err
 	}
 

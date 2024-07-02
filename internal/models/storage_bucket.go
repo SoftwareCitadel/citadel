@@ -17,8 +17,8 @@ type StorageBucket struct {
 	KeyId     string `bun:"key_id"`
 	SecretKey string `bun:"secret_key"`
 
-	UserID string `bun:"user_id"`
-	User   *User  `bun:"rel:belongs-to,join:user_id=id"`
+	Organization   *Organization `bun:"rel:belongs-to,join:organization_id=id"`
+	OrganizationID string        `bun:"organization_id"`
 }
 
 var _ bun.BeforeAppendModelHook = (*StorageBucket)(nil)

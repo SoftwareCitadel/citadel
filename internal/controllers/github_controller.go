@@ -82,7 +82,7 @@ func (c *GithubController) processInstallationEvent(ctx *caesar.Context, event *
 		user.RemoveGitHubInstallationId(event.Installation.GetID())
 	}
 
-	if err := c.repo.UpdateOneWhere(ctx.Context(), "id", user.ID, user); err != nil {
+	if err := c.repo.UpdateOneWhere(ctx.Context(), user, "id", user.ID); err != nil {
 		return caesar.NewError(500)
 	}
 

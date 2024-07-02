@@ -63,7 +63,7 @@ func (c *StripeController) handlePaymentMethodAttached(ctx *caesar.Context, paym
 	user.StripePaymentMethodExpirationDate = time.Date(
 		int(paymentMethod.Card.ExpYear), time.Month(paymentMethod.Card.ExpMonth), 0, 0, 0, 0, 0, time.UTC,
 	)
-	if err := c.usersRepo.UpdateOneWhere(ctx.Context(), "id", user.ID, user); err != nil {
+	if err := c.usersRepo.UpdateOneWhere(ctx.Context(), user, "id", user.ID); err != nil {
 		return err
 	}
 
@@ -78,7 +78,7 @@ func (c *StripeController) handlePaymentMethodDetached(ctx *caesar.Context, stri
 
 	user.StripePaymentMethodID = ""
 	user.StripePaymentMethodExpirationDate = time.Time{}
-	if err := c.usersRepo.UpdateOneWhere(ctx.Context(), "id", user.ID, user); err != nil {
+	if err := c.usersRepo.UpdateOneWhere(ctx.Context(), user, "id", user.ID); err != nil {
 		return err
 	}
 

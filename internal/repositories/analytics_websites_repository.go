@@ -17,10 +17,10 @@ func NewAnalyticsWebsitesRepository(db *orm.Database) *AnalyticsWebsitesReposito
 	}}
 }
 
-func (r AnalyticsWebsitesRepository) FindAllFromUser(ctx context.Context, userId string) ([]models.AnalyticsWebsite, error) {
+func (r AnalyticsWebsitesRepository) FindAllFromOrg(ctx context.Context, orgId string) ([]models.AnalyticsWebsite, error) {
 	var items []models.AnalyticsWebsite = make([]models.AnalyticsWebsite, 0)
 
-	err := r.NewSelect().Model((*models.AnalyticsWebsite)(nil)).Where("user_id = ?", userId).Scan(ctx, &items)
+	err := r.NewSelect().Model((*models.AnalyticsWebsite)(nil)).Where("organization_id = ?", orgId).Scan(ctx, &items)
 	if err != nil {
 		return nil, err
 	}

@@ -31,8 +31,8 @@ type MailDomain struct {
 	DNSVerified        bool            `bun:"dns_verified"`
 	ExpectedDNSRecords json.RawMessage `bun:"expected_dns_records,type:jsonb,default:'[]'"`
 
-	User   *User  `bun:"rel:belongs-to,join:user_id=id"`
-	UserID string `bun:"user_id"`
+	Organization   *Organization `bun:"rel:belongs-to,join:organization_id=id"`
+	OrganizationID string        `bun:"organization_id"`
 
 	CreatedAt time.Time
 	UpdatedAt time.Time

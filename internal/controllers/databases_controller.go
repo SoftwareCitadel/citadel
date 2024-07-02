@@ -7,7 +7,6 @@ import (
 	"citadel/views/pages"
 	"os"
 
-	"github.com/caesar-rocks/auth"
 	caesar "github.com/caesar-rocks/core"
 )
 
@@ -21,12 +20,7 @@ func NewDatabasesController(dbRepo *repositories.DatabasesRepository, driver dri
 }
 
 func (c *DatabasesController) Index(ctx *caesar.Context) error {
-	user, err := auth.RetrieveUserFromCtx[models.User](ctx)
-	if err != nil {
-		return err
-	}
-
-	dbs, err := c.dbRepo.FindAllFromUser(ctx.Context(), user.ID)
+	dbs, err := c.dbRepo.FindAllFromOrg(ctx.Context(), ctx.PathValue("orgId"))
 	if err != nil {
 		return err
 	}
@@ -42,23 +36,18 @@ type StoreDatabaseValidator struct {
 }
 
 func (c *DatabasesController) Store(ctx *caesar.Context) error {
-	user, err := auth.RetrieveUserFromCtx[models.User](ctx)
-	if err != nil {
-		return err
-	}
-
 	data, _, ok := caesar.Validate[StoreDatabaseValidator](ctx)
 	if !ok {
-		return ctx.Redirect("/databases")
+		return ctx.Redirect("/orgs/" + ctx.PathValue("orgId") + "/databases")
 	}
 
 	db := &models.Database{
-		Name:     data.Name,
-		DBMS:     data.DBMS,
-		Username: data.Username,
-		Password: data.Password,
-		UserID:   user.ID,
-		Host:     os.Getenv("DB_HOST"),
+		Name:           data.Name,
+		DBMS:           data.DBMS,
+		Username:       data.Username,
+		Password:       data.Password,
+		OrganizationID: ctx.PathValue("orgId"),
+		Host:           os.Getenv("DB_HOST"),
 	}
 	if err := c.dbRepo.Create(ctx.Context(), db); err != nil {
 		return err
@@ -68,22 +57,13 @@ func (c *DatabasesController) Store(ctx *caesar.Context) error {
 		return err
 	}
 
-	return ctx.Redirect("/databases")
+	return ctx.Redirect("/orgs/" + ctx.PathValue("orgId") + "/databases")
 }
 
 func (c *DatabasesController) Delete(ctx *caesar.Context) error {
-	user, err := auth.RetrieveUserFromCtx[models.User](ctx)
-	if err != nil {
-		return err
-	}
-
 	db, err := c.dbRepo.FindOneBy(ctx.Context(), "slug", ctx.PathValue("slug"))
 	if err != nil {
 		return err
-	}
-
-	if db.UserID != user.ID {
-		return ctx.Redirect("/databases")
 	}
 
 	if err := c.dbRepo.DeleteOneWhere(ctx.Context(), "slug", ctx.PathValue("slug")); err != nil {
@@ -94,5 +74,5 @@ func (c *DatabasesController) Delete(ctx *caesar.Context) error {
 		return err
 	}
 
-	return ctx.Redirect("/databases")
+	return ctx.Redirect("/orgs/" + ctx.PathValue("orgId") + "/databases")
 }

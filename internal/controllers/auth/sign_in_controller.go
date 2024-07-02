@@ -57,5 +57,5 @@ func (c *SignInController) Handle(ctx *caesar.Context) error {
 		return err
 	}
 
-	return ctx.Redirect("/apps")
+	return ctx.Redirect("/")
 }

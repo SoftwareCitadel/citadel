@@ -5,15 +5,17 @@ import (
 	"citadel/internal/middleware"
 	"citadel/internal/models"
 	"citadel/views/ui"
+	"citadel/views/util"
 )
 
-templ Edit(org models.Organization, currentMember models.OrganizationMember) {
+templ Edit(org models.Organization, members []*models.OrganizationMember, currentMember models.OrganizationMember) {
 	@layouts.DashboardLayout(layouts.DashboardLayoutProps{}) {
 		<h2 class="text-3xl text-gradient font-semibold ">
 			Organization Settings
 		</h2>
 		if currentMember.Role == models.OrganizationMemberRoleOwner {
 			@UpdateOrgForm(org, nil)
+			@MembersManagementCard(members)
 			@ui.Card(ui.CardProps{
 				Title:       "Delete Organization",
 				Description: "Deleting your organization will delete everything associated with it.",
@@ -55,8 +57,8 @@ templ Edit(org models.Organization, currentMember models.OrganizationMember) {
 				Description: "Are you sure you want to delete your organization? Everything associated with this organization will be deleted.",
 			}) {
 				@ui.Button(ui.ButtonProps{
-					Variant:  ui.ButtonVariantDanger,
-					HxDelete: "/orgs/" + ctx.Value(middleware.CTX_KEY_ORG_ID).(string),
+					Variant: ui.ButtonVariantDanger,
+					HxPost:  util.Route(ctx, "/leave"),
 				}) {
 					Leave Organization
 				}
@@ -73,7 +75,7 @@ templ UpdateOrgForm(org models.Organization, errors map[string]string) {
 		}) {
 			<div class="px-6 mb-4">
 				@ui.InputField(ui.InputFieldProps{
-					Label:       "Name",
+					Label:       "Organization Name",
 					Id:          "name",
 					Placeholder: "Organization Name",
 					Value:       org.Name,
@@ -90,4 +92,58 @@ templ UpdateOrgForm(org models.Organization, errors map[string]string) {
 			</div>
 		}
 	</form>
+}
+
+templ MembersManagementCard(members []*models.OrganizationMember) {
+	@ui.Card(ui.CardProps{
+		Title:       "Members",
+		Description: "Manage and invite Team Members",
+		Class:       "!p-0",
+	}) {
+		<ul class="space-y-3 px-6 mb-4">
+			for _, member := range members {
+				<li class="flex items-center gap-x-3 text-sm leading-6 font-normal text-white">
+					<div class="flex h-10 w-10 items-center justify-center rounded-full bg-zinc-800 border-zinc-700 border text-zinc-200">
+						<span class="font-medium">{ util.RetrieveInitials(ctx) }</span>
+					</div>
+					<div class="flex flex-col space-y-1">
+						<div class="flex items-center gap-x-2">
+							<span class="font-medium">{ member.User.FullName }</span>
+							<span
+								if member.Role == models.OrganizationMemberRoleOwner {
+									class="text-xs px-1 p-1 rounded-md bg-emerald-400/10 text-emerald-400 ring-1 ring-inset ring-emerald-400/20"
+								} else {
+									class="text-xs px-1 p-1 rounded-md bg-red-400/10 text-red-400 ring-1 ring-inset ring-red-400/20"
+								}
+							>
+								if member.Role == models.OrganizationMemberRoleOwner {
+									Owner
+								} else {
+									Member
+								}
+							</span>
+						</div>
+						<span class="text-white text-xs">{ member.User.Email }</span>
+					</div>
+				</li>
+			}
+		</ul>
+		<form
+			class="px-6 pt-3 mb-4 space-y-3 border-t border-zinc-300/20"
+			hx-post={ util.Route(ctx, "invite") }
+		>
+			@ui.InputField(ui.InputFieldProps{
+				Label:       "Email",
+				Placeholder: "Enter the email address",
+				Type:        "email",
+				Id:          "email",
+			})
+			@ui.Button(ui.ButtonProps{
+				Variant: ui.ButtonVariantPrimary,
+				Type:    "submit",
+			}) {
+				Send Invitation Email
+			}
+		</form>
+	}
 }

@@ -49,7 +49,7 @@ func (usersListener *UsersListener) assignStripeCustomer(user *models.User) erro
 
 	user.StripeCustomerID = cus.ID
 
-	if err := usersListener.usersRepo.UpdateOneWhere(context.Background(), "id", user.ID, user); err != nil {
+	if err := usersListener.usersRepo.UpdateOneWhere(context.Background(), user, "id", user.ID); err != nil {
 		return err
 	}
 

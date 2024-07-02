@@ -24,7 +24,7 @@ func NewCertsController(auth *auth.Auth, appsRepo *repositories.ApplicationsRepo
 }
 
 func (c *CertsController) Index(ctx *caesar.Context) error {
-	app, err := c.appsService.GetAppOwnedByCurrentUser(ctx)
+	app, err := c.appsService.GetAppOwnedByCurrentOrg(ctx)
 	if err != nil {
 		return err
 	}
@@ -42,7 +42,7 @@ type StoreCertInput struct {
 }
 
 func (c *CertsController) Store(ctx *caesar.Context) error {
-	app, err := c.appsService.GetAppOwnedByCurrentUser(ctx)
+	app, err := c.appsService.GetAppOwnedByCurrentOrg(ctx)
 	if err != nil {
 		return err
 	}
@@ -60,11 +60,10 @@ func (c *CertsController) Store(ctx *caesar.Context) error {
 	}
 	cert.DnsEntries = dnsEntries
 
-	ok, _ = c.driver.CheckDnsConfig(*app, *cert)
-	if !ok {
-		cert.Status = models.CertificateStatusPending
-	} else {
+	if ok, _ = c.driver.CheckDnsConfig(*app, *cert); ok {
 		cert.Status = models.CertificateStatusVerified
+	} else {
+		cert.Status = models.CertificateStatusPending
 	}
 
 	if err := c.certsRepo.Create(ctx.Context(), cert); err != nil {
@@ -75,17 +74,17 @@ func (c *CertsController) Store(ctx *caesar.Context) error {
 }
 
 func (c *CertsController) Delete(ctx *caesar.Context) error {
-	app, err := c.appsService.GetAppOwnedByCurrentUser(ctx)
+	app, err := c.appsService.GetAppOwnedByCurrentOrg(ctx)
 	if err != nil {
 		return err
 	}
 
-	cert, err := c.certsRepo.FindOneBy(ctx.Context(), "id", ctx.PathValue("id"))
+	cert, err := c.certsRepo.FindOneBy(
+		ctx.Context(),
+		"id", ctx.PathValue("id"),
+		"application_id", app.ID,
+	)
 	if err != nil {
-		return err
-	}
-
-	if cert.ApplicationID != app.ID {
 		return err
 	}
 
@@ -97,28 +96,27 @@ func (c *CertsController) Delete(ctx *caesar.Context) error {
 }
 
 func (c *CertsController) Check(ctx *caesar.Context) error {
-	app, err := c.appsService.GetAppOwnedByCurrentUser(ctx)
+	app, err := c.appsService.GetAppOwnedByCurrentOrg(ctx)
 	if err != nil {
 		return err
 	}
 
-	cert, err := c.certsRepo.FindOneBy(ctx.Context(), "id", ctx.PathValue("id"))
+	cert, err := c.certsRepo.FindOneBy(
+		ctx.Context(),
+		"id", ctx.PathValue("id"),
+		"application_id", app.ID,
+	)
 	if err != nil {
 		return err
 	}
 
-	if cert.ApplicationID != app.ID {
-		return err
-	}
-
-	ok, _ := c.driver.CheckDnsConfig(*app, *cert)
-
-	if !ok {
-		cert.Status = models.CertificateStatusPending
-	} else {
+	if ok, _ := c.driver.CheckDnsConfig(*app, *cert); ok {
 		cert.Status = models.CertificateStatusVerified
+	} else {
+		cert.Status = models.CertificateStatusPending
 	}
-	if err := c.certsRepo.UpdateOneWhere(ctx.Context(), "id", cert.ID, cert); err != nil {
+
+	if err := c.certsRepo.UpdateOneWhere(ctx.Context(), cert, "id", cert.ID); err != nil {
 		return err
 	}
 

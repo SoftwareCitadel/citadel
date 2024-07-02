@@ -88,8 +88,8 @@ github.com/caesar-rocks/events v0.0.1 h1:I06yEJdj+mTHbk9xlOr/+z9F9PRbgTbejozaVTm
 github.com/caesar-rocks/events v0.0.1/go.mod h1:acsMRelqyATFRwEQd8CsGfa01/kHyzj/53qOwMAONMs=
 github.com/caesar-rocks/mail v0.0.2 h1:OnsNmMhfMDIFRCHqLAoO+QLcZYy6rOtnK6vHqxhjczU=
 github.com/caesar-rocks/mail v0.0.2/go.mod h1:9dFdu9bu2RhyYEFti8bJBH75uRSBscnyPR/F5ymiRa4=
-github.com/caesar-rocks/orm v0.0.2 h1:nlgTEnWtPR3ydDACUEqfZ8r7UTBLsh7PAl9joByIzcU=
-github.com/caesar-rocks/orm v0.0.2/go.mod h1:CAHl4SriBNMO9bgeRDSUrbZEiIVfQauh9Mcsy6cPsBQ=
+github.com/caesar-rocks/orm v0.0.4 h1:ptVJLhi5RRFbpnLiaPQNGL9QH60PpwbzGATuOw17Zy0=
+github.com/caesar-rocks/orm v0.0.4/go.mod h1:CAHl4SriBNMO9bgeRDSUrbZEiIVfQauh9Mcsy6cPsBQ=
 github.com/caesar-rocks/ui v0.0.3 h1:j4OTRMq1e39VHb8FBRozMBvjvr2jbHS0PTpYR6BpiGM=
 github.com/caesar-rocks/ui v0.0.3/go.mod h1:3NNWugcgwQk/craqya2VdTqvvCNjjo1ww0HJ/ayMDC4=
 github.com/caesar-rocks/vexillum v0.0.2 h1:0ffp55XEcN89dNNbF5yVMnPwrTmSuzeSYaEjMGGM2ws=

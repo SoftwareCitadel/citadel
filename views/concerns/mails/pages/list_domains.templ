@@ -5,6 +5,7 @@ import (
 	"citadel/views/layouts"
 	"citadel/views/ui"
 	"citadel/views/concerns/mails/components"
+	"citadel/views/util"
 )
 
 templ ListDomainsPage(domains []models.MailDomain) {
@@ -66,7 +67,7 @@ templ domainsTableItem(domain models.MailDomain) {
 		<td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-zinc-300 sm:pl-6 max-w-[100vw] ">
 			<a
 				class="underline text-zinc-300 hover:text-zinc-100 transition-colors"
-				href={ templ.URL("/mails/domains/" + domain.ID) }
+				href={ templ.URL(util.Route(ctx, "/mails/domains/"+domain.ID)) }
 			>
 				{ domain.Domain }
 			</a>
@@ -103,7 +104,7 @@ templ domainsTableItem(domain models.MailDomain) {
 			}) {
 				@ui.Button(ui.ButtonProps{
 					Variant:  ui.ButtonVariantDanger,
-					HxDelete: "/mails/domains/" + domain.ID,
+					HxDelete: util.Route(ctx, "/mails/domains/"+domain.ID),
 				}) {
 					Delete Domain
 				}

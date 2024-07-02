@@ -4,6 +4,7 @@ import (
 	"citadel/views/layouts"
 	"citadel/views/ui"
 	"citadel/internal/models"
+	"citadel/views/util"
 )
 
 templ IndexPage(apps []models.Application) {
@@ -50,7 +51,7 @@ templ createApplicationDialogActionButton() {
 }
 
 templ namingStep() {
-	<div class="px-6 pb-4">
+	<div class="px-6 pb-6">
 		@ui.InputField(ui.InputFieldProps{
 			Label:       "Name",
 			Id:          "name",
@@ -146,7 +147,7 @@ script disconnectGitHubRepoFromForm() {
 }
 
 templ applicationCard(app models.Application) {
-	<a class="hover:opacity-75 transition-opacity" href={ templ.URL("/apps/" + app.Slug) }>
+	<a class="hover:opacity-75 transition-opacity" href={ templ.URL(util.Route(ctx, "/apps/"+app.Slug)) }>
 		<div class="rounded-md border bg-zinc-900 text-white shadow border-zinc-300/20">
 			<div class="p-6">
 				<h3 class="font-semibold leading-none tracking-tight text-xl text-white !text-lg">

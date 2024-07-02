@@ -17,8 +17,8 @@ type Database struct {
 	Username string `bun:"username"`
 	Password string `bun:"password"`
 
-	UserID string `bun:"user_id"`
-	User   *User  `bun:"rel:belongs-to,join:user_id=id"`
+	Organization   *Organization `bun:"rel:belongs-to,join:organization_id=id"`
+	OrganizationID string        `bun:"organization_id"`
 
 	CreatedAt time.Time
 	UpdatedAt time.Time

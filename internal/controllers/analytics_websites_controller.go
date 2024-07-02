@@ -5,7 +5,6 @@ import (
 	"citadel/internal/repositories"
 	analyticsWebsitesPages "citadel/views/concerns/analytics_websites/pages"
 
-	"github.com/caesar-rocks/auth"
 	caesar "github.com/caesar-rocks/core"
 	"github.com/caesar-rocks/ui/toast"
 	"github.com/charmbracelet/log"
@@ -24,12 +23,7 @@ func NewAnalyticsWebsitesController(
 }
 
 func (c *AnalyticsWebsitesController) Index(ctx *caesar.Context) error {
-	user, err := auth.RetrieveUserFromCtx[models.User](ctx)
-	if err != nil {
-		return err
-	}
-
-	websites, err := c.analRepo.FindAllFromUser(ctx.Context(), user.ID)
+	websites, err := c.analRepo.FindAllFromOrg(ctx.Context(), ctx.PathValue("orgId"))
 	if err != nil {
 		log.Error("err", err)
 		return caesar.NewError(400)
@@ -48,20 +42,15 @@ type CreateAnalyticsWebsiteValidator struct {
 }
 
 func (c *AnalyticsWebsitesController) Store(ctx *caesar.Context) error {
-	user, err := auth.RetrieveUserFromCtx[models.User](ctx)
-	if err != nil {
-		return err
-	}
-
 	data, _, ok := caesar.Validate[CreateAnalyticsWebsiteValidator](ctx)
 	if !ok {
 		return nil
 	}
 
 	website := &models.AnalyticsWebsite{
-		UserID: user.ID,
-		Name:   data.Name,
-		Domain: data.Domain,
+		OrganizationID: ctx.PathValue("orgId"),
+		Name:           data.Name,
+		Domain:         data.Domain,
 	}
 	if err := c.analRepo.Create(ctx.Context(), website); err != nil {
 		return caesar.NewError(400)
@@ -71,11 +60,11 @@ func (c *AnalyticsWebsitesController) Store(ctx *caesar.Context) error {
 		return ctx.SendJSON(website)
 	}
 
-	return ctx.Redirect("/analytics_websites/" + website.ID)
+	return ctx.Redirect("/orgs/" + ctx.PathValue("orgId") + "/analytics_websites/" + website.ID)
 }
 
 func (c *AnalyticsWebsitesController) Show(ctx *caesar.Context) error {
-	website, err := c.analRepo.FindOneBy(ctx.Context(), "id", ctx.PathValue("id"))
+	website, err := c.analRepo.FindOneBy(ctx.Context(), "id", ctx.PathValue("id"), "organization_id", ctx.PathValue("orgId"))
 	if err != nil {
 		return caesar.NewError(404)
 	}
@@ -88,7 +77,7 @@ func (c *AnalyticsWebsitesController) Show(ctx *caesar.Context) error {
 }
 
 func (c *AnalyticsWebsitesController) Edit(ctx *caesar.Context) error {
-	website, err := c.analRepo.FindOneBy(ctx.Context(), "id", ctx.PathValue("id"))
+	website, err := c.analRepo.FindOneBy(ctx.Context(), "id", ctx.PathValue("id"), "organization_id", ctx.PathValue("orgId"))
 	if err != nil {
 		return caesar.NewError(404)
 	}
@@ -106,7 +95,7 @@ type UpdateAnalyticsWebsiteValidator struct {
 }
 
 func (c *AnalyticsWebsitesController) Update(ctx *caesar.Context) error {
-	website, err := c.analRepo.FindOneBy(ctx.Context(), "id", ctx.PathValue("id"))
+	website, err := c.analRepo.FindOneBy(ctx.Context(), "id", ctx.PathValue("id"), "organization_id", ctx.PathValue("orgId"))
 	if err != nil {
 		return caesar.NewError(404)
 	}
@@ -119,7 +108,7 @@ func (c *AnalyticsWebsitesController) Update(ctx *caesar.Context) error {
 	website.Name = data.Name
 	website.Domain = data.Domain
 
-	if err := c.analRepo.UpdateOneWhere(ctx.Context(), "id", website.ID, website); err != nil {
+	if err := c.analRepo.UpdateOneWhere(ctx.Context(), website, "id", website.ID); err != nil {
 		return caesar.NewError(400)
 	}
 
@@ -129,7 +118,7 @@ func (c *AnalyticsWebsitesController) Update(ctx *caesar.Context) error {
 }
 
 func (c *AnalyticsWebsitesController) Delete(ctx *caesar.Context) error {
-	website, err := c.analRepo.FindOneBy(ctx.Context(), "id", ctx.PathValue("id"))
+	website, err := c.analRepo.FindOneBy(ctx.Context(), "id", ctx.PathValue("id"), "organization_id", ctx.PathValue("orgId"))
 	if err != nil {
 		return caesar.NewError(404)
 	}
@@ -138,7 +127,7 @@ func (c *AnalyticsWebsitesController) Delete(ctx *caesar.Context) error {
 		return caesar.NewError(400)
 	}
 
-	return ctx.Redirect("/analytics_websites")
+	return ctx.Redirect("/orgs/" + ctx.PathValue("orgId") + "/analytics_websites")
 }
 
 func (c *AnalyticsWebsitesController) Track(ctx *caesar.Context) error {

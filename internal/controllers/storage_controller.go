@@ -29,7 +29,7 @@ func (c *StorageController) Index(ctx *caesar.Context) error {
 		return err
 	}
 
-	storageBuckets, err := c.storageBucketsRepo.FindAllFromUser(ctx.Context(), user.ID)
+	storageBuckets, err := c.storageBucketsRepo.FindAllFromOrg(ctx.Context(), user.ID)
 	if err != nil {
 		return caesar.NewError(400)
 	}
@@ -46,17 +46,12 @@ type StoreStorageBucketValidator struct {
 }
 
 func (c *StorageController) Store(ctx *caesar.Context) error {
-	user, err := auth.RetrieveUserFromCtx[models.User](ctx)
-	if err != nil {
-		return err
-	}
-
 	data, _, ok := caesar.Validate[StoreStorageBucketValidator](ctx)
 	if !ok {
-		return ctx.Redirect("/storage")
+		return ctx.Redirect("/orgs/" + ctx.PathValue("orgId") + "/storage")
 	}
 
-	bucket := &models.StorageBucket{Name: data.Name, UserID: user.ID}
+	bucket := &models.StorageBucket{Name: data.Name, OrganizationID: ctx.PathValue("orgId")}
 	if err := c.storageBucketsRepo.Create(ctx.Context(), bucket); err != nil {
 		return err
 	}
@@ -70,27 +65,27 @@ func (c *StorageController) Store(ctx *caesar.Context) error {
 	bucket.SecretKey = secretKey
 	bucket.Region = region
 
-	if err := c.storageBucketsRepo.UpdateOneWhere(ctx.Context(), "id", bucket.ID, bucket); err != nil {
+	if err := c.storageBucketsRepo.UpdateOneWhere(ctx.Context(), bucket, "id", bucket.ID); err != nil {
 		return err
 	}
 
-	return ctx.Redirect("/storage/" + bucket.Slug)
+	return ctx.Redirect("/orgs/" + ctx.PathValue("orgId") + "/storage/" + bucket.Slug)
 }
 
 func (c *StorageController) Show(ctx *caesar.Context) error {
-	user, err := auth.RetrieveUserFromCtx[models.User](ctx)
-	if err != nil {
-		return err
-	}
+	// user, err := auth.RetrieveUserFromCtx[models.User](ctx)
+	// if err != nil {
+	// 	return err
+	// }
 
 	bucket, err := c.storageBucketsRepo.FindOneBy(ctx.Context(), "slug", ctx.PathValue("slug"))
 	if err != nil {
 		return err
 	}
 
-	if bucket.UserID != user.ID {
-		return caesar.NewError(403)
-	}
+	// if bucket.UserID != user.ID {
+	// 	return caesar.NewError(403)
+	// }
 
 	bucketSize, storageFiles, err := c.driver.GetFilesAndTotalSize(*bucket)
 	if err != nil {
@@ -101,36 +96,27 @@ func (c *StorageController) Show(ctx *caesar.Context) error {
 }
 
 func (c *StorageController) Edit(ctx *caesar.Context) error {
-	user, err := auth.RetrieveUserFromCtx[models.User](ctx)
-	if err != nil {
-		return err
-	}
+	// user, err := auth.RetrieveUserFromCtx[models.User](ctx)
+	// if err != nil {
+	// 	return err
+	// }
 
 	bucket, err := c.storageBucketsRepo.FindOneBy(ctx.Context(), "slug", ctx.PathValue("slug"))
 	if err != nil {
 		return err
 	}
 
-	if bucket.UserID != user.ID {
-		return caesar.NewError(403)
-	}
+	// if bucket.UserID != user.ID {
+	// 	return caesar.NewError(403)
+	// }
 
 	return ctx.Render(storagePages.Edit(*bucket))
 }
 
 func (c *StorageController) Update(ctx *caesar.Context) error {
-	user, err := auth.RetrieveUserFromCtx[models.User](ctx)
+	bucket, err := c.storageBucketsRepo.FindOneBy(ctx.Context(), "slug", ctx.PathValue("slug"), "organization_id", ctx.PathValue("orgId"))
 	if err != nil {
 		return err
-	}
-
-	bucket, err := c.storageBucketsRepo.FindOneBy(ctx.Context(), "slug", ctx.PathValue("slug"))
-	if err != nil {
-		return err
-	}
-
-	if bucket.UserID != user.ID {
-		return caesar.NewError(403)
 	}
 
 	data, _, ok := caesar.Validate[StoreStorageBucketValidator](ctx)
@@ -139,7 +125,7 @@ func (c *StorageController) Update(ctx *caesar.Context) error {
 	}
 
 	bucket.Name = data.Name
-	if err := c.storageBucketsRepo.UpdateOneWhere(ctx.Context(), "id", bucket.ID, bucket); err != nil {
+	if err := c.storageBucketsRepo.UpdateOneWhere(ctx.Context(), bucket, "id", bucket.ID); err != nil {
 		return err
 	}
 
@@ -149,18 +135,13 @@ func (c *StorageController) Update(ctx *caesar.Context) error {
 }
 
 func (c *StorageController) Delete(ctx *caesar.Context) error {
-	user, err := auth.RetrieveUserFromCtx[models.User](ctx)
+	bucket, err := c.storageBucketsRepo.FindOneBy(
+		ctx.Context(),
+		"slug", ctx.PathValue("slug"),
+		"organization_id", ctx.PathValue("orgId"),
+	)
 	if err != nil {
 		return err
-	}
-
-	bucket, err := c.storageBucketsRepo.FindOneBy(ctx.Context(), "slug", ctx.PathValue("slug"))
-	if err != nil {
-		return err
-	}
-
-	if bucket.UserID != user.ID {
-		return caesar.NewError(403)
 	}
 
 	if err := c.storageBucketsRepo.DeleteOneWhere(ctx.Context(), "id", bucket.ID); err != nil {
@@ -171,22 +152,17 @@ func (c *StorageController) Delete(ctx *caesar.Context) error {
 		return err
 	}
 
-	return ctx.Redirect("/storage")
+	return ctx.Redirect("/orgs/" + ctx.PathValue("orgId") + "/storage")
 }
 
 func (c *StorageController) UploadFile(ctx *caesar.Context) error {
-	// Retrieve the bucket owned by the current user
-	user, err := auth.RetrieveUserFromCtx[models.User](ctx)
+	bucket, err := c.storageBucketsRepo.FindOneBy(
+		ctx.Context(),
+		"slug", ctx.PathValue("slug"),
+		"organization_id", ctx.PathValue("orgId"),
+	)
 	if err != nil {
 		return err
-	}
-	bucket, err := c.storageBucketsRepo.FindOneBy(ctx.Context(), "slug", ctx.PathValue("slug"))
-	if err != nil {
-		return err
-	}
-
-	if bucket.UserID != user.ID {
-		return caesar.NewError(403)
 	}
 
 	// Parse the file, and pass its contents into a buffer.

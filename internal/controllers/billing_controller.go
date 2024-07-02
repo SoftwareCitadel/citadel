@@ -47,7 +47,7 @@ func (c *BillingController) InitiatePaymentMethodChange(ctx *caesar.Context) err
 		return err
 	}
 
-	redirectUrl := os.Getenv("APP_URL") + "/billing"
+	redirectUrl := os.Getenv("APP_URL") + "/orgs/" + ctx.PathValue("orgId") + "/billing"
 	session, err := c.stripeClientApi.CheckoutSessions.New(&stripe.CheckoutSessionParams{
 		PaymentMethodTypes: stripe.StringSlice([]string{"card"}),
 		Mode:               stripe.String("setup"),

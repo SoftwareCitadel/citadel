@@ -4,6 +4,7 @@ import (
 	"citadel/views/layouts"
 	"citadel/internal/models"
 	"citadel/views/ui"
+	"citadel/views/util"
 )
 
 templ EditPage(app models.Application) {
@@ -26,7 +27,7 @@ templ EditPage(app models.Application) {
 				} else {
 					<form
 						class="flex flex-col sm:flex-row py-2 items-start"
-						hx-post={ "/apps/" + app.Slug + "/disconnect_github" }
+						hx-post={ util.Route(ctx, "/apps/"+app.Slug+"/disconnect_github") }
 						hx-swap="outerHTML"
 						hx-trigger="submit"
 						hx-target="body"
@@ -73,7 +74,7 @@ templ EditPage(app models.Application) {
 			Title: "Connect GitHub Repository",
 			Class: "!p-0 flex flex-col",
 		}) {
-			<div class="px-6 py-4">
+			<div class="px-6 pt-4">
 				<a
 					class="text-yellow-400 hover:text-yellow-500 transition-colors text-sm cursor-pointer"
 					onclick="window.open('https://github.com/apps/software-citadel/installations/new', 'popup', 'width=600,height=600')"
@@ -114,7 +115,7 @@ templ EditPage(app models.Application) {
 		}) {
 			@ui.Button(ui.ButtonProps{
 				Variant:  ui.ButtonVariantDanger,
-				HxDelete: "/apps/" + app.Slug,
+				HxDelete: util.Route(ctx, "/apps/"+app.Slug),
 			}) {
 				Delete Application
 			}
@@ -123,7 +124,7 @@ templ EditPage(app models.Application) {
 }
 
 templ ApplicationsSettingsForm(app models.Application, errors map[string]string) {
-	<form hx-patch={ "/apps/" + app.Slug }>
+	<form hx-patch={ util.Route(ctx, "/apps/"+app.Slug) }>
 		@ui.Card(ui.CardProps{
 			Title: "Application settings",
 			Class: "!p-0",

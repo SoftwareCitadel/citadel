@@ -84,9 +84,9 @@ func (s *Session) Mail(from string, opts *smtp.MailOptions) error {
 		log.Error("failed to get email domain", "error", err)
 		return err
 	}
-	domain, err := s.domainsRepo.FindVerifiedDomainWithUser(context.Background(), d, s.apiKey.UserID)
+	domain, err := s.domainsRepo.FindVerifiedDomainWithOrg(context.Background(), d, s.apiKey.OrganizationID)
 	if err != nil {
-		log.Error("failed to find domain", "domain", d, "user.id", s.apiKey.UserID, "error", err)
+		log.Error("failed to find domain", "domain", d, "s.apiKey.OrganizationID", s.apiKey.OrganizationID, "error", err)
 		return err
 	}
 

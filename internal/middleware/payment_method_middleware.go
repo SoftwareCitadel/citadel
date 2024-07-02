@@ -23,7 +23,7 @@ func PaymentMethodMiddleware(vexillum *vexillum.Vexillum) caesar.Handler {
 					"error": "Payment method is required",
 				}, 400)
 			}
-			return ctx.Redirect("/apps")
+			return ctx.Redirect("/orgs/" + ctx.PathValue("orgId") + "/apps")
 		}
 
 		ctx.Next()

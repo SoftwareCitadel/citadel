@@ -20,7 +20,7 @@ func NewEnvController(appsService *services.AppsService, repo *repositories.Appl
 }
 
 func (c *EnvController) Edit(ctx *caesar.Context) error {
-	app, err := c.appsService.GetAppOwnedByCurrentUser(ctx)
+	app, err := c.appsService.GetAppOwnedByCurrentOrg(ctx)
 	if err != nil {
 		return err
 	}
@@ -29,7 +29,7 @@ func (c *EnvController) Edit(ctx *caesar.Context) error {
 }
 
 func (c *EnvController) Update(ctx *caesar.Context) error {
-	app, err := c.appsService.GetAppOwnedByCurrentUser(ctx)
+	app, err := c.appsService.GetAppOwnedByCurrentOrg(ctx)
 	if err != nil {
 		return err
 	}
@@ -38,7 +38,7 @@ func (c *EnvController) Update(ctx *caesar.Context) error {
 	env := ctx.Request.FormValue("env")
 	app.Env = []byte(env)
 
-	if err := c.repo.UpdateOneWhere(ctx.Context(), "id", app.ID, app); err != nil {
+	if err := c.repo.UpdateOneWhere(ctx.Context(), app, "id", app.ID); err != nil {
 		return caesar.NewError(500)
 	}
 

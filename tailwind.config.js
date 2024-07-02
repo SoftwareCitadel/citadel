@@ -4,7 +4,7 @@ module.exports = {
     extend: {
       fontFamily: {
         sans: [
-          -apple - system,
+          "-apple-system",
           "BlinkMacSystemFont",
           "Segoe UI",
           "Roboto",

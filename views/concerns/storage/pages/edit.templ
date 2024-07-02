@@ -4,6 +4,7 @@ import (
 	"citadel/internal/models"
 	"citadel/views/layouts"
 	"citadel/views/ui"
+	"citadel/views/util"
 )
 
 templ Edit(storageBucket models.StorageBucket) {
@@ -33,7 +34,7 @@ templ Edit(storageBucket models.StorageBucket) {
 		}) {
 			@ui.Button(ui.ButtonProps{
 				Variant:  ui.ButtonVariantDanger,
-				HxDelete: "/storage/" + storageBucket.Slug,
+				HxDelete: util.Route(ctx, "/storage/"+storageBucket.Slug),
 			}) {
 				Delete Storage Bucket
 			}

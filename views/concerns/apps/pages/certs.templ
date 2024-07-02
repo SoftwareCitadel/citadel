@@ -5,6 +5,7 @@ import (
 	"citadel/internal/models"
 	"citadel/views/ui"
 	"strconv"
+	"citadel/views/util"
 )
 
 templ CertsPage(app models.Application, certs []models.Certificate) {
@@ -62,11 +63,14 @@ templ certCardHeader(app models.Application, cert models.Certificate) {
 		<div class="flex gap-x-2 items-center">
 			@ui.Button(ui.ButtonProps{
 				Variant: ui.ButtonVariantSecondary,
-				HxPost:  "/apps/" + app.Slug + "/certs/" + cert.ID + "/check",
+				HxPost:  util.Route(ctx, "/apps/"+app.Slug+"/certs/"+cert.ID+"/check"),
 			}) {
 				Check
 			}
-			@ui.Button(ui.ButtonProps{Variant: ui.ButtonVariantDanger, OnClick: ui.OpenDialog("delete-cert-" + cert.ID)}) {
+			@ui.Button(ui.ButtonProps{
+				Variant: ui.ButtonVariantDanger,
+				OnClick: ui.OpenDialog("delete-cert-" + cert.ID),
+			}) {
 				Delete
 			}
 		</div>
@@ -89,7 +93,10 @@ templ certCardHeader(app models.Application, cert models.Certificate) {
 		Title:       "Delete certificate",
 		Description: "Are you sure you want to delete this certificate?",
 	}) {
-		@ui.Button(ui.ButtonProps{Variant: ui.ButtonVariantDanger, HxDelete: "/apps/" + app.Slug + "/certs/" + cert.ID}) {
+		@ui.Button(ui.ButtonProps{
+			Variant:  ui.ButtonVariantDanger,
+			HxDelete: util.Route(ctx, "/apps/"+app.Slug+"/certs/"+cert.ID),
+		}) {
 			Delete certificate
 		}
 	}

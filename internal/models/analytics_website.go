@@ -13,8 +13,8 @@ type AnalyticsWebsite struct {
 	Name   string `bun:"name,notnull"`
 	Domain string `bun:"domain,notnull"`
 
-	UserID string `bun:"user_id,notnull"`
-	User   *User  `bun:"rel:belongs-to,join:user_id=id"`
+	Organization   *Organization `bun:"rel:belongs-to,join:organization_id=id"`
+	OrganizationID string        `bun:"organization_id"`
 
 	CreatedAt time.Time `bun:"created_at,notnull,default:current_timestamp"`
 	UpdatedAt time.Time `bun:"updated_at,notnull,default:current_timestamp"`

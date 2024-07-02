@@ -24,8 +24,8 @@ type Application struct {
 
 	Certificates []*Certificate `bun:"rel:has-many,join:id=application_id"`
 
-	UserID string `bun:"user_id"`
-	User   *User  `bun:"rel:belongs-to,join:user_id=id"`
+	OrganizationID string        `bun:"organization_id"`
+	Organization   *Organization `bun:"rel:belongs-to,join:organization_id=id"`
 
 	CreatedAt time.Time
 	UpdatedAt time.Time

@@ -8,7 +8,6 @@ import (
 
 	appsPages "citadel/views/concerns/apps/pages"
 
-	"github.com/caesar-rocks/auth"
 	caesar "github.com/caesar-rocks/core"
 	"github.com/caesar-rocks/ui/toast"
 	"github.com/charmbracelet/log"
@@ -25,12 +24,7 @@ func NewAppsController(appsService *services.AppsService, appsRepo *repositories
 }
 
 func (c *AppsController) Index(ctx *caesar.Context) error {
-	user, err := auth.RetrieveUserFromCtx[models.User](ctx)
-	if err != nil {
-		return err
-	}
-
-	apps, err := c.appsRepo.FindAllFromUser(ctx.Context(), user.ID)
+	apps, err := c.appsRepo.FindAllFromOrg(ctx.Context(), ctx.PathValue("orgId"))
 	if err != nil {
 		log.Error("err", err)
 		return caesar.NewError(400)
@@ -53,14 +47,9 @@ type StoreAppValidator struct {
 }
 
 func (c *AppsController) Store(ctx *caesar.Context) error {
-	user, err := auth.RetrieveUserFromCtx[models.User](ctx)
-	if err != nil {
-		return err
-	}
-
 	data, _, ok := caesar.Validate[StoreAppValidator](ctx)
 	if !ok {
-		return ctx.Redirect("/apps")
+		return ctx.RedirectBack()
 	}
 
 	if data.CpuConfig == "" {
@@ -71,7 +60,7 @@ func (c *AppsController) Store(ctx *caesar.Context) error {
 	}
 
 	app := &models.Application{
-		UserID:               user.ID,
+		OrganizationID:       ctx.PathValue("orgId"),
 		Name:                 data.Name,
 		CpuConfig:            data.CpuConfig,
 		RamConfig:            data.RamConfig,
@@ -91,11 +80,11 @@ func (c *AppsController) Store(ctx *caesar.Context) error {
 		return ctx.SendJSON(app)
 	}
 
-	return ctx.Redirect("/apps/" + app.Slug)
+	return ctx.Redirect("/orgs/" + ctx.PathValue("orgId") + "/apps/" + app.Slug)
 }
 
 func (c *AppsController) Show(ctx *caesar.Context) error {
-	app, err := c.appsService.GetAppOwnedByCurrentUser(ctx)
+	app, err := c.appsService.GetAppOwnedByCurrentOrg(ctx)
 	if err != nil {
 		return err
 	}
@@ -104,18 +93,13 @@ func (c *AppsController) Show(ctx *caesar.Context) error {
 }
 
 func (c *AppsController) Edit(ctx *caesar.Context) error {
-	user, err := auth.RetrieveUserFromCtx[models.User](ctx)
+	app, err := c.appsRepo.FindOneBy(
+		ctx.Context(),
+		"slug", ctx.PathValue("slug"),
+		"organization_id", ctx.PathValue("orgId"),
+	)
 	if err != nil {
 		return err
-	}
-
-	app, err := c.appsRepo.FindOneBy(ctx.Context(), "slug", ctx.PathValue("slug"))
-	if err != nil {
-		return err
-	}
-
-	if app.UserID != user.ID {
-		return caesar.NewError(403)
 	}
 
 	return ctx.Render(appsPages.EditPage(*app))
@@ -129,7 +113,7 @@ type UpdateApplicationValidator struct {
 }
 
 func (c *AppsController) Update(ctx *caesar.Context) error {
-	app, err := c.appsService.GetAppOwnedByCurrentUser(ctx)
+	app, err := c.appsService.GetAppOwnedByCurrentOrg(ctx)
 	if err != nil {
 		return err
 	}
@@ -144,7 +128,7 @@ func (c *AppsController) Update(ctx *caesar.Context) error {
 	app.CpuConfig = data.CpuConfig
 	app.RamConfig = data.RamConfig
 
-	if err := c.appsRepo.UpdateOneWhere(ctx.Context(), "slug", ctx.PathValue("slug"), app); err != nil {
+	if err := c.appsRepo.UpdateOneWhere(ctx.Context(), app, "slug", ctx.PathValue("slug")); err != nil {
 		return err
 	}
 
@@ -160,7 +144,7 @@ type ConnectGitHubValidator struct {
 }
 
 func (c *AppsController) ConnectGitHub(ctx *caesar.Context) error {
-	app, err := c.appsService.GetAppOwnedByCurrentUser(ctx)
+	app, err := c.appsService.GetAppOwnedByCurrentOrg(ctx)
 	if err != nil {
 		return err
 	}
@@ -174,15 +158,15 @@ func (c *AppsController) ConnectGitHub(ctx *caesar.Context) error {
 	app.GitHubRepository = data.GitHubRepository
 	app.GitHubBranch = data.GitHubBranch
 
-	if err := c.appsRepo.UpdateOneWhere(ctx.Context(), "slug", ctx.PathValue("slug"), app); err != nil {
+	if err := c.appsRepo.UpdateOneWhere(ctx.Context(), app, "slug", ctx.PathValue("slug")); err != nil {
 		return err
 	}
 
-	return ctx.Redirect("/apps/" + app.Slug + "/edit")
+	return ctx.Redirect("/orgs/" + ctx.PathValue("orgId") + "/apps/" + app.Slug + "/edit")
 }
 
 func (c *AppsController) DisconnectGitHub(ctx *caesar.Context) error {
-	app, err := c.appsService.GetAppOwnedByCurrentUser(ctx)
+	app, err := c.appsService.GetAppOwnedByCurrentOrg(ctx)
 	if err != nil {
 		return err
 	}
@@ -191,15 +175,15 @@ func (c *AppsController) DisconnectGitHub(ctx *caesar.Context) error {
 	app.GitHubRepository = ""
 	app.GitHubBranch = ""
 
-	if err := c.appsRepo.UpdateOneWhere(ctx.Context(), "slug", ctx.PathValue("slug"), app); err != nil {
+	if err := c.appsRepo.UpdateOneWhere(ctx.Context(), app, "slug", ctx.PathValue("slug")); err != nil {
 		return err
 	}
 
-	return ctx.Redirect("/apps/" + app.Slug + "/edit")
+	return ctx.Redirect("/orgs/" + ctx.PathValue("orgId") + "/apps/" + app.Slug + "/edit")
 }
 
 func (c *AppsController) Delete(ctx *caesar.Context) error {
-	app, err := c.appsService.GetAppOwnedByCurrentUser(ctx)
+	app, err := c.appsService.GetAppOwnedByCurrentOrg(ctx)
 	if err != nil {
 		return err
 	}
@@ -208,5 +192,5 @@ func (c *AppsController) Delete(ctx *caesar.Context) error {
 		return err
 	}
 
-	return ctx.Redirect("/apps")
+	return ctx.Redirect("/orgs/" + ctx.PathValue("orgId") + "/apps")
 }

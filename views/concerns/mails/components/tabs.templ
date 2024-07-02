@@ -11,15 +11,15 @@ templ Tabs() {
 			<li>
 				<a
 					class={ util.GetClassForTab("/orgs/"+ctx.Value(middleware.CTX_KEY_ORG_ID).(string)+"/mails", util.RetrievePath(ctx)) }
-					href={ templ.URL("/orgs/" + ctx.Value(middleware.CTX_KEY_ORG_ID).(string) + "/mails") }
+					href={ templ.URL(util.Route(ctx, "/mails/domains") + "/mails") }
 				>
 					Overview
 				</a>
 			</li>
 			<li>
 				<a
-					class={ util.GetClassForTab("/orgs/"+ctx.Value(middleware.CTX_KEY_ORG_ID).(string)+"/mails/domains", util.RetrievePath(ctx)) }
-					href={ templ.URL("/orgs/" + ctx.Value(middleware.CTX_KEY_ORG_ID).(string) + "/mails/domains") }
+					class={ util.GetClassForTab(util.Route(ctx, "/mails/domains"), util.RetrievePath(ctx)) }
+					href={ templ.URL(util.Route(ctx, "/mails/domains") + "/mails/domains") }
 				>
 					Domains
 				</a>
@@ -27,7 +27,7 @@ templ Tabs() {
 			<li>
 				<a
 					class={ util.GetClassForTab("/orgs/"+ctx.Value(middleware.CTX_KEY_ORG_ID).(string)+"/mails/api_keys", util.RetrievePath(ctx)) }
-					href={ templ.URL("/orgs/" + ctx.Value(middleware.CTX_KEY_ORG_ID).(string) + "/mails/api_keys") }
+					href={ templ.URL(util.Route(ctx, "/mails/domains") + "/mails/api_keys") }
 				>
 					API Keys
 				</a>
