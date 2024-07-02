@@ -10,16 +10,15 @@ import (
 	"net/http"
 )
 
-func RetrieveApplications() ([]models.Application, error) {
+func RetrieveApplications(orgId string) ([]models.Application, error) {
 	token, err := util.RetrieveTokenFromConfig()
 	if err != nil {
 		return nil, err
 	}
 
-	url := RetrieveApiBaseUrl() + "/apps"
+	url := RetrieveApiBaseUrl() + "/orgs/" + orgId + "/apps"
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
-		fmt.Println("[1]", err)
 		return nil, err
 	}
 

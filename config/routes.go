@@ -228,6 +228,9 @@ func RegisterRoutes(
 
 	// Organizations-related routes
 	router.
+		Get("/orgs", orgsController.Index).
+		Use(auth.AuthMiddleware)
+	router.
 		Post("/orgs", orgsController.Store).
 		Use(auth.AuthMiddleware)
 	router.

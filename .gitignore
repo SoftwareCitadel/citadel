@@ -23,3 +23,9 @@ private-key.pem
 .DS_Store
 
 vendor
+
+# Binaries
+citadel
+smtp
+caesar
+citadel.toml

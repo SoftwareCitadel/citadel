@@ -64,18 +64,18 @@ func RetrieveReleaseCommandFromProjectConfig() (string, error) {
 	return releaseCommand, nil
 }
 
-func InitializeConfigFile(appSlug string) error {
+func InitializeConfigFile(orgId, appSlug string) error {
 	vi := viper.New()
 	vi.SetConfigName("citadel")
 	vi.AddConfigPath(".")
 	vi.SetConfigType("toml")
 
+	vi.Set("organization_id", orgId)
 	vi.Set("application_slug", appSlug)
 
 	var fileExists bool
 
-	_, err := os.Stat("citadel.toml")
-	if err == nil {
+	if _, err := os.Stat("citadel.toml"); err == nil {
 		fileExists = true
 	} else if os.IsNotExist(err) {
 		fileExists = false
@@ -84,18 +84,16 @@ func InitializeConfigFile(appSlug string) error {
 	}
 
 	if fileExists {
-		err = vi.MergeInConfig()
-		if err != nil {
+		if err := vi.MergeInConfig(); err != nil {
 			return err
 		}
 	} else {
-		_, err = os.Create("citadel.toml")
-		if err != nil {
+		if _, err := os.Create("citadel.toml"); err != nil {
 			return err
 		}
 	}
 
-	if err = vi.WriteConfig(); err != nil {
+	if err := vi.WriteConfig(); err != nil {
 		return err
 	}
 

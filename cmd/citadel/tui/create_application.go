@@ -11,7 +11,7 @@ import (
 	"github.com/sveltinio/prompti/input"
 )
 
-func CreateApplication() string {
+func CreateApplication(orgId string) string {
 	questionPrompt := &input.Config{
 		Message:      "What's the name of your application?",
 		Placeholder:  "webapp",

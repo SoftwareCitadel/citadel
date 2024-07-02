@@ -5,6 +5,7 @@ import (
 	"citadel/views/layouts"
 	"citadel/views/concerns/analytics_websites/components"
 	"citadel/views/ui"
+	"citadel/views/util"
 )
 
 templ EditPage(website models.AnalyticsWebsite) {
@@ -43,7 +44,7 @@ templ EditPage(website models.AnalyticsWebsite) {
 }
 
 templ AnalyticsWebsiteSettingsForm(website models.AnalyticsWebsite, errors map[string]string) {
-	<form hx-patch={ "/analytics_websites/" + website.ID } class="space-y-4">
+	<form hx-patch={ util.Route(ctx, "/analytics_websites/"+website.ID) } class="space-y-4">
 		@ui.Card(ui.CardProps{
 			Title: "Application settings",
 			Class: "!p-0",

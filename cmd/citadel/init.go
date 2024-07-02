@@ -19,13 +19,15 @@ var initCmd = &cobra.Command{
 }
 
 func init() {
-	initCmd.Flags().StringP("application-slug", "a", "", "Application slug to use for initialization (optional)")
+	initCmd.Flags().StringP("org-id", "o", "", "Organization ID to use for initialization (optional)")
+	initCmd.Flags().StringP("app-slug", "a", "", "Application slug to use for initialization (optional)")
 
 	rootCmd.AddCommand(initCmd)
 }
 
 func runInit(cmd *cobra.Command, args []string) {
-	appSlug, _ := cmd.Flags().GetString("application-slug")
+	orgId, _ := cmd.Flags().GetString("org-id")
+	appSlug, _ := cmd.Flags().GetString("app-slug")
 
 	if !auth.IsLoggedIn() {
 		fmt.Println("You must be logged in to initialize a project.\nPlease run `citadel auth login` to log in.")
@@ -38,14 +40,21 @@ func runInit(cmd *cobra.Command, args []string) {
 		}
 	}
 
-	if appSlug == "" {
-		appSlug = tui.SelectApplication()
-		if appSlug == "" {
-			appSlug = tui.CreateApplication()
+	if orgId == "" {
+		orgId = tui.SelectOrganization()
+		if orgId == "" {
+			orgId = tui.CreateOrganization()
 		}
 	}
 
-	err := util.InitializeConfigFile(appSlug)
+	if appSlug == "" {
+		appSlug = tui.SelectApplication(orgId)
+		if appSlug == "" {
+			appSlug = tui.CreateApplication(orgId)
+		}
+	}
+
+	err := util.InitializeConfigFile(orgId, appSlug)
 	if err != nil {
 		fmt.Println("Failed to initialize Software Citadel project.")
 		return

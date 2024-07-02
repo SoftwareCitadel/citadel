@@ -20,6 +20,20 @@ func NewOrganizationsController(orgsRepo *repositories.OrganizationsRepository, 
 	return &OrganizationsController{orgsRepo, orgMembersRepo}
 }
 
+func (c *OrganizationsController) Index(ctx *caesar.Context) error {
+	user, err := caesarAuth.RetrieveUserFromCtx[models.User](ctx)
+	if err != nil {
+		return err
+	}
+
+	orgs, err := c.orgsRepo.FindAllWhereUserIsMember(ctx.Request.Context(), user.ID)
+	if err != nil {
+		return err
+	}
+
+	return ctx.SendJSON(orgs)
+}
+
 type StoreOrgValidator struct {
 	Name string `form:"name" validate:"required,min=3"`
 }
