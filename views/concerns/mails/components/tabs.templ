@@ -2,35 +2,17 @@ package mailsComponents
 
 import (
 	"citadel/views/util"
+	"citadel/views/ui"
 )
 
 templ Tabs() {
 	<nav class="flex overflow-x-auto border-b border-zinc-300/20 py-4 px-12">
 		<ul class="flex min-w-full flex-none gap-x-6 text-sm leading-6 text-zinc-300">
-			<li>
-				<a
-					class={ util.GetClassForTab(util.Route(ctx, "/mails"), util.RetrievePath(ctx)) }
-					href={ templ.URL(util.Route(ctx, "/mails")) }
-				>
-					Overview
-				</a>
-			</li>
-			<li>
-				<a
-					class={ util.GetClassForTab(util.Route(ctx, "/mails/domains"), util.RetrievePath(ctx)) }
-					href={ templ.URL(util.Route(ctx, "/mails/domains")) }
-				>
-					Domains
-				</a>
-			</li>
-			<li>
-				<a
-					class={ util.GetClassForTab(util.Route(ctx, "/mails/api_keys"), util.RetrievePath(ctx)) }
-					href={ templ.URL(util.Route(ctx, "/mails/api_keys")) }
-				>
-					API Keys
-				</a>
-			</li>
+			@ui.Tab(util.Route(ctx, "/mails"), "Overview")
+			@ui.Tab(util.Route(ctx, "/mails/domains"), "Domains")
+			@ui.Tab(util.Route(ctx, "/mails/api_keys"), "API Keys")
+			// @ui.Tab(util.Route(ctx, "/mails/emails"), "Emails")
+			// @ui.Tab(util.Route(ctx, "/mails/metrics"), "Metrics")
 		</ul>
 	</nav>
 }

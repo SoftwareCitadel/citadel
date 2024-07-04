@@ -31,26 +31,16 @@ templ breadcrumbs(app models.Application) {
 templ tabs(app models.Application) {
 	<nav class="flex overflow-x-auto border-b border-zinc-300/20 py-4 px-12">
 		<ul class="flex min-w-full flex-none gap-x-6 text-sm leading-6 text-zinc-300">
-			@tab(util.Route(ctx, "/apps/"+app.Slug), "Overview")
-			@tab(util.Route(ctx, "/apps/"+app.Slug+"/logs"), "Logs")
-			@tab(util.Route(ctx, "/apps/"+app.Slug+"/deployments"), "Deployments")
-			@tab(util.Route(ctx, "/apps/"+app.Slug+"/env"), "Environment variables")
-			@tab(util.Route(ctx, "/apps/"+app.Slug+"/certs"), "Certificates")
-			@tab(util.Route(ctx, "/apps/"+app.Slug+"/edit"), "Settings")
+			@ui.Tab(util.Route(ctx, "/apps/"+app.Slug), "Overview")
+			@ui.Tab(util.Route(ctx, "/apps/"+app.Slug+"/logs"), "Logs")
+			@ui.Tab(util.Route(ctx, "/apps/"+app.Slug+"/deployments"), "Deployments")
+			@ui.Tab(util.Route(ctx, "/apps/"+app.Slug+"/env"), "Environment variables")
+			@ui.Tab(util.Route(ctx, "/apps/"+app.Slug+"/certs"), "Certificates")
+			@ui.Tab(util.Route(ctx, "/apps/"+app.Slug+"/edit"), "Settings")
 		</ul>
 	</nav>
 }
 
-templ tab(path, label string) {
-	<li>
-		<a
-			class={ util.GetClassForTab(path, util.RetrievePath(ctx)) }
-			href={ templ.URL(path) }
-		>
-			{ label }
-		</a>
-	</li>
-}
 
 templ computingSpecsFormPart(app *models.Application) {
 	<script>

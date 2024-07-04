@@ -2,7 +2,7 @@ package storagePages
 
 import (
 	"citadel/internal/models"
-	"citadel/views/util"
+	"citadel/views/ui"
 )
 
 templ breadcrumbs(storageBucket models.StorageBucket) {
@@ -27,22 +27,8 @@ templ breadcrumbs(storageBucket models.StorageBucket) {
 templ tabs(storageBucket models.StorageBucket) {
 	<nav class="flex overflow-x-auto border-b border-zinc-300/20 py-4 px-12">
 		<ul class="flex min-w-full flex-none gap-x-6 text-sm leading-6 text-zinc-300">
-			<li>
-				<a
-					class={ util.GetClassForTab("/storage/"+storageBucket.Slug, util.RetrievePath(ctx)) }
-					href={ templ.URL("/storage/" + storageBucket.Slug) }
-				>
-					Overview
-				</a>
-			</li>
-			<li>
-				<a
-					class={ util.GetClassForTab("/storage/"+storageBucket.Slug+"/edit", util.RetrievePath(ctx)) }
-					href={ templ.URL("/storage/" + storageBucket.Slug + "/edit") }
-				>
-					Settings
-				</a>
-			</li>
+			@ui.Tab("/storage/"+storageBucket.Slug, "Overview")
+			@ui.Tab("/storage/"+storageBucket.Slug+"/edit", "Settings")
 		</ul>
 	</nav>
 }

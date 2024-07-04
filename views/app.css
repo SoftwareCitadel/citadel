@@ -50,7 +50,7 @@
 }
 
 .secondary-btn {
-  @apply base-btn items-center overflow-hidden  transition rounded-md py-1.5 px-3 ring-1 ring-inset text-zinc-400 ring-white/10 hover:bg-white/5 hover:text-white;
+  @apply base-btn items-center overflow-hidden transition rounded-md py-1.5 px-3 ring-1 ring-inset text-zinc-300 ring-white/10 hover:bg-white/5 hover:text-white;
 }
 
 .base-input {

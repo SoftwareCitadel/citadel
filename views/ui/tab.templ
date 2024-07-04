@@ -1,0 +1,16 @@
+package ui
+
+import (
+	"citadel/views/util"
+)
+
+templ Tab(path, label string) {
+	<li>
+		<a
+			class={ util.GetClassForTab(path, util.RetrievePath(ctx)) }
+			href={ templ.URL(path) }
+		>
+			{ label }
+		</a>
+	</li>
+}
