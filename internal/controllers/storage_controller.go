@@ -73,19 +73,14 @@ func (c *StorageController) Store(ctx *caesar.Context) error {
 }
 
 func (c *StorageController) Show(ctx *caesar.Context) error {
-	// user, err := auth.RetrieveUserFromCtx[models.User](ctx)
-	// if err != nil {
-	// 	return err
-	// }
-
-	bucket, err := c.storageBucketsRepo.FindOneBy(ctx.Context(), "slug", ctx.PathValue("slug"))
+	bucket, err := c.storageBucketsRepo.FindOneBy(
+		ctx.Context(),
+		"slug", ctx.PathValue("slug"),
+		"organization_id", ctx.PathValue("orgId"),
+	)
 	if err != nil {
 		return err
 	}
-
-	// if bucket.UserID != user.ID {
-	// 	return caesar.NewError(403)
-	// }
 
 	bucketSize, storageFiles, err := c.driver.GetFilesAndTotalSize(*bucket)
 	if err != nil {
@@ -96,25 +91,24 @@ func (c *StorageController) Show(ctx *caesar.Context) error {
 }
 
 func (c *StorageController) Edit(ctx *caesar.Context) error {
-	// user, err := auth.RetrieveUserFromCtx[models.User](ctx)
-	// if err != nil {
-	// 	return err
-	// }
-
-	bucket, err := c.storageBucketsRepo.FindOneBy(ctx.Context(), "slug", ctx.PathValue("slug"))
+	bucket, err := c.storageBucketsRepo.FindOneBy(
+		ctx.Context(),
+		"slug", ctx.PathValue("slug"),
+		"organization_id", ctx.PathValue("orgId"),
+	)
 	if err != nil {
 		return err
 	}
-
-	// if bucket.UserID != user.ID {
-	// 	return caesar.NewError(403)
-	// }
 
 	return ctx.Render(storagePages.Edit(*bucket))
 }
 
 func (c *StorageController) Update(ctx *caesar.Context) error {
-	bucket, err := c.storageBucketsRepo.FindOneBy(ctx.Context(), "slug", ctx.PathValue("slug"), "organization_id", ctx.PathValue("orgId"))
+	bucket, err := c.storageBucketsRepo.FindOneBy(
+		ctx.Context(),
+		"slug", ctx.PathValue("slug"),
+		"organization_id", ctx.PathValue("orgId"),
+	)
 	if err != nil {
 		return err
 	}

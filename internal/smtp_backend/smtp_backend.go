@@ -1,18 +1,17 @@
 package smtpBackend
 
 import (
-	mailBuilder "citadel/internal/mail_builder"
+	"citadel/internal/listeners"
 	"citadel/internal/repositories"
-	smtpSender "citadel/internal/smtp_sender"
 	"citadel/util"
 	"context"
 	"errors"
 	"io"
 	"net/mail"
-	"os"
 
 	"citadel/internal/models"
 
+	"github.com/caesar-rocks/events"
 	"github.com/charmbracelet/log"
 	"github.com/emersion/go-sasl"
 	"github.com/emersion/go-smtp"
@@ -22,14 +21,16 @@ import (
 type Backend struct {
 	apiKeysRepo *repositories.MailApiKeysRepository
 	domainsRepo *repositories.MailDomainsRepository
+	emitter     *events.EventsEmitter
 }
 
 // New creates a new Backend.
 func New(
 	apiKeysRepo *repositories.MailApiKeysRepository,
 	domainsRepo *repositories.MailDomainsRepository,
+	emitter *events.EventsEmitter,
 ) *Backend {
-	return &Backend{apiKeysRepo, domainsRepo}
+	return &Backend{apiKeysRepo, domainsRepo, emitter}
 }
 
 // NewSession is called after client greeting (EHLO, HELO).
@@ -37,6 +38,7 @@ func (bkd *Backend) NewSession(c *smtp.Conn) (smtp.Session, error) {
 	return &Session{
 		apiKeysRepo: bkd.apiKeysRepo,
 		domainsRepo: bkd.domainsRepo,
+		emitter:     bkd.emitter,
 	}, nil
 }
 
@@ -44,6 +46,7 @@ func (bkd *Backend) NewSession(c *smtp.Conn) (smtp.Session, error) {
 type Session struct {
 	apiKeysRepo *repositories.MailApiKeysRepository
 	domainsRepo *repositories.MailDomainsRepository
+	emitter     *events.EventsEmitter
 
 	from   string
 	to     string
@@ -113,24 +116,19 @@ func (s *Session) Data(r io.Reader) error {
 		return err
 	}
 
-	// Build the email to send
-	builder := mailBuilder.New(msg)
-	outputMsg, err := builder.Build()
-	if err != nil {
-		log.Error("failed to build the email:", "error", err)
-		return err
+	// Emit event
+	event := &listeners.OutboundEmailEvent{
+		Msg:    msg,
+		Domain: s.domain,
+		From:   s.from,
+		To:     s.to,
 	}
 
-	// Sign the email with DKIM
-	outputMsg, err = builder.SignWithDKIM(outputMsg, s.domain.Domain, s.domain.DKIMPrivateKey)
+	bytes, err := util.EncodeJSON(event)
 	if err != nil {
-		log.Error("failed to sign the email with DKIM:", "error", err)
 		return err
 	}
-
-	// Send the email
-	sender := smtpSender.New(os.Getenv("SMTP_DOMAIN"))
-	sender.Send(s.from, s.to, outputMsg)
+	s.emitter.Emit("smtp.outbound_email", bytes)
 
 	return nil
 }

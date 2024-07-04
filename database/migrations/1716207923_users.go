@@ -13,7 +13,7 @@ func usersMigrationUp_1716207923(ctx context.Context, db *bun.DB) error {
 }
 
 func usersMigrationDown_1716207923(ctx context.Context, db *bun.DB) error {
-	_, err := db.NewDropTable().Model((*models.User)(nil)).Exec(ctx)
+	_, err := db.NewCreateTable().Model((*models.User)(nil)).Exec(ctx)
 	return err
 }
 

@@ -2,6 +2,7 @@ package main
 
 import (
 	"citadel/config"
+	"citadel/internal/listeners"
 	"citadel/internal/repositories"
 	smtpBackend "citadel/internal/smtp_backend"
 	"context"
@@ -10,6 +11,7 @@ import (
 	"time"
 
 	"github.com/caddyserver/certmagic"
+	"github.com/caesar-rocks/events"
 	"github.com/charmbracelet/log"
 	"github.com/emersion/go-smtp"
 	"go.uber.org/fx"
@@ -19,7 +21,8 @@ func main() {
 	fx.New(
 		fx.Provide(config.ProvideEnvironmentVariables, config.ProvideDatabase),
 		fx.Provide(repositories.NewMailApiKeysRepository, repositories.NewMailDomainsRepository),
-		fx.Provide(newSMTPServer),
+		fx.Provide(listeners.NewSMTPListener),
+		fx.Provide(newSMTPServer, newEventsEmitter),
 		fx.Invoke(func(*smtp.Server) {}),
 	).Run()
 }
@@ -28,9 +31,10 @@ func newSMTPServer(
 	lc fx.Lifecycle,
 	env *config.EnvironmentVariables,
 	apiKeysRepo *repositories.MailApiKeysRepository, domainsRepo *repositories.MailDomainsRepository,
+	emitter *events.EventsEmitter,
 ) *smtp.Server {
 	// Create the server
-	backend := smtpBackend.New(apiKeysRepo, domainsRepo)
+	backend := smtpBackend.New(apiKeysRepo, domainsRepo, emitter)
 
 	srv := smtp.NewServer(backend)
 	srv.Addr = env.SMTP_ADDR
@@ -68,4 +72,11 @@ func newSMTPServer(
 	})
 
 	return srv
+}
+
+func newEventsEmitter(smtpListener *listeners.SMTPListener) *events.EventsEmitter {
+	emitter := events.NewEventsEmitter()
+	emitter.On("smtp.outbound_email", smtpListener.OnOutboundEmail)
+
+	return emitter
 }
