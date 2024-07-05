@@ -36,105 +36,23 @@ templ DashboardLayout(props DashboardLayoutProps) {
 	})	
 	</script>
 	@SharedLayout() {
-		<main class="flex min-h-screen flex-col justify-center bg-zinc-900">
-			<div class="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-72 lg:flex-col">
-				<div class="flex grow flex-col gap-y-5 overflow-y-auto border-r border-zinc-300/20 bg-zinc-900">
-					<div class="flex space-x-4 h-16 shrink-0 items-center border-b border-zinc-300/20 px-6">
-						@components.Logo("h-6", "white")
-						<span class=" text-xl font-medium text-white">Software Citadel</span>
-					</div>
-					<nav class="flex flex-1 flex-col">
-						@ui.SelectField(ui.SelectFieldProps{
-							DivClass: "px-5 mb-5",
-							Options:  getSelectOrgOptions(ctx),
-							OnChange: onSelectOrgChange(ctx.Value(middleware.CTX_KEY_ORG_ID).(string)),
-							Id:       "select_org",
-							Value:    ctx.Value(middleware.CTX_KEY_ORG_ID).(string),
-						})
-						<ul role="list" class="flex flex-1 flex-col gap-y-3">
-							<li class="px-6">
-								<ul role="list" class="-mx-2 space-y-2">
-									@sidebarItem(sidebarItemProps{
-										label: "Applications",
-										icon:  "fa-terminal",
-										href:  util.Route(ctx, "/apps"),
-									})
-									@sidebarItem(sidebarItemProps{
-										label:      "Authentication",
-										icon:       "fa-lock",
-										href:       util.Route(ctx, "/auth"),
-										comingSoon: true,
-									})
-									@sidebarItem(sidebarItemProps{
-										label: "Databases",
-										icon:  "fa-database",
-										href:  util.Route(ctx, "/databases"),
-									})
-									@sidebarItem(sidebarItemProps{
-										label: "Dev Machines",
-										icon:  "fa-database",
-										href:  util.Route(ctx, "/dev_machines"),
-										comingSoon: true,
-									})
-									@sidebarItem(sidebarItemProps{
-										label: "Emails",
-										icon:  "fa-envelope",
-										href:  util.Route(ctx, "/mails"),
-									})
-									@sidebarItem(sidebarItemProps{
-										label: "Object Storage",
-										icon:  "fa-hard-drive",
-										href:  util.Route(ctx, "/storage"),
-									})
-									@sidebarItem(sidebarItemProps{
-										label:      "Web Analytics",
-										icon:       "fa-chart-simple",
-										href:       util.Route(ctx, "/analytics_websites"),
-									})
-									if util.IsFeatureActive(ctx, "billing") {
-										@sidebarItem(sidebarItemProps{
-											label: "Billing",
-											icon:  "fa-money-bill",
-											href:  util.Route(ctx, "/billing"),
-										})
-									}
-									@sidebarItem(sidebarItemProps{
-										label: "Organization Settings",
-										icon:  "fa-gear",
-										href:  util.Route(ctx, "/edit"),
-									})
-								</ul>
-							</li>
-							@accountMenu()
-						</ul>
-					</nav>
-				</div>
+		<main 
+			class="flex min-h-screen flex-col justify-center bg-zinc-900"
+			x-data="{ mobileSidebarOpen: false }"
+		>
+			<div class="hidden lg:fixed lg:inset-y-0 lg:flex lg:flex-col w-72">
+				@sidebar()
 			</div>
-			<div class="lg:pl-72 bg-zinc-900">
-				<div class="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-zinc-300/20 bg-zinc-900 px-4 sm:gap-x-6 sm:px-6 lg:px-12">
-					<button type="button" class="-m-2.5 p-2.5 text-zinc-300 lg:hidden">
-						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6" aria-hidden="true">
-							<path d="M4 6l16 0"></path><path d="M4 12l16 0"></path><path d="M4 18l16 0"></path>
-						</svg>
-					</button>
-					<div class="h-6 w-px bg-zinc-300/20 lg:hidden" aria-hidden="true"></div>
-					<div class="flex flex-1 gap-x-4 self-stretch">
-						<div class="ml-auto flex items-center space-x-6">
-							<a
-								href="https://www.valyent.dev/contact"
-								class="text-zinc-300 hover:text-zinc-50 transition-colors text-sm flex space-x-2 items-center !py-[10px] !py !rounded-md cursor-pointer"
-							>
-								<button>Get in touch</button>
-							</a>
-							<a href="https://docs.softwarecitadel.com" target="_blank">
-								<button class="secondary-btn text-sm flex space-x-2 items-center !py-[10px] !py !rounded-md cursor-pointer !text-zinc-300">
-									<span>Documentation</span>
-									<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="tabler-icon tabler-icon-external-link"><path d="M12 6h-6a2 2 0 0 0 -2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-6"></path><path d="M11 13l9 -9"></path><path d="M15 4h5v5"></path></svg>
-								</button>
-							</a>
-						</div>
-					</div>
+			<template x-if="mobileSidebarOpen">
+				<div 
+					class="lg:hidden fixed inset-0 z-40 bg-zinc-900 bg-opacity-90 !h-full"
+				>
+					@sidebar()
 				</div>
+				
+			</template>
+			<div class="lg:pl-72 bg-zinc-900">
+				@dashboardHeader()
 				<main class={ "py-8 px-12 bg-zinc-850 bg-white/2.5 min-h-[calc(100vh-64px)]", props.Class }>
 					if util.ShowPaymentMethodDialog(ctx) {
 						@components.PaymentMethodDialog()
@@ -147,6 +65,80 @@ templ DashboardLayout(props DashboardLayoutProps) {
 			</div>
 		</main>
 	}
+}
+
+templ sidebar() {
+	<div class="!h-full flex grow flex-col gap-y-5 overflow-y-auto border-r border-zinc-300/20 bg-zinc-900">
+		<div class="flex space-x-4 h-16 shrink-0 items-center border-b border-zinc-300/20 px-6">
+			@components.Logo("h-6", "white")
+			<span class=" text-xl font-medium text-white">Software Citadel</span>
+		</div>
+		<nav class="flex flex-1 flex-col">
+			@ui.SelectField(ui.SelectFieldProps{
+				DivClass: "px-5 mb-5",
+				Options:  getSelectOrgOptions(ctx),
+				OnChange: onSelectOrgChange(ctx.Value(middleware.CTX_KEY_ORG_ID).(string)),
+				Id:       "select_org",
+				Value:    ctx.Value(middleware.CTX_KEY_ORG_ID).(string),
+			})
+			<ul role="list" class="flex flex-1 flex-col gap-y-3">
+				<li class="px-6">
+					<ul role="list" class="-mx-2 space-y-2">
+						@sidebarItem(sidebarItemProps{
+							label: "Applications",
+							icon:  "fa-terminal",
+							href:  util.Route(ctx, "/apps"),
+						})
+						@sidebarItem(sidebarItemProps{
+							label:      "Authentication",
+							icon:       "fa-lock",
+							href:       util.Route(ctx, "/auth"),
+							comingSoon: true,
+						})
+						@sidebarItem(sidebarItemProps{
+							label: "Databases",
+							icon:  "fa-database",
+							href:  util.Route(ctx, "/databases"),
+						})
+						@sidebarItem(sidebarItemProps{
+							label: "Dev Machines",
+							icon:  "fa-database",
+							href:  util.Route(ctx, "/dev_machines"),
+							comingSoon: true,
+						})
+						@sidebarItem(sidebarItemProps{
+							label: "Emails",
+							icon:  "fa-envelope",
+							href:  util.Route(ctx, "/mails"),
+						})
+						@sidebarItem(sidebarItemProps{
+							label: "Object Storage",
+							icon:  "fa-hard-drive",
+							href:  util.Route(ctx, "/storage"),
+						})
+						@sidebarItem(sidebarItemProps{
+							label:      "Web Analytics",
+							icon:       "fa-chart-simple",
+							href:       util.Route(ctx, "/analytics_websites"),
+						})
+						if util.IsFeatureActive(ctx, "billing") {
+							@sidebarItem(sidebarItemProps{
+								label: "Billing",
+								icon:  "fa-money-bill",
+								href:  util.Route(ctx, "/billing"),
+							})
+						}
+						@sidebarItem(sidebarItemProps{
+							label: "Organization Settings",
+							icon:  "fa-gear",
+							href:  util.Route(ctx, "/edit"),
+						})
+					</ul>
+				</li>
+				@accountMenu()
+			</ul>
+		</nav>
+	</div>
 }
 
 script onSelectOrgChange(orgId string) {
@@ -287,13 +279,15 @@ templ accountMenu() {
 					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2 h-4 w-4"><path d="M10.325 4.317c.426 -1.756 2.924 -1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543 -.94 3.31 .826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c1.756 .426 1.756 2.924 0 3.35a1.724 1.724 0 0 0 -1.066 2.573c.94 1.543 -.826 3.31 -2.37 2.37a1.724 1.724 0 0 0 -2.572 1.065c-.426 1.756 -2.924 1.756 -3.35 0a1.724 1.724 0 0 0 -2.573 -1.066c-1.543 .94 -3.31 -.826 -2.37 -2.37a1.724 1.724 0 0 0 -1.065 -2.572c-1.756 -.426 -1.756 -2.924 0 -3.35a1.724 1.724 0 0 0 1.066 -2.573c-.94 -1.543 .826 -3.31 2.37 -2.37c1 .608 2.296 .07 2.572 -1.065z"></path><path d="M9 12a3 3 0 1 0 6 0a3 3 0 0 0 -6 0"></path></svg>
 					<span>Settings</span>
 				</a>
-				<button
-					class="px-3 py-2 relative flex cursor-default select-none items-center rounded-sm text-sm outline-none transition-colors focus:bg-zinc-300/10 focus:text-zinc-300-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 hover:opacity-75 transition cursor-pointer"
-					hx-post="/auth/sign_out"
-				>
-					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2 h-4 w-4"><path d="M14 8v-2a2 2 0 0 0 -2 -2h-7a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h7a2 2 0 0 0 2 -2v-2"></path><path d="M9 12h12l-3 -3"></path><path d="M18 15l3 -3"></path></svg>
-					<span>Sign Out</span>
-				</button>
+				<form method="post" action="/auth/sign_out" class="!mb-0 !w-full">
+					<button
+						class="px-3 py-2 relative flex cursor-default select-none !w-full items-center rounded-sm text-sm outline-none transition-colors focus:bg-zinc-300/10 focus:text-zinc-300-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 hover:opacity-75 transition cursor-pointer"
+						type="submit"
+					>
+						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2 h-4 w-4"><path d="M14 8v-2a2 2 0 0 0 -2 -2h-7a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h7a2 2 0 0 0 2 -2v-2"></path><path d="M9 12h12l-3 -3"></path><path d="M18 15l3 -3"></path></svg>
+						<span>Sign Out</span>
+					</button>
+				</form>
 			</div>
 		</div>
 	</li>
@@ -327,4 +321,35 @@ templ createOrganizationDialog() {
 			</div>
 		</form>
 	}
+}
+
+templ dashboardHeader() {
+	<div class="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-zinc-300/20 bg-zinc-900 px-4 sm:gap-x-6 sm:px-6 lg:px-12">
+		<button
+			type="button" 
+			class="-m-2.5 p-2.5 text-zinc-300 lg:hidden"
+			x-on:click="mobileSidebarOpen = !mobileSidebarOpen"
+		>
+			<i class="fa-solid fa-times w-6 h-6" x-show="mobileSidebarOpen"></i>
+			<svg x-show="!mobileSidebarOpen" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6" aria-hidden="true">
+				<path d="M4 6l16 0"></path><path d="M4 12l16 0"></path><path d="M4 18l16 0"></path>
+			</svg>
+		</button>
+		<div class="flex flex-1 gap-x-4 self-stretch">
+			<div class="ml-auto flex items-center space-x-6">
+				<a
+					href="https://www.valyent.dev/contact"
+					class="text-zinc-300 hover:text-zinc-50 transition-colors text-sm flex space-x-2 items-center !py-[10px] !py !rounded-md cursor-pointer"
+				>
+					<button>Get in touch</button>
+				</a>
+				<a href="https://docs.softwarecitadel.com" target="_blank">
+					<button class="secondary-btn text-sm flex space-x-2 items-center !py-[10px] !py !rounded-md cursor-pointer !text-zinc-300">
+						<span>Documentation</span>
+						<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="tabler-icon tabler-icon-external-link"><path d="M12 6h-6a2 2 0 0 0 -2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-6"></path><path d="M11 13l9 -9"></path><path d="M15 4h5v5"></path></svg>
+					</button>
+				</a>
+			</div>
+		</div>
+	</div>
 }

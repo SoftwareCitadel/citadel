@@ -137,7 +137,7 @@ func (d *MailDomain) assignExpectedDNSRecords() error {
 		{
 			Type:  ExpectedDNSRecordTypeMX,
 			Host:  d.Domain,
-			Value: os.Getenv("SMTP_DOMAIN") + ".",
+			Value: os.Getenv("SMTP_DOMAIN"),
 		},
 	}
 
