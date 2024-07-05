@@ -51,8 +51,6 @@ func (mb *MailBuilder) Build() ([]byte, error) {
 		return nil, fmt.Errorf("failed to copy body: %w", err)
 	}
 
-	fmt.Println("buf: ", buf.String())
-
 	return buf.Bytes(), nil
 }
 

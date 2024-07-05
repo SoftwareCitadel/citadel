@@ -273,7 +273,7 @@ func RegisterRoutes(
 	router.Delete("/orgs/{orgId}/analytics_websites/{id}", analyticsWebsitesController.Delete).Use(auth.AuthMiddleware)
 
 	// API-related routes
-	router.Get("/api/v1/emails", emailsController.Send).Use(auth.AuthMiddleware)
+	router.Post("/api/v1/emails", emailsController.Send)
 	router.Post("/api/v1/analytics_websites/{id}/track", analyticsWebsitesController.Track)
 
 	return router

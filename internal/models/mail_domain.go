@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"net"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/charmbracelet/log"
@@ -200,9 +201,9 @@ func (d *MailDomain) CheckDNS() error {
 				}
 			}
 		case ExpectedDNSRecordTypeTXT:
-			log.Info("Looking up TXT records", "domain", record.Host+"."+d.Domain)
+			log.Info("Looking up TXT records", "domain", record.Host)
 
-			txt, err := net.LookupTXT(record.Host + "." + d.Domain)
+			txt, err := net.LookupTXT(record.Host)
 			if err != nil {
 				log.Error("Failed to lookup TXT records", "err", err)
 				expectedRecords[i].Verified = false
@@ -210,7 +211,8 @@ func (d *MailDomain) CheckDNS() error {
 			}
 
 			for _, t := range txt {
-				log.Info("TXT record", "t", t, "value", record.Value)
+				t = strings.Replace(t, "~all", "-all", 1)
+				log.Info("TXT record", "value", t, "expected", record.Value, "verified", t == record.Value)
 				if t == record.Value {
 					expectedRecords[i].Verified = true
 					break

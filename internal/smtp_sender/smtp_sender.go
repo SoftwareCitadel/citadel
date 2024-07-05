@@ -67,7 +67,6 @@ type Sender struct {
 // Send email
 func (s *Sender) Send(from, to string, msg []byte) SenderError {
 	toDomain, err := util.GetEmailDomain(to)
-	log.Printf("domain %v\n", toDomain)
 	if err != nil {
 		return newSMTPError(err, true, 510)
 	}

@@ -32,8 +32,8 @@ func (r *MailDomainsRepository) FindVerifiedDomainWithOrg(ctx context.Context, d
 	err := r.NewSelect().
 		Model(&domain).
 		Where("domain = ?", domainName).
-		Where("user_id = ?", orgID).
-		Where("verified = true").
+		Where("organization_id = ?", orgID).
+		Where("dns_verified = true").
 		Scan(ctx)
 	if err != nil {
 		return nil, err
