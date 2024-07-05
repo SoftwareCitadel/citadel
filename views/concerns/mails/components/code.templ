@@ -1,21 +1,34 @@
 package mailsComponents
 
+import (
+	"citadel/views/util"
+)
+
 templ Code() {
 	<script type="module">
     import { codeToHtml } from 'https://esm.sh/shiki@1.0.0'
 
-    const codeSnippetsData = {
-        shellscript: `curl https://softwarecitadel.com/api/v1/emails\n\t-H "Authorization: Bearer {apiKey}"\n\t-H "Content-Type: application/json"\n\t-X POST\n\t-d $'\n      {\n        "from": "dagny@taggart.com",\n        "to": "henry@rearden.com",\n        "subject": "Urgent Meeting Request: Collaboration Opportunity",\n        "text": "Dear Henry, ...",\n        "html": "Dear <b>Henry</b>, ..."\n      }'\n`,
-        python: `import facteur\n    \nf = facteur.Facteur("facteur-...")\nf.send_email(\n    frm='no-reply@example.com',\n    to='ayn@rand.com',\n    subject='Who is John Galt?',\n    text='I started my life with a single absolute: that the world was mine to shape in the image of my highest values and never to be given up to a lesser standard, no matter how long or hard the struggle.',\n    html='<p>I started my life with <b>a single absolute</b>: that the world was mine to shape in the image of my highest values and never to be given up to a lesser standard, no matter how long or hard the struggle.</p>',\n)`,
-        typescript: `import Facteur from 'facteur-node';\n    \nasync function sendSomeEmail() {\n  const facteur = new Facteur('facteur-...');\n\n  await facteur.sendEmail({\n    from: 'no-reply@example.com',\n    to: 'ayn@rand.com',\n    subject: 'Who is John Galt?',\n    text:\n      'I started my life with a single absolute: that the world was mine to shape in the image of my highest values and never to be given up to a lesser standard, no matter how long or hard the struggle.',\n    html:\n      '<p>I started my life with <b>a single absolute</b>: that the world was mine to shape in the image of my highest values and never to be given up to a lesser standard, no matter how long or hard the struggle.</p>',\n  });\n}\nsendSomeEmail();`,
-        go: `package main\n\nfunc main() {\n\tpayload := &facteur.SendEmailPayload{\n      From: "no-reply@example.com",\n      To: "ayn@rand.com",\n      Subject: "Who is John Galt? From Golang!",\n      Text: "I started my life with a single absolute: that the world was mine to shape in the image of my highest values and never to be given up to a lesser standard, no matter how long or hard the struggle.",\n      HTML: "<p>I started my life with <b>a single absolute</b>: that the world was mine to shape in the image of my highest values and never to be given up to a lesser standard, no matter how long or hard the struggle.</p>",\n\t}\n\n\tf := facteur.NewFacteur("<YOUR_API_KEY>")\n\terr := f.SendEmail(payload)\n\tif err != nil {\n\t\tfmt.Println(err)\n\t}\n}`,
-        php: `use FacteurDevFacteurPhpFacteur;\n$facteur = new Facteur('<your-api-key>');\ntry {\n    $facteur->sendEmail([\n        'from' => 'hank@rearden.com',\n        'to' => 'dagny@taggart.com',\n        'subject' => 'Who is John Galt?',\n        'text' => 'I started my life with a single absolute: that the world was mine to shape in the image of my highest values and never to be given up to a lesser standard, no matter how long or hard the struggle.',\n        'html' => "<h1>it <u>works</u>!</h1>"\n    ]);\n} catch (Exception $e) {\n      echo $e->getMessage();\n  }`
-    }
+	const codeSnippetsData = {
+		shellscript: `curl https://console.softwarecitadel.com/api/v1/emails \\\n\t-H "Authorization: Bearer <api_key>" \\\n\t-H "Content-Type: application/json" \\\n\t-X POST \\\n\t-d $'\n      {\n        "from": "dagny@taggart.com",\n        "to": "henry@rearden.com",\n        "subject": "Urgent Meeting Request: Collaboration Opportunity",\n        "text": "Dear Henry, ...",\n        "html": "Dear <b>Henry</b>, ..."\n      }'\n`,
+		python: `import requests\n\nurl = "https://console.softwarecitadel.com/api/v1/emails"\nheaders = {\n    "Authorization": "Bearer <api_key>",\n    "Content-Type": "application/json"\n}\npayload = {\n    "from": "dagny@taggart.com",\n    "to": "henry@rearden.com",\n    "subject": "Urgent Meeting Request: Collaboration Opportunity",\n    "text": "Dear Henry, ...",\n    "html": "Dear <b>Henry</b>, ..."\n}\n\nresponse = requests.post(url, json=payload, headers=headers)\n\nprint(response.status_code)\nprint(response.json())\n\n`,
+		typescript: `import * as https from 'https';\n\nconst data = JSON.stringify({\n  from: 'dagny@taggart.com',\n  to: 'henry@rearden.com',\n  subject: 'Urgent Meeting Request: Collaboration Opportunity',\n  text: 'Dear Henry, ...',\n  html: 'Dear <b>Henry</b>, ...'\n});\n\nconst options = {\n  hostname: 'console.softwarecitadel.com',\n  path: '/api/v1/emails',\n  method: 'POST',\n  headers: {\n    'Authorization': 'Bearer <api_key>',\n    'Content-Type': 'application/json',\n    'Content-Length': data.length\n  }\n};\n\nconst req = https.request(options, (res) => {\n  let responseBody = '';\n\n  res.on('data', (chunk) => {\n    responseBody += chunk;\n  });\n\n  res.on('end', () => {\n    console.log(res.statusCode);\n    console.log(responseBody);\n  });\n});\n\nreq.on('error', (error) => {\n  console.error(error);\n});\n\nreq.write(data);\nreq.end();\n\n`,
+		go: `package main\n\nimport (\n    "bytes"\n    "encoding/json"\n    "fmt"\n    "net/http"\n)\n\nfunc main() {\n    url := "https://console.softwarecitadel.com/api/v1/emails"\n    payload := map[string]string{\n        "from":    "dagny@taggart.com",\n        "to":      "henry@rearden.com",\n        "subject": "Urgent Meeting Request: Collaboration Opportunity",\n        "text":    "Dear Henry, ...",\n        "html":    "Dear <b>Henry</b>, ...",\n    }\n    jsonData, err := json.Marshal(payload)\n    if err != nil {\n        fmt.Println(err)\n        return\n    }\n\n    req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonData))\n    if err != nil {\n        fmt.Println(err)\n        return\n    }\n    req.Header.Set("Authorization", "Bearer <api_key>")\n    req.Header.Set("Content-Type", "application/json")\n\n    client := &http.Client{}\n    resp, err := client.Do(req)\n    if err != nil {\n        fmt.Println(err)\n        return\n    }\n    defer resp.Body.Close()\n\n    fmt.Println("Response Status:", resp.Status)\n}\n\n`,
+		php: `<?php\n\n$url = 'https://console.softwarecitadel.com/api/v1/emails';\n$headers = [\n    'Authorization: Bearer <api_key>',\n    'Content-Type: application/json'\n];\n$data = [\n    'from' => 'dagny@taggart.com',\n    'to' => 'henry@rearden.com',\n    'subject' => 'Urgent Meeting Request: Collaboration Opportunity',\n    'text' => 'Dear Henry, ...',\n    'html' => 'Dear <b>Henry</b>, ...'\n];\n\n$options = [\n    'http' => [\n        'header'  => implode("\\r\\n", $headers),\n        'method'  => 'POST',\n        'content' => json_encode($data)\n    ]\n];\n\n$context  = stream_context_create($options);\n$result = file_get_contents($url, false, $context);\n\nif ($result === FALSE) {\n    // Handle error\n}\n\nvar_dump($result);\n?>\n\n`,
+	};
 
     const codeSnippets = document.querySelectorAll('#code-snippet')
     for (const codeSnippet of codeSnippets) {
       const lang = codeSnippet.getAttribute('data-lang')
-      codeSnippet.innerHTML = await codeToHtml(codeSnippetsData[lang], {
+	  let code = codeSnippetsData[lang]
+	  code = code.replace(
+		'henry@rearden.com', 
+		document.getElementById('emails-code').getAttribute('data-user-email')
+	  )
+	  code = code.replace(
+		'https://console.softwarecitadel.com',
+		window.location.origin
+	  )
+      codeSnippet.innerHTML = await codeToHtml(code, {
         lang,
         theme: 'monokai'
       })
@@ -31,7 +44,9 @@ templ Code() {
   	</script>
 	<div
 		class="border border-zinc-700 rounded-xl w-full bg-zinc-900 text-white max-w-5xl mt-6"
+		id="emails-code"
 		x-data="{ selectedLanguage: 'shellscript' }"
+		data-user-email={ util.RetrieveUser(ctx).Email }
 	>
 		<div class="px-4 flex space-x-4 border-b border-zinc-700">
 			<button

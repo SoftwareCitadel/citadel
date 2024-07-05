@@ -74,23 +74,33 @@ templ AddApiKeyOnboarding(apiKey string) {
 				Add
 			}
 		} else {
+			// Replace <api_key by the actual value of the apiKey variable
+			<script>
+			const codeSnippets = document.querySelectorAll('#code-snippet')
+			for (const codeSnippet of codeSnippets) {
+				codeSnippet.innerHTML = codeSnippet.innerHTML.replaceAll(
+					'&lt;api_key&gt;', document.getElementById('api-key').value
+				)
+			}
+			</script>
 			<div class="flex">
-				<div class="flex">
-					@ui.InputField(ui.InputFieldProps{
-						Class:       "!w-full !rounded-r-none !text-zinc-100",
-						DivClass:    "!w-full",
-						SubDivClass: "!mt-0",
-						Readonly:    true,
-						Value:       apiKey,
-					})
-					<button
-						class="bg-zinc-900 hover:opacity-75 transition text-white px-4 text-sm rounded-r border-l-0 border-zinc-300/20 border duration-200 flex items-center justify-center"
-						onClick={ ui.CopyValueToClipboard("api-key-icon", apiKey) }
-						type="button"
-					>
-						<i class="fa-regular fa-copy" id={ "api-key-icon" }></i>
-					</button>
-				</div>
+			<div class="flex">
+				@ui.InputField(ui.InputFieldProps{
+					Class:       "!w-full !rounded-r-none !text-zinc-100",
+					DivClass:    "!w-full",
+					SubDivClass: "!mt-0",
+					Id:		  	 "api-key",
+					Readonly:    true,
+					Value:       apiKey,
+				})
+				<button
+					class="bg-zinc-900 hover:opacity-75 transition text-white px-4 text-sm rounded-r border-l-0 border-zinc-300/20 border duration-200 flex items-center justify-center"
+					onClick={ ui.CopyValueToClipboard("api-key-icon", apiKey) }
+					type="button"
+				>
+					<i class="fa-regular fa-copy" id={ "api-key-icon" }></i>
+				</button>
+			</div>
 			</div>
 		}
 	</form>
