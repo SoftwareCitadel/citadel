@@ -44,10 +44,12 @@ func newSMTPServer(
 	// Set the TLS configuration
 	tlsConfig, err := certmagic.TLS([]string{env.SMTP_DOMAIN})
 	if err != nil {
-		log.Fatal("failed to get TLS configuration", "error", err)
+		log.Fatal("Failed to get TLS configuration", "error", err)
 	}
 	tlsConfig.ClientAuth = tls.RequestClientCert
 	tlsConfig.NextProtos = []string{"smtp"}
+
+	certmagic.DefaultACME.Email = env.SMTP_ADMIN_EMAIL
 
 	srv.TLSConfig = tlsConfig
 
