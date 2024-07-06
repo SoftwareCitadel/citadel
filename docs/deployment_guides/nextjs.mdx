@@ -1,0 +1,171 @@
+---
+title: NextJS
+description: Learn how to deploy a NextJS application to Software Citadel
+---
+
+# NextJS Guide
+
+## Introduction
+
+[NextJS](https://nextjs.org) is a React framework for building full-stack web applications. In this article, we are going to deploy a NextJS application to Software Citadel.
+
+## Prerequisites
+
+- a UNIX-like system (see [WSL](https://learn.microsoft.com/en-us/windows/wsl/install) if you are using Windows), in order to use the [Software Citadel CLI](https://docs.softwarecitadel.com/cli)
+- a Software Citadel account, with a registered payment method (you can sign up [here](https://dashboard.softwarecitadel.com/auth/sign_up))
+- [NodeJS](https://nodejs.org) and [NPM](https://www.npmjs.com) installed on your machine
+
+## Installing the Software Citadel CLI
+
+```bash
+curl -L https://cli.softwarecitadel.com/install.sh | sh
+```
+
+You can inspect the installation script [here](https://cli.softwarecitadel.com/install.sh) and the [GitHub repository](https://github.com/softwarecitadel/cli).
+
+## Authenticating
+
+```bash
+citadel auth login
+```
+
+## Initializing the project
+
+```bash
+npx create-next-app <app-name>
+```
+
+Then, change directory to the newly created application :
+
+```bash
+cd <app-name>
+```
+
+Now, we can initialize the `citadel.toml` configuration file, that allows to link the local codebase, to a Software Citadel application :
+
+```bash
+citadel init
+```
+
+This command will ask you to select/create a project and an associated application.
+
+## Adding the Dockerfile
+
+Let’s add a Dockerfile so that Software Citadel can build a Docker image for your application.
+
+```bash
+touch Dockerfile
+```
+
+We can fill it this way :
+
+```bash
+FROM node:18-alpine AS base
+
+# Install dependencies only when needed
+FROM base AS deps
+# Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
+RUN apk add --no-cache libc6-compat
+WORKDIR /app
+
+# Install dependencies based on the preferred package manager
+COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* ./
+RUN \
+  if [ -f yarn.lock ]; then yarn --frozen-lockfile; \
+  elif [ -f package-lock.json ]; then npm ci; \
+  elif [ -f pnpm-lock.yaml ]; then yarn global add pnpm && pnpm i --frozen-lockfile; \
+  else echo "Lockfile not found." && exit 1; \
+  fi
+
+
+# Rebuild the source code only when needed
+FROM base AS builder
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
+
+# Next.js collects completely anonymous telemetry data about general usage.
+# Learn more here: https://nextjs.org/telemetry
+# Uncomment the following line in case you want to disable telemetry during the build.
+# ENV NEXT_TELEMETRY_DISABLED 1
+
+RUN yarn build
+
+# If using npm comment out above and use below instead
+# RUN npm run build
+
+# Production image, copy all the files and run next
+FROM base AS runner
+WORKDIR /app
+
+ENV NODE_ENV production
+# Uncomment the following line in case you want to disable telemetry during runtime.
+# ENV NEXT_TELEMETRY_DISABLED 1
+
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
+
+COPY --from=builder /app/public ./public
+
+# Set the correct permission for prerender cache
+RUN mkdir .next
+RUN chown nextjs:nodejs .next
+
+# Automatically leverage output traces to reduce image size
+# https://nextjs.org/docs/advanced-features/output-file-tracing
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+
+USER nextjs
+
+EXPOSE 3000
+
+ENV PORT 3000
+# set hostname to localhost
+ENV HOSTNAME "0.0.0.0"
+
+# server.js is created by next build from the standalone output
+# https://nextjs.org/docs/pages/api-reference/next-config-js/output
+CMD ["node", "server.js"]
+```
+
+## Adding the .dockerignore
+
+Let’s add a .dockerignore so that Software Citadel so that it doesn’t send unnecessary files to the Docker build context.
+
+```bash
+touch .dockerignore
+```
+
+We can fill it this way :
+
+```bash
+.dockerignore
+node_modules
+npm-debug.log
+README.md
+.next
+.git
+```
+
+## Deploy the project
+
+To expose the application’s port, we need to set up the `PORT` environment variable :
+
+```bash
+citadel env set PORT=3000
+```
+
+Then, we can deploy the application :
+
+```bash
+citadel deploy
+```
+
+Once the deployment is finished, type :
+
+```bash
+citadel open
+```
+
+to see your NextJS application in your browser.

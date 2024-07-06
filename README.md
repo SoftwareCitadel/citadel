@@ -10,10 +10,10 @@
 <br />
 
 <div align="center">
-    <picture>
-        <source srcset="./public/assets/logo_white.svg" media="(prefers-color-schema: dark)" />
-        <img src="./public/assets/logo_black.svg" width="64" width="64" />
-    </picture>
+  <picture>
+    <source srcset="./public/assets/logo_white.svg" media="(prefers-color-scheme: dark)">
+    <img src="./public/assets/logo_black.svg" alt="Logo">
+  </picture>
 </div>
 
 <h1 align="center">
@@ -22,7 +22,7 @@
 
 > _Software Citadel is an open-source cloud platform that allows you to deploy and manage applications, databases, ..._
 
-![](./screenshot.png)
+![](./docs/screenshot.png)
 
 ## Features
 

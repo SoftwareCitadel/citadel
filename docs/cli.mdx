@@ -1,0 +1,111 @@
+---
+title: 'CLI'
+description: 'Learn how to preview changes locally'
+---
+
+<Info>
+  **Prerequisite** Make sure you already have a Software Citadel account. If you don't have one, you can sign up [here](https://console.softwarecitadel.com/auth/sign_up).
+</Info>
+
+## Installation
+
+The first step to using the CLI is to install it. You can do this by running the following command:
+
+    <CodeGroup title="Installation on macOS/Linux">
+
+    ```bash curl
+    curl -L https://cli.softwarecitadel.com/install.sh | sh
+    ```
+
+    </CodeGroup>
+
+The [installation script](https://cli.softwarecitadel.com/install.sh) will install the CLI, and append the CLI's binary to your `PATH` variable.
+
+If you are using Windows, please use [Windows Subsystem for Linux](https://docs.microsoft.com/en-us/windows/wsl/install-win10) to install the CLI. You can then follow the instructions above.
+
+In the future, we will provide a Windows installer, but for now, this is the only way to install the CLI on Windows.
+
+## Authentication
+
+In order to use the CLI, you must first authenticate with the Software Citadel API. You can do this by running the following command:
+
+<CodeGroup title="Authenticate with the API">
+
+```bash CLI
+citadel auth login
+```
+
+</CodeGroup>
+
+This will open a browser window where you can log in to your Software Citadel account.
+
+Once authentication is complete, you can close the browser window and return to the CLI.
+
+A token will be saved to your machine so that you do not have to log in again.
+
+## Initialization
+
+In the [dashboard](https://dashboard.softwarecitadel.com), you can create a new application, then you can initialize the CLI in your application's code directory.
+
+<CodeGroup title="Initialize the CLI">
+
+```bash CLI
+citadel init
+```
+
+</CodeGroup>
+
+This will prompt you to select aan application. Once you have selected an application, the CLI will be initialized in your application's code directory.
+
+## Environment Variables
+
+In order to specify environment variables for your application, you can use the following command:
+
+<CodeGroup title="Set environment variables">
+
+```bash CLI
+citadel env set <key>=<value>
+```
+
+</CodeGroup>
+
+This will set the environment variable `<key>` to `<value>`.
+
+Please note that only one environment variable can be set at a time.
+
+If you wish to expose your application to the Internet, make sure to set the `PORT` environment variable to the port that your application is listening on.
+
+## Deployment
+
+Once you have initialized the CLI in your application's code directory, you can deploy your application to Software Citadel by running the following command:
+
+<CodeGroup title="Deploy your application">
+
+```bash CLI
+citadel deploy
+```
+
+</CodeGroup>
+
+This will launch a Docker build process, and then deploy your application to Software Citadel once the build process is complete.
+
+Make sure to have a `Dockerfile` in your application's code directory.
+
+## Configuration file
+
+The CLI makes use of a configuration file called `citadel.toml`, created by the [citadel init](#initialization) command.
+
+This file contains information about your application, and is used by the CLI to deploy your application to Software Citadel.
+
+### Release command
+
+To override the release command set in the application's scope, you can add the following to the `citadel.toml` file:
+
+```toml citadel.toml
+# Defined by the `citadel init` command
+organization_id = "..."
+application_slug = "..."
+
+# Override the release command
+release_command = "node ace migration:run"
+```

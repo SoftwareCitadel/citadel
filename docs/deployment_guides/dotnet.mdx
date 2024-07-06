@@ -1,0 +1,105 @@
+---
+title: .NET
+description: Learn how to deploy a .NET application to Software Citadel
+---
+
+## Introduction
+
+[.NET](https://dotnet.microsoft.com/) .NET is the free, open-source, cross-platform framework for building modern apps and powerful cloud services. In this article, we are going to deploy a freshly created .NET app to Software Citadel.
+
+## Prerequisites
+
+- a UNIX-like system (see [WSL](https://learn.microsoft.com/en-us/windows/wsl/install) if you are using Windows), in order to use the [Software Citadel CLI](https://docs.softwarecitadel.com/cli)
+- a Software Citadel account, with a registered payment method (you can sign up [here](https://dashboard.softwarecitadel.com/auth/sign_up))
+- [.NET](https://dotnet.microsoft.com/en-us/) installed on your machine
+
+## Installing the CLI
+
+```bash
+curl -L https://cli.softwarecitadel.com/install.sh | sh
+```
+
+You can inspect the installation script [here](https://cli.softwarecitadel.com/install.sh) and the [GitHub repository](https://github.com/softwarecitadel/cli).
+
+## Authenticating
+
+```bash
+citadel auth login
+```
+
+## Initializing the project
+
+In the first place, we are going to set up a new .NET project.
+
+Then, we can scaffold the .NET project :
+
+```bash
+dotnet new web --name <replace_it_by_your_application_name>
+```
+
+Please note that most .NET apps require at least 1Go of RAM.
+
+Now, we can initialize the `citadel.toml` configuration file, that allows to link the local codebase, to a Software Citadel application :
+
+```bash
+citadel init
+```
+
+This command will ask you to select/create a project and an associated application.
+
+## Adding the Dockerfile
+
+Let’s add a Dockerfile so that Software Citadel can build a Docker image for your application.
+
+```bash
+touch Dockerfile
+```
+
+We can fill it this way :
+
+```bash
+# Adjust DOTNET_OS_VERSION as desired
+ARG DOTNET_OS_VERSION="-alpine"
+ARG DOTNET_SDK_VERSION=8.0
+
+FROM mcr.microsoft.com/dotnet/sdk:${DOTNET_SDK_VERSION}${DOTNET_OS_VERSION} AS build
+WORKDIR /src
+
+# copy everything
+COPY . ./
+# restore as distinct layers
+RUN dotnet restore
+# build and publish a release
+RUN dotnet publish -c Release -o /app
+
+# final stage/image
+FROM mcr.microsoft.com/dotnet/aspnet:${DOTNET_SDK_VERSION}
+ENV ASPNETCORE_URLS http://+:8080
+ENV ASPNETCORE_ENVIRONMENT Production
+EXPOSE 8080
+WORKDIR /app
+COPY --from=build /app .
+ENTRYPOINT [ "dotnet", "<replace_it_by_your_application_name>.dll" ]
+```
+
+## Deploy the project
+
+To expose the application’s port, we need to set up the `PORT` environment variable :
+
+```bash
+citadel env set PORT=8080
+```
+
+Then, we can deploy the application :
+
+```bash
+citadel deploy
+```
+
+Once the deployment is finished, type :
+
+```bash
+citadel open
+```
+
+to see your .NET application in your browser.

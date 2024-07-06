@@ -1,0 +1,139 @@
+---
+title: Remix
+description: Learn how to deploy a Remix application to Software Citadel
+---
+
+## Introduction
+
+[Remix](https://remix.run) is a full stack web framework that lets you focus on the user interface and work back through web standards to deliver a fast, slick, and resilient user experience. In this article, we are going to deploy a Remix application to Software Citadel.
+
+## Prerequisites
+
+- a UNIX-like system (see [WSL](https://learn.microsoft.com/en-us/windows/wsl/install) if you are using Windows), in order to use the [Software Citadel CLI](https://docs.softwarecitadel.com/cli)
+- a Software Citadel account, with a registered payment method (you can sign up [here](https://dashboard.softwarecitadel.com/auth/sign_up))
+- [NodeJS](https://nodejs.org) and [NPM](https://www.npmjs.com) installed on your machine
+
+## Installing the Software Citadel CLI
+
+```bash
+curl -L https://cli.softwarecitadel.com/install.sh | sh
+```
+
+You can inspect the installation script [here](https://cli.softwarecitadel.com/install.sh) and the [GitHub repository](https://github.com/softwarecitadel/cli).
+
+## Authenticating
+
+```bash
+citadel auth login
+```
+
+## Initializing the project
+
+We can scaffold a Remix application with the following command :
+
+```bash
+npx create-remix@latest
+```
+
+Then, change directory to the newly created application :
+
+```bash
+cd <app-name>
+```
+
+Now, we can initialize the `citadel.toml` configuration file, that allows to link the local codebase, to a Software Citadel application :
+
+```bash
+citadel init
+```
+
+This command will ask you to select/create a project and an associated application.
+
+## Adding the Dockerfile
+
+Let’s add a Dockerfile so that Software Citadel can build a Docker image for your application.
+
+```bash
+touch Dockerfile
+```
+
+We can fill it this way :
+
+```bash
+# Adjust NODE_VERSION as desired
+ARG NODE_VERSION=21.5.0
+FROM node:${NODE_VERSION}-slim as base
+
+# Remix app lives here
+WORKDIR /app
+
+# Set production environment
+ENV NODE_ENV="production"
+
+# Throw-away build stage to reduce size of final image
+FROM base as build
+
+# Install packages needed to build node modules
+RUN apt-get update -qq && \
+    apt-get install --no-install-recommends -y build-essential node-gyp pkg-config python-is-python3
+
+# Install node modules
+COPY --link package-lock.json package.json ./
+RUN npm ci --include=dev
+
+# Copy application code
+COPY --link . .
+
+# Build application
+RUN npm run build
+
+# Remove development dependencies
+RUN npm prune --omit=dev
+
+# Final stage for app image
+FROM base
+
+# Copy built application
+COPY --from=build /app /app
+
+# Start the server by default, this can be overwritten at runtime
+EXPOSE 3000
+CMD [ "npm", "run", "start" ]
+```
+
+## Adding the .dockerignore
+
+Let’s add a .dockerignore so that Software Citadel so that it doesn’t send unnecessary files to the Docker build context.
+
+```bash
+touch .dockerignore
+```
+
+We can fill it this way :
+
+```bash
+node_modules
+.git
+```
+
+## Deploy the project
+
+To expose the application’s port, we need to set up the `PORT` environment variable :
+
+```bash
+citadel env set PORT=3000
+```
+
+Then, we can deploy the application :
+
+```bash
+citadel deploy
+```
+
+Once the deployment is finished, type :
+
+```bash
+citadel open
+```
+
+to see your Remix application in your browser.

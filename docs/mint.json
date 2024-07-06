@@ -1,0 +1,80 @@
+{
+  "$schema": "https://mintlify.com/schema.json",
+  "name": "Software Citadel",
+  "logo": {
+    "dark": "/logo/dark.svg",
+    "light": "/logo/light.svg"
+  },
+  "favicon": "/favicon.svg",
+  "colors": {
+    "primary": "#ca8a04",
+    "light": "#facc15",
+    "dark": "#ca8a04",
+    "anchors": {
+      "from": "#ca8a04",
+      "to": "#facc15"
+    }
+  },
+  "topbarLinks": [
+    {
+      "name": "Contact",
+      "url": "https://softwarecitadel.com/contact"
+    }
+  ],
+  "topbarCtaButton": {
+    "name": "Console",
+    "url": "https://console.softwarecitadel.com"
+  },
+  "tabs": [
+    {
+      "name": "API Reference",
+      "url": "api_reference"
+    }
+  ],
+  "anchors": [
+    {
+      "name": "Discord",
+      "icon": "discord",
+      "url": "https://discord.gg/WZCXG3SZQt"
+    },
+    {
+      "name": "GitHub",
+      "icon": "github",
+      "url": "https://github.com/valyentdev/software-citadel.git"
+    },
+    {
+      "name": "X",
+      "icon": "x",
+      "url": "https://x.com/SoftwareCitadel"
+    }
+  ],
+  "navigation": [
+    {
+      "group": "Get Started",
+      "pages": ["introduction", "cli"]
+    },
+    {
+      "group": "Deployment Guides",
+      "pages": [
+        "deployment_guides/adonis",
+        "deployment_guides/angular",
+        "deployment_guides/dotnet",
+        "deployment_guides/fastapi",
+        "deployment_guides/laravel",
+        "deployment_guides/nestjs",
+        "deployment_guides/nextjs",
+        "deployment_guides/rails",
+        "deployment_guides/remix"
+      ]
+    },
+    {
+      "group": "Emails API",
+      "pages": ["api_reference/emails/send"]
+    }
+  ],
+  "footerSocials": {
+    "discord": "https://discord.gg/WZCXG3SZQt",
+    "github": "https://github.com/valyentdev/software-citadel.git",
+    "x": "https://x.com/SoftwareCitadel"
+  }
+}

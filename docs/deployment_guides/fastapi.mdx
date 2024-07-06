@@ -1,0 +1,125 @@
+---
+title: FastAPI
+description: Learn how to deploy an FastAPI application to Software Citadel
+---
+
+## Introduction
+
+[FastAPI](https://fastapi.tiangolo.com) is a modern, fast (high-performance), web framework for building APIs with Python 3.8+ based on standard Python type hints.
+
+## Prerequisites
+
+- a UNIX-like system (see [WSL](https://learn.microsoft.com/en-us/windows/wsl/install) if you are using Windows), in order to use the [Software Citadel CLI](https://docs.softwarecitadel.com/cli)
+- a Software Citadel account, with a registered payment method (you can sign up [here](https://dashboard.softwarecitadel.com/auth/sign_up))
+- [Python3](https://www.python.org) and installed on your machine
+
+## Installing the CLI
+
+```bash
+curl -L https://cli.softwarecitadel.com/install.sh | sh
+```
+
+You can inspect the installation script [here](https://cli.softwarecitadel.com/install.sh) and the [GitHub repository](https://github.com/softwarecitadel/cli).
+
+## Authenticating
+
+```bash
+citadel auth login
+```
+
+## Initializing the project
+
+In the first place, we are going to install FastAPI dependencies. You can refer to the [official documentation](https://fastapi.tiangolo.com/tutorial/#install-fastapi) for more information.
+
+```bash
+pip install fastapi
+pip install uvicorn[standard]
+```
+
+Then, we can scaffold a new FastAPI project :
+
+```bash
+mkdir -p fastapi-testing/app && cd fastapi-testing && touch app/main.py
+```
+
+Make sure to create a `requirements.txt` file, in order to install the dependencies in the Docker image :
+
+```bash
+touch requirements.txt
+```
+
+For this example, we are going to use the following dependencies :
+
+```bash
+# requirements.txt
+fastapi>=0.68.0,<0.69.0
+pydantic>=1.8.0,<2.0.0
+uvicorn>=0.15.0,<0.16.0
+```
+
+In the `app/main.py` file, we can add the following code :
+
+```bash
+# app/main.py
+from fastapi import FastAPI
+
+app = FastAPI()
+
+@app.get("/")
+def read_root():
+  return {"Hello": "World"}
+```
+
+Now, we can initialize the `citadel.toml` configuration file, that allows to link the local codebase, to a Software Citadel application :
+
+```bash
+citadel init
+```
+
+This command will ask you to select/create a project and an associated application.
+
+## Adding the Dockerfile
+
+Let's add a Dockerfile so that Software Citadel can build a Docker image for your application.
+
+```bash
+touch Dockerfile
+```
+
+We can fill it with the following Dockerfile (coming from [here](https://fastapi.tiangolo.com/deployment/docker/#dockerfile)) :
+
+```bash
+FROM python:3.9
+
+WORKDIR /code
+
+COPY ./requirements.txt /code/requirements.txt
+
+RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
+
+COPY ./app /code/app
+
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "80"]
+```
+
+## Deploy the project
+
+Software Citadel makes use of the `PORT` environment variable to determine which port to expose. We can set it with the following command :
+
+```bash
+citadel env set PORT=80
+```
+
+Then, we can deploy the application :
+
+```bash
+citadel deploy
+```
+
+Once the deployment is finished, type :
+
+```bash
+citadel open
+```
+
+to test your FastAPI application in your browser.

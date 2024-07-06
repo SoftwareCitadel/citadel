@@ -1,0 +1,173 @@
+---
+title: Laravel
+description: Learn how to deploy a Laravel application to Software Citadel
+---
+
+## Introduction
+
+[Laravel](https://laravel.com/) is a powerful PHP web framework known for its elegant syntax and developer-friendly features. In this article, we'll guide you through deploying a Laravel application to Software Citadel.
+
+## Prerequisites
+
+- A UNIX-like system (see [WSL](https://learn.microsoft.com/en-us/windows/wsl/install) if you are using Windows) for using the [Software Citadel CLI](https://docs.softwarecitadel.com/cli).
+- A Software Citadel account, with a registered payment method (sign up [here](https://dashboard.softwarecitadel.com/auth/sign_up)).
+- [PHP](https://www.php.net/), [Composer](https://getcomposer.org/), [NodeJS](https://nodejs.org), and [NPM](https://www.npmjs.com) installed on your machine.
+
+## Installing the Software Citadel CLI
+
+```bash
+curl -L https://cli.softwarecitadel.com/install.sh | sh
+```
+
+Inspect the installation script [here](https://cli.softwarecitadel.com/install.sh) and the [GitHub repository](https://github.com/softwarecitadel/cli).
+
+## Authenticating
+
+```bash
+citadel auth login
+```
+
+## Initializing the Laravel project
+
+If you don't have a Laravel project yet, create one using Composer:
+
+```bash
+composer create-project --prefer-dist laravel/laravel <app-name>
+```
+
+Now, change your directory to the newly created Laravel application:
+
+```bash
+cd <app-name>
+```
+
+## Initializing the project for Software Citadel
+
+Note that Laravel applications may require at least 512MB of RAM to run.
+
+Initialize the `citadel.toml` configuration file to link your local codebase to a Software Citadel application:
+
+```bash
+citadel init
+```
+
+This command will prompt you to select or create a project and an associated application.
+
+## Adding the Dockerfile
+
+Create a Dockerfile to enable Software Citadel to build a Docker image for your Laravel application:
+
+```bash
+touch Dockerfile
+```
+
+Fill it with the following content:
+
+```bash
+# Use the webdevops PHP with Nginx base image version 8.3 on Alpine Linux
+FROM webdevops/php-nginx:8.3-alpine
+
+# Install required dependencies for Docker to function
+RUN apk add oniguruma-dev libxml2-dev
+
+# Install necessary PHP extensions
+RUN docker-php-ext-install \
+        bcmath \
+        ctype \
+        fileinfo \
+        mbstring \
+        pdo_mysql \
+        xml
+
+# Copy Composer binary from the official Composer image
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# Install NodeJS and npm
+RUN apk add nodejs npm
+
+# Set the document root for the web server
+ENV WEB_DOCUMENT_ROOT /app/public
+
+# Set the application environment to production
+ENV APP_ENV production
+
+# Set the working directory to /app
+WORKDIR /app
+
+# Copy the application code into the container
+COPY . .
+
+# Copy the .env.example file and rename it to .env
+# You can modify the .env.example to configure your site for production
+RUN cp -n .env.example .env
+
+# Install and configure your site for production
+# https://laravel.com/docs/10.x/deployment#optimizing-configuration-loading
+RUN composer install --no-interaction --optimize-autoloader --no-dev
+
+# Generate security key
+RUN php artisan key:generate
+
+# Optimize Configuration loading
+RUN php artisan config:cache
+
+# Optimize Route loading
+RUN php artisan route:cache
+
+# Optimize View loading
+RUN php artisan view:cache
+
+# Compile Breeze assets (or your site's assets)
+RUN npm install
+RUN npm run build
+
+# Set ownership of files to the 'application' user
+RUN chown -R application:application .
+```
+
+## Adding the .dockerignore file
+
+Create a `.dockerignore` file to exclude unnecessary files from the Docker image:
+
+```bash
+touch .dockerignore
+```
+
+Fill it with the following content:
+
+```bash
+.git
+.gitignore
+node_modules
+vendor
+.env
+.env.example
+```
+
+## Deploy the project
+
+We are now ready to deploy the Laravel application to Software Citadel.
+
+There is a few environment variables that need to be set before we can deploy the application.
+
+Expose the application’s port by setting up the `PORT` environment variable:
+
+```bash
+citadel env set PORT=80
+```
+
+Now, deploy the Laravel application:
+
+```bash
+citadel deploy
+```
+
+Once the deployment is complete, run:
+
+```bash
+citadel open
+```
+
+to view your Laravel application in your browser.
+
+Please note that this guide assumes a standard Laravel setup. Adjustments may be needed based on your specific Laravel project structure or additional requirements.

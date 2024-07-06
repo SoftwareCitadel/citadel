@@ -1,0 +1,136 @@
+---
+title: AdonisJS
+description: Learn how to deploy an AdonisJS 6 application to Software Citadel
+---
+
+## Introduction
+
+[Adonis](https://adonisjs.com/) is a fully featured web framework for Node.js. In this article, we are going to deploy a freshly created AdonisJS application to Software Citadel.
+
+## Prerequisites
+
+- a UNIX-like system (see [WSL](https://learn.microsoft.com/en-us/windows/wsl/install) if you are using Windows), in order to use the [Software Citadel CLI](https://docs.softwarecitadel.com/cli)
+- a Software Citadel account, with a registered payment method (you can sign up [here](https://dashboard.softwarecitadel.com/auth/sign_up))
+- [NodeJS](https://nodejs.org) and [NPM](https://www.npmjs.com) installed on your machine
+
+## Installing the CLI
+
+```bash
+curl -L https://cli.softwarecitadel.com/install.sh | sh
+```
+
+You can inspect the installation script [here](https://cli.softwarecitadel.com/install.sh) and the [GitHub repository](https://github.com/softwarecitadel/cli).
+
+## Authenticating
+
+```bash
+citadel auth login
+```
+
+## Initializing the project
+
+In the first place, we are going to set up a new AdonisJS project. You can refer to the [official documentation](https://docs.adonisjs.com/guides/installation).
+
+```bash
+npm init adonis-ts-app@latest <some_project_name> && cd <some_project_name>
+```
+
+You can select the project structure you want. For this guide, we are going to select the `web` project structure.
+
+Now, we can initialize the `citadel.toml` configuration file, that allows to link the local codebase, to a Software Citadel application :
+
+```bash
+citadel init
+```
+
+This command will ask you to select/create a project and an associated application.
+
+## Adding the Dockerfile
+
+Let’s add a Dockerfile so that Software Citadel can build a Docker image for your application.
+
+```bash
+touch Dockerfile
+```
+
+We can fill it with the following Dockerfile (coming from this [cookbook](https://docs.adonisjs.com/cookbooks/dockerizing-adonis)) :
+
+```bash
+ARG NODE_IMAGE=node:16.13.1-alpine
+
+FROM $NODE_IMAGE AS base
+RUN apk --no-cache add dumb-init
+RUN mkdir -p /home/node/app && chown node:node /home/node/app
+WORKDIR /home/node/app
+USER node
+RUN mkdir tmp
+
+FROM base AS dependencies
+COPY --chown=node:node ./package*.json ./
+RUN npm ci
+COPY --chown=node:node . .
+
+FROM dependencies AS build
+RUN node ace build --production
+
+FROM base AS production
+ENV NODE_ENV=production
+ENV PORT=$PORT
+ENV HOST=0.0.0.0
+COPY --chown=node:node ./package*.json ./
+RUN npm ci --production
+COPY --chown=node:node --from=build /home/node/app/build .
+EXPOSE $PORT
+CMD [ "dumb-init", "node", "server.js" ]
+```
+
+## Setting environment variables
+
+### Option 1
+
+We can set environment variables using the `citadel env set` command :
+
+```bash
+citadel env set PORT=3333 HOST=0.0.0.0 NODE_ENV=development APP_KEY=<my_app_key> DRIVE_DISK=local SESSION_DRIVER=cookie CACHE_VIEWS=true
+```
+
+### Option 2
+
+We are also able to load environment variables from a `.env` file :
+
+```bash
+touch .env.prod
+```
+
+```bash
+# .env.prod
+PORT=3333
+HOST=0.0.0.0
+NODE_ENV=development
+APP_KEY=<my_app_key>
+DRIVE_DISK=local
+SESSION_DRIVER=cookie
+CACHE_VIEWS=true
+```
+
+```bash
+citadel env load .env.prod
+```
+
+Don’t forget to add the `.env.prod` file to your `.gitignore` file.
+
+## Deploy the project
+
+Then, we can deploy the application :
+
+```bash
+citadel deploy
+```
+
+Once the deployment is finished, type :
+
+```bash
+citadel open
+```
+
+to see your Adonis application in your browser.

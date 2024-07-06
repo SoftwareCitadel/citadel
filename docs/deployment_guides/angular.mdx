@@ -1,0 +1,119 @@
+---
+title: Angular
+description: Learn how to deploy an Angular application to Software Citadel 
+---
+
+## Introduction
+
+[Angular](https://angular.io) is an application-design framework and development platform for creating efficient and sophisticated single-page apps.
+
+## Prerequisites
+
+- a UNIX-like system (see [WSL](https://learn.microsoft.com/en-us/windows/wsl/install) if you are using Windows), in order to use the [Software Citadel CLI](https://docs.softwarecitadel.com/cli)
+- a Software Citadel account, with a registered payment method (you can sign up [here](https://dashboard.softwarecitadel.com/auth/sign_up))
+- [NodeJS](https://nodejs.org) and [NPM](https://www.npmjs.com) installed on your machine
+
+## Installing the Software Citadel CLI
+
+```bash
+curl -L https://cli.softwarecitadel.com/install.sh | sh
+```
+
+You can inspect the installation script [here](https://cli.softwarecitadel.com/install.sh) and the [GitHub repository](https://github.com/softwarecitadel/cli).
+
+## Authenticating with the Software Citadel CLI
+
+```bash
+citadel auth login
+```
+
+## Installing the Angular CLI
+
+```bash
+npm install -g @angular/cli
+```
+
+## Initializing the project
+
+Now, you can use the `ng` command to create a new Angular project :
+
+```bash
+ng new <my_angular_app> && cd <my_angular_app>
+```
+
+Now, we can initialize the `citadel.toml` configuration file, that allows to link the local codebase, to a Software Citadel application :
+
+```bash
+citadel init
+```
+
+This command will ask you to select/create a project and an associated application.
+
+## Adding the Dockerfile
+
+Let’s add a Dockerfile so that Software Citadel can build a Docker image for your application.
+
+```bash
+touch Dockerfile
+```
+
+We can fill it with the following :
+
+```bash
+# Use an official Node runtime as a base image
+FROM node:20 as builder
+
+# Set the working directory
+WORKDIR /app
+
+# Copy package.json and package-lock.json to the working directory
+COPY package*.json ./
+
+# Install Angular CLI globally
+RUN npm install -g @angular/cli
+
+# Install project dependencies
+RUN npm install
+
+# Copy the application code to the working directory
+COPY . .
+
+# Build the Angular application
+RUN ng build --configuration=production --output-path=dist
+
+# Use a lightweight base image for the final runtime
+FROM nginx:alpine
+
+# Copy the built Angular application from the builder stage to the nginx web root directory
+COPY --from=builder /app/dist/* /usr/share/nginx/html/
+
+# Expose port 80 for the nginx server
+EXPOSE 80
+
+# Start the nginx server
+CMD ["nginx", "-g", "daemon off;"]
+```
+
+## Setting the PORT environment variable
+
+We can set the `PORT` environment variable, so that the application listens on the correct port :
+
+```bash
+citadel env set PORT=80
+```
+
+## Deploy the project
+
+Then, we can deploy the application :
+
+```bash
+citadel deploy
+```
+
+Once the deployment is finished, type :
+
+```bash
+citadel open
+```
+
+to see your Adonis application in your browser.

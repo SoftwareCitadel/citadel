@@ -1,0 +1,98 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Software Citadel OpenAPI",
+    "description": "A sample API to send emails through an SMTP server.",
+    "license": {
+      "name": "MIT"
+    },
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://console.softwarecitadel.com"
+    }
+  ],
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/v1/emails": {
+      "post": {
+        "description": "Send an email through our SMTP server",
+        "requestBody": {
+          "description": "Details of the email to send",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SendEmailRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Email sent successfully"
+          },
+          "400": {
+            "description": "Invalid request data"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "SendEmailRequest": {
+        "type": "object",
+        "required": ["from", "to", "subject"],
+        "properties": {
+          "from": {
+            "type": "string",
+            "format": "email",
+            "description": "The email address of the sender"
+          },
+          "to": {
+            "type": "string",
+            "format": "email",
+            "description": "The email address of the recipient"
+          },
+          "subject": {
+            "type": "string",
+            "description": "The subject of the email"
+          },
+          "text": {
+            "type": "string",
+            "description": "The plain text content of the email"
+          },
+          "html": {
+            "type": "string",
+            "description": "The HTML content of the email"
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": ["message"],
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Error message"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    }
+  }
+}
