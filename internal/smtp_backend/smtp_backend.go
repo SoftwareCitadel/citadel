@@ -7,6 +7,7 @@ import (
 	"citadel/util"
 	"context"
 	"errors"
+	"fmt"
 	"io"
 	"net/mail"
 	"os"
@@ -65,6 +66,7 @@ func (s *Session) Auth(mech string) (sasl.Server, error) {
 		}
 
 		// Check if the API key is valid
+		fmt.Print("password: ", password, "\n")
 		apiKey, err := s.apiKeysRepo.FindOneBy(context.Background(), "value", password)
 		if err != nil {
 			return errors.New("invalid api key")

@@ -4,6 +4,7 @@ import (
 	"citadel/internal/models"
 	"citadel/internal/repositories"
 	mailsPages "citadel/views/concerns/mails/pages"
+	"fmt"
 
 	caesar "github.com/caesar-rocks/core"
 	"github.com/caesar-rocks/ui/toast"
@@ -87,6 +88,12 @@ func (c *MailDomainsController) CheckDNS(ctx *caesar.Context) error {
 
 	// Check the DNS records
 	if err := domain.CheckDNS(); err != nil {
+		return caesar.NewError(500)
+	}
+
+	// Save the domain
+	fmt.Println("domain.DNSVerified", domain.DNSVerified)
+	if err := c.mailDomainsRepo.UpdateOneWhere(ctx.Context(), domain, "id", ctx.PathValue("id")); err != nil {
 		return caesar.NewError(500)
 	}
 

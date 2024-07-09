@@ -1,74 +1,60 @@
 services:
   web:
+    restart: unless-stopped
     build:
       context: ../..
       dockerfile: ./zarf/docker/web.dockerfile
     env_file:
       - .env.prod
     networks:
-      - traefik
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.web.rule=Host(`console.softwarecitadel.com`)"
-      - "traefik.http.routers.web.entrypoints=websecure"
-      - "traefik.http.routers.web.tls.certresolver=myresolver"
-      - "traefik.http.services.web.loadbalancer.server.port=80"
+      - citadel
 
-  smtp:
-    build:
-      context: ../..
-      dockerfile: ./zarf/docker/smtp.dockerfile
-    env_file:
-      - .env.prod
-    network_mode: host
-    labels:
-      - "traefik.enable=true"
-      - "traefik.tcp.routers.smtp.rule=HostSNI(`mail.softwarecitadel.com`)"
-      - "traefik.tcp.routers.smtp.entrypoints=smtpsecure"
-      - "traefik.tcp.routers.smtp.tls=true"
-      - "traefik.tcp.routers.smtp.tls.options=mytlsoptions"
-      - "traefik.tcp.services.smtp.loadbalancer.server.port=25"
-
-  traefik:
-    image: traefik:v3.0
-    command:
-      - "--api.insecure=true"
-      - "--providers.docker"
-      - "--providers.docker.exposedbydefault=false"
-      - "--entrypoints.web.address=:80"
-      - "--entrypoints.websecure.address=:443"
-      - "--entrypoints.smtpsecure.address=:465"
-      - "--certificatesresolvers.myresolver.acme.httpchallenge=true"
-      - "--certificatesresolvers.myresolver.acme.httpchallenge.entrypoint=web"
-      - "--certificatesresolvers.myresolver.acme.email=contact@softwarecitadel.com"
-      - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
-      - "--entrypoints.traefik.address=:8080"
-
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - citadel_traefik:/letsencrypt
+  caddy:
+    image: caddy:2.8.4-alpine
+    restart: unless-stopped
     ports:
       - "80:80"
       - "443:443"
-      - "465:465" # For secure SMTP
-      - "8080:8080"
+      - "443:443/udp"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - ./site:/srv
+      - caddy_data:/data
+      - caddy_config:/config
     networks:
-      - traefik
+      - citadel
+
+  redis:
+    image: redis:6.2-alpine
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - citadel_redis:/data
+    command: redis-server --save 20 1 --loglevel warning --requirepass PCDmwMtyKVge8oLd2t81eYVX7EwVmmxK
 
   postgres:
     image: "postgres:13"
+    restart: unless-stopped
     environment:
       PGPASSWORD: citadel
-      POSTGRES_DB: citadel
+      POSTGRES_DB: PCDmwMtyKVge8oLd2t81eYVX7EwVmmxK
       POSTGRES_USER: citadel
-      POSTGRES_PASSWORD: citadel
+      POSTGRES_PASSWORD: PCDmwMtyKVge8oLd2t81eYVX7EwVmmxK
+    ports:
+      - "5432:5432"
     volumes:
       - "citadel_postgres:/var/lib/postgresql/data"
+    networks:
+      - citadel
 
 volumes:
   citadel_postgres:
-  citadel_traefik:
+    name: citadel_postgres
+  citadel_redis:
+    name: citadel_redis
+  caddy_data:
+  caddy_config:
 
 networks:
-  traefik:
-    name: traefik
+  citadel:

@@ -28,4 +28,4 @@ vendor
 smtp
 caesar
 citadel.toml
-zarf/docker/.env.prod
+zarf

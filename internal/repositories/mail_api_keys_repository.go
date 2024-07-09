@@ -12,7 +12,9 @@ type MailApiKeysRepository struct {
 }
 
 func NewMailApiKeysRepository(db *orm.Database) *MailApiKeysRepository {
-	return &MailApiKeysRepository{Repository: &orm.Repository[models.MailApiKey]{Database: db}}
+	return &MailApiKeysRepository{Repository: &orm.Repository[models.MailApiKey]{
+		Database: db,
+	}}
 }
 
 func (r MailApiKeysRepository) FindAllFromOrgWithRelatedDomain(ctx context.Context, orgId string) ([]models.MailApiKey, error) {

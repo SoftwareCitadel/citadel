@@ -195,7 +195,7 @@ func (d *MailDomain) CheckDNS() error {
 
 			for _, mx := range mxs {
 				log.Info("MX record", "host", mx.Host, "pref", mx.Pref, "value", record.Value)
-				if mx.Host == record.Value {
+				if strings.Contains(mx.Host, record.Value) {
 					expectedRecords[i].Verified = true
 					break
 				}
@@ -229,6 +229,8 @@ func (d *MailDomain) CheckDNS() error {
 			break
 		}
 	}
+
+	fmt.Println("[CheckDNS] domain.DNSVerified", d.DNSVerified)
 
 	// Save the updated records
 	if err := d.setExpectedDNSRecords(expectedRecords); err != nil {
