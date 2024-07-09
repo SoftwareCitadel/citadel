@@ -6,11 +6,15 @@ import (
 	smtpSender "citadel/internal/smtp_sender"
 	"citadel/util"
 	"context"
+	"encoding/hex"
 	"errors"
 	"fmt"
 	"io"
 	"net/mail"
 	"os"
+	"time"
+
+	"golang.org/x/crypto/bcrypt"
 
 	"citadel/internal/models"
 
@@ -64,17 +68,55 @@ func (s *Session) Auth(mech string) (sasl.Server, error) {
 		if username != "citadel" {
 			return errors.New("invalid username")
 		}
-
-		// Check if the API key is valid
-		fmt.Print("password: ", password, "\n")
+		// new check implementation
 		apiKey, err := s.apiKeysRepo.FindOneBy(context.Background(), "value", password)
 		if err != nil {
-			return errors.New("invalid api key")
+			// Verify the API key if found
+			decodedHash, err := hex.DecodeString(apiKey.Value)
+			if err != nil {
+				return errors.New("invalid api key format")
+			}
+			if err := bcrypt.CompareHashAndPassword(decodedHash, []byte(password)); err == nil {
+				s.apiKey = apiKey
+				return nil
+			}
+		}
+		//If the api wasn't found or didn't match, check if a new creation is needed
+		if password == "CREATE_NEW_API_KEY" {
+			//Generate a new API key
+			newAPIKey, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+			if err != nil {
+				return errors.New("failed to create new API key")
+			}
+			// Hash the key
+			hashedKey, err := bcrypt.GenerateFromPassword([]byte(newAPIKey), bcrypt.DefaultCost)
+			if err != nil {
+				return errors.New("failed to hash API key")
+			}
+			// Encode the hash
+			encodedHash := hex.EncodeToString(hashedKey)
+			//Create a new MailApiKey object
+			newMailApiKey := &models.MailApiKey{
+				Name:           "New API Key",
+				Value:          encodedHash,
+				OrganizationID: s.apiKey.OrganizationID,
+				CreatedAt:      (time.Now()),
+				UpdatedAt:      (time.Now()),
+			}
+			// Store the hashed key in the database
+			err = s.apiKeysRepo.Create(context.Background(), newMailApiKey)
+			if err != nil {
+				return errors.New("failed to store API key")
+			}
+			// Give the user the option to save the API Key
+			fmt.Printf("Your new API key is: %s\n", newAPIKey)
+			fmt.Println("Please store this key safely. It will not be shown again.")
+
+			s.apiKey = newMailApiKey
+			return nil
 		}
 
-		s.apiKey = apiKey
-
-		return nil
+		return errors.New("invalid api key")
 	}), nil
 }
 
