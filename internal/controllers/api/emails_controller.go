@@ -15,11 +15,12 @@ func NewEmailsController() *EmailsController {
 }
 
 type SendEmailValidator struct {
-	From    string `json:"from" validate:"required,email"`
-	To      string `json:"to" validate:"required,email"`
-	Subject string `json:"subject" validate:"required"`
-	Text    string `json:"text"`
-	HTML    string `json:"html"`
+	From    string            `json:"from" validate:"required,email"`
+	To      string            `json:"to" validate:"required,email"`
+	Subject string            `json:"subject" validate:"required"`
+	Text    string            `json:"text"`
+	HTML    string            `json:"html"`
+	Headers map[string]string `json:"headers"`
 }
 
 func (c *EmailsController) Send(ctx *caesar.Context) error {
@@ -35,6 +36,9 @@ func (c *EmailsController) Send(ctx *caesar.Context) error {
 	m.SetHeader("From", data.From)
 	m.SetHeader("To", data.To)
 	m.SetHeader("Subject", data.Subject)
+	for key, value := range data.Headers {
+		m.SetHeader(key, value)
+	}
 
 	m.SetBody("text/plain", data.Text)
 	if data.HTML != "" {

@@ -34,7 +34,7 @@ type DockerDriver struct {
 	minioAdmin   *madmin.AdminClient
 }
 
-func NewDockerDriver(appsRepo *repositories.ApplicationsRepository, deplsRepo *repositories.DeploymentsRepository) *DockerDriver {
+func New(appsRepo *repositories.ApplicationsRepository, deplsRepo *repositories.DeploymentsRepository) *DockerDriver {
 	client, err := client.NewClientWithOpts(
 		client.FromEnv,
 		client.WithAPIVersionNegotiation(),

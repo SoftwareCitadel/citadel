@@ -5,7 +5,6 @@ import (
 	apiControllers "citadel/internal/controllers/api"
 	authControllers "citadel/internal/controllers/auth"
 	"citadel/internal/drivers"
-	dockerDriver "citadel/internal/drivers/docker_driver"
 	"citadel/internal/listeners"
 	"citadel/internal/repositories"
 	"citadel/internal/services"
@@ -54,7 +53,6 @@ func ProvideApp(env *EnvironmentVariables) *core.App {
 	app.RegisterProviders(
 		services.NewUsersService,
 		services.NewAppsService,
-		dockerDriver.NewDockerDriver,
 	)
 
 	app.RegisterProviders(

@@ -5,11 +5,9 @@ import (
 	"citadel/internal/repositories"
 	smtpBackend "citadel/internal/smtp_backend"
 	"context"
-	"crypto/tls"
 	"log/slog"
 	"time"
 
-	"github.com/caddyserver/certmagic"
 	"github.com/charmbracelet/log"
 	"github.com/emersion/go-smtp"
 	"go.uber.org/fx"
@@ -42,14 +40,14 @@ func newSMTPServer(
 	srv.AllowInsecureAuth = false
 
 	// Set the TLS configuration
-	tlsConfig, err := certmagic.TLS([]string{env.SMTP_DOMAIN})
-	if err != nil {
-		log.Fatal("Failed to get TLS configuration", "error", err)
-	}
-	tlsConfig.ClientAuth = tls.RequestClientCert
-	tlsConfig.NextProtos = []string{"smtp"}
+	// tlsConfig, err := certmagic.TLS([]string{env.SMTP_DOMAIN})
+	// if err != nil {
+	// 	log.Fatal("Failed to get TLS configuration", "error", err)
+	// }
+	// tlsConfig.ClientAuth = tls.RequestClientCert
+	// tlsConfig.NextProtos = []string{"smtp"}
 
-	srv.TLSConfig = tlsConfig
+	// srv.TLSConfig = tlsConfig
 
 	// Register the server with the lifecycle
 	lc.Append(fx.Hook{

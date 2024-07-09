@@ -61,10 +61,10 @@ func RegisterRoutes(
 		// Redirect to owned organization if user has one
 		org, err := orgsRepository.FindFirstOwnedByUser(ctx.Context(), user.ID)
 		if err == nil {
-			return ctx.Redirect("/orgs/" + org.ID + "/apps")
+			return ctx.Redirect("/orgs/" + org.ID + "/mails")
 		}
 
-		return ctx.Redirect("/orgs/no_org/apps")
+		return ctx.Redirect("/orgs/no_org/mails")
 	})
 
 	// Auth routes

@@ -2,7 +2,7 @@ package main
 
 import (
 	"citadel/config"
-	"citadel/database/migrations"
+	"citadel/database"
 	"fmt"
 	"os"
 	"strings"
@@ -28,11 +28,11 @@ func main() {
 	case "list:routes":
 		listRoutes()
 	case "migrations:run":
-		getDB().Migrate(migrations.Migrations)
+		getDB().Migrate(database.GetMigrations())
 	case "migrations:rollback":
-		getDB().Rollback(migrations.Migrations)
+		getDB().Rollback(database.GetMigrations())
 	case "migrations:reset":
-		getDB().Reset(migrations.Migrations)
+		getDB().Reset(database.GetMigrations())
 	case "db:seed":
 		getDB().Seed()
 	}

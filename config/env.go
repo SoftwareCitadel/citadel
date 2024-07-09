@@ -91,7 +91,17 @@ type EnvironmentVariables struct {
 
 	// SMTP_DOMAIN is the domain for the SMTP server.
 	SMTP_DOMAIN string
+
+	// SMTP_USER is the user for the SMTP server.
+	DRIVER Driver `validate:"oneof=docker ravel"`
 }
+
+type Driver string
+
+const (
+	DockerDriver Driver = "docker"
+	RavelDriver  Driver = "ravel"
+)
 
 func ProvideEnvironmentVariables() *EnvironmentVariables {
 	return core.ValidateEnvironmentVariables[EnvironmentVariables]()
