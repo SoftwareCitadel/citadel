@@ -25,7 +25,6 @@ private-key.pem
 vendor
 
 # Binaries
-citadel
 smtp
 caesar
 citadel.toml
