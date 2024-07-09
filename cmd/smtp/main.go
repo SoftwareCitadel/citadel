@@ -49,8 +49,6 @@ func newSMTPServer(
 	tlsConfig.ClientAuth = tls.RequestClientCert
 	tlsConfig.NextProtos = []string{"smtp"}
 
-	certmagic.DefaultACME.Email = env.SMTP_ADMIN_EMAIL
-
 	srv.TLSConfig = tlsConfig
 
 	// Register the server with the lifecycle

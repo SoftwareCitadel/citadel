@@ -1142,6 +1142,14 @@ select {
   height: 100% !important;
 }
 
+.h-96 {
+  height: 24rem;
+}
+
+.h-64 {
+  height: 16rem;
+}
+
 .max-h-72 {
   max-height: 18rem;
 }
@@ -2277,6 +2285,11 @@ select {
 
 .underline {
   text-decoration-line: underline;
+}
+
+.antialiased {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 .accent-white {

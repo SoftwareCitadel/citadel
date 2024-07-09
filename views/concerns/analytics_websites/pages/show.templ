@@ -5,6 +5,7 @@ import (
 	"citadel/views/layouts"
 	"citadel/views/concerns/analytics_websites/components"
 	"citadel/views/ui"
+	"strings"
 )
 
 templ ShowPage(website models.AnalyticsWebsite) {
@@ -13,7 +14,7 @@ templ ShowPage(website models.AnalyticsWebsite) {
 	}) {
 		@components.Breadcrumbs(website)
 		@components.Tabs(website)
-		@websiteInfo(website)
+		@websiteInfo(website, []string{"Red", "Blue", "Yellow", "Green", "Purple", "Orange"}, []uint64{12, 19, 3, 5, 2, 150})
 		<div class="pb-6 px-12 gap-4 grid grid-cols-1 sm:grid-cols-2">
 			@ui.Card(ui.CardProps{
 				Title:     "Pages",
@@ -43,32 +44,52 @@ templ ShowPage(website models.AnalyticsWebsite) {
 	}
 }
 
-templ websiteInfo(website models.AnalyticsWebsite) {
+templ websiteInfo(
+	website models.AnalyticsWebsite,
+	labels []string,
+	data []uint64,
+) {
 	<script type="module">
 	import { Chart, registerables } from 'https://cdn.jsdelivr.net/npm/chart.js@4.4.3/+esm'
 
 	Chart.register(...registerables);
 
 	new Chart(document.getElementById('myChart'), {
-		type: 'bar',
+		type: 'line',
+		responsive: true,
 		data: {
+			// @TODO: Replace with actual data from the backend
 			labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
 			datasets: [{
-				label: '# of Votes',
-				data: [12, 19, 3, 5, 2, 3],
-				borderWidth: 1
+				// @TODO: Replace with actual data from the backend
+				data: [12, 19, 3, 5, 2, 150],
+				borderWidth: 1,
+				borderColor: 'rgb(253 224 71)',
+				backgroundColor: 'rgb(253 224 71/0.1)',
+				fill: true,
+				tension: 0.5
 			}]
 		},
 		options: {
+			maintainAspectRatio: false,
+			plugins: {
+				legend: {
+					display: false
+				},
+			},
+			responsive: true,
 			scales: {
 				y: {
-					beginAtZero: true
+					beginAtZero: true,
 				}
 			}
 		}
 	});
 	</script>
-	<div class="py-6 px-12 border-b border-zinc-300/20">
+	<div 
+		class="py-6 px-12 border-b border-zinc-300/20"
+		data-labels={ strings.Join(labels, ",") }
+	>
 		<div class="flex space-x-2 justify-between items-start">
 			<div>
 				<div class="flex space-x-4">
@@ -115,7 +136,7 @@ templ websiteInfo(website models.AnalyticsWebsite) {
 			})
 		</div>
 		@ui.Card(ui.CardProps{}) {
-			<div class="max-h-96 flex justify-center">
+			<div class="flex h-72 justify-center">
 				<canvas id="myChart"></canvas>
 			</div>
 		}
@@ -127,7 +148,7 @@ templ addTrackingCodeDialog() {
 	<script type="module">
 	import { codeToHtml } from 'https://esm.sh/shiki@1.0.0'
 
-	const scriptTag = '<' +`script defer src="https://console.softwarecitadel.com/script.js" data-website-id="276800de-8036-4ce5-9003-ce5a0b7f8dc8"></script` + '>'
+	const scriptTag = '<' +`script defer src="https://console.softwarecitadel.com/assets/scripts/track.js" data-website-id="276800de-8036-4ce5-9003-ce5a0b7f8dc8"></script` + '>'
 
 	const codeSnippet = document.getElementById('tracking-code-snippet')
 	codeSnippet.innerHTML = await codeToHtml(scriptTag, {

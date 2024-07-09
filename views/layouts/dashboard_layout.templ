@@ -88,6 +88,7 @@ templ sidebar() {
 							label: "Applications",
 							icon:  "fa-terminal",
 							href:  util.Route(ctx, "/apps"),
+							comingSoon: true,
 						})
 						@sidebarItem(sidebarItemProps{
 							label:      "Authentication",
@@ -99,6 +100,7 @@ templ sidebar() {
 							label: "Databases",
 							icon:  "fa-database",
 							href:  util.Route(ctx, "/databases"),
+							comingSoon: true,
 						})
 						@sidebarItem(sidebarItemProps{
 							label: "Dev Machines",
@@ -115,11 +117,13 @@ templ sidebar() {
 							label: "Object Storage",
 							icon:  "fa-hard-drive",
 							href:  util.Route(ctx, "/storage"),
+							comingSoon: true,
 						})
 						@sidebarItem(sidebarItemProps{
 							label:      "Web Analytics",
 							icon:       "fa-chart-simple",
 							href:       util.Route(ctx, "/analytics_websites"),
+							comingSoon: true,
 						})
 						if util.IsFeatureActive(ctx, "billing") {
 							@sidebarItem(sidebarItemProps{
