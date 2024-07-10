@@ -22,6 +22,7 @@ type MailApiKey struct {
 
 	CreatedAt time.Time
 	UpdatedAt time.Time
+	IsNewlyCreated bool
 }
 
 var _ bun.BeforeAppendModelHook = (*MailApiKey)(nil)

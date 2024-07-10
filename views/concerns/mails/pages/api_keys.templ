@@ -28,6 +28,7 @@ templ APIKeysPage(mailDomains []models.MailDomain, apiKeys []models.MailApiKey) 
 			<h3 class="mt-2 text-zinc-300 text-sm">
 				API keys are used to access the Facteur API. You can create or revoke them at any time.
 			</h3>
+			<div id="new-api-key-result"></div>
 			<div class="mt-8 flow-root">
 				<div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
 					<div class="inline-block min-w-full py-2 align-middle px-4 sm:px-6 lg:px-8">
@@ -130,7 +131,7 @@ templ apiKeysTableItem(apiKey models.MailApiKey) {
 }
 
 templ addApiKeyDialog(mailDomains []models.MailDomain) {
-	<form hx-post={ "/orgs/" + ctx.Value(middleware.CTX_KEY_ORG_ID).(string) + "/mails/api_keys" }>
+	<form hx-post={ "/orgs/" + ctx.Value(middleware.CTX_KEY_ORG_ID).(string) + "/mails/api_keys" }hx-target="#new-api-key-result">
 		@ui.Dialog(ui.DialogProps{
 			Id:    "add_api_key",
 			Title: "Add API Key",
@@ -161,8 +162,21 @@ templ addApiKeyDialog(mailDomains []models.MailDomain) {
 					Add API Key
 				}
 			</div>
+			<div id="api-key-result"></div>
 		}
 	</form>
+}
+
+templ newApiKeyResult(apiKey models.MailApiKey) {
+    if apiKey.IsNewlyCreated {
+        <div class="mt-4 p-4 bg-yellow-100 border border-yellow-400 text-yellow-700 rounded">
+            <h4 class="font-bold">New API Key Created</h4>
+            <p class="mt-2">Your new API key is: <strong>{ apiKey }</strong></p>
+            <p class="mt-2 text-red-600 font-bold">
+                WARNING: Store this key securely. It will not be shown again. If lost, you'll need to create a new key.
+            </p>
+        </div>
+    }
 }
 
 func getSelectOptionsForMailDomains(mailDomains []models.MailDomain) []ui.SelectFieldOption {
