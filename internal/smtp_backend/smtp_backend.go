@@ -59,11 +59,13 @@ type Session struct {
 	domainsRepo *repositories.MailDomainsRepository
 	emailsRepo  *repositories.EmailRepository
 
-	from      string
-	to        string
-	apiKey    *models.MailApiKey
-	domain    *models.MailDomain
-	newAPIKey string
+	from        string
+	to          string
+	apiKey      *models.MailApiKey
+	domain      *models.MailDomain
+	newAPIKey   string
+	subject     string
+	attachments string
 }
 
 // AuthMechanisms returns a slice of available auth mechanisms; only PLAIN is supported in this example.
@@ -245,6 +247,25 @@ func (s *Session) Data(r io.Reader) error {
 
 	// Build the email to send
 	builder := mailBuilder.New(msg)
+
+	// Get the subject
+	subject := s.subject
+	if subject == "" {
+		subject = msg.Header.Get("Subject")
+	}
+	// Set parameters
+	builder.SetHeader("Subject", subject)
+	builder.SetHeader("From", s.from)
+	builder.SetHeader("To", s.to)
+
+	// Get the attachments
+	if s.attachments != "" {
+		attachmentPaths := strings.Split(s.attachments, ",")
+		for _, path := range attachmentPaths {
+			builder.Attach(strings.TrimSpace(path))
+		}
+	}
+
 	outputMsg, err := builder.Build()
 	if err != nil {
 		return err

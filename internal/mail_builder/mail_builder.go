@@ -7,7 +7,11 @@ import (
 	"encoding/base64"
 	"fmt"
 	"io"
+	"mime/multipart"
 	"net/mail"
+	"net/textproto"
+	"os"
+	"path/filepath"
 	"time"
 
 	"github.com/emersion/go-msgauth/dkim"
@@ -16,7 +20,9 @@ import (
 
 // MailBuilder is responsible for preparing an email message for sending.
 type MailBuilder struct {
-	msg *mail.Message
+	msg         *mail.Message
+	embedded    []*file // add embedding of files to MailBuilder
+	attachments []*file // add attachments to MailBuilder
 }
 
 // New creates a new MailBuilder.
@@ -38,6 +44,10 @@ func (mb *MailBuilder) Build() ([]byte, error) {
 	// Set date header
 	mb.msg.Header["Date"] = []string{time.Now().Format(time.RFC1123Z)}
 
+	// Create a multipart writer
+	writer := multipart.NewWriter(&buf)
+	mb.msg.Header["Content-Type"] = []string{"multipart/mixed; boundary=" + writer.Boundary()}
+
 	// Write the initial headers
 	for key, values := range mb.msg.Header {
 		for _, value := range values {
@@ -45,10 +55,38 @@ func (mb *MailBuilder) Build() ([]byte, error) {
 		}
 	}
 
-	// Write the body
 	buf.WriteString("\r\n")
-	if _, err := io.Copy(&buf, mb.msg.Body); err != nil {
+
+	// Write the body
+	bodyPart, err := writer.CreatePart(textproto.MIMEHeader{"Content-Type": {"text/plain"}})
+	if err != nil {
+		return nil, fmt.Errorf("failed to create body part: %w", err)
+	}
+	if _, err := io.Copy(bodyPart, mb.msg.Body); err != nil {
 		return nil, fmt.Errorf("failed to copy body: %w", err)
+	}
+
+	// Write the attachments
+	for _, attachment := range mb.attachments {
+		attachmentPart, err := writer.CreatePart(textproto.MIMEHeader{
+			"Content-Type":              {fmt.Sprintf("application/octet-stream; name=%q", attachment.Name)},
+			"Content-Transfer-Encoding": {"base64"},
+			"Content-Disposition":       {fmt.Sprintf("attachment; filename=%q", attachment.Name)},
+		})
+		if err != nil {
+			return nil, fmt.Errorf("failed to create attachment part: %w", err)
+		}
+
+		encoder := base64.NewEncoder(base64.StdEncoding, attachmentPart)
+		if err := attachment.CopyFunc(encoder); err != nil {
+			return nil, fmt.Errorf("failed to copy attachment: %w", err)
+		}
+		encoder.Close()
+	}
+
+	// Close the multipart writer
+	if err := writer.Close(); err != nil {
+		return nil, fmt.Errorf("failed to close multipart writer: %w", err)
 	}
 
 	return buf.Bytes(), nil
@@ -92,4 +130,57 @@ func (mb *MailBuilder) SignWithDKIM(msg []byte, domain, privateKey string) ([]by
 	}
 
 	return signedMsg.Bytes(), nil
+}
+
+// Set the file structure
+type file struct {
+	Name     string
+	Header   map[string]string // Check for conflicts with msg header
+	CopyFunc func(w io.Writer) error
+}
+
+// Set the file settings
+
+type FileSettings func(*file)
+
+// Gather the document(s)
+func (m *MailBuilder) AppendFileToEmail(list []*file, name string, settings []FileSettings) []*file {
+	f := &file{
+		Name:   filepath.Base(name),
+		Header: make(map[string]string), // Check for conflicts with msg header
+		CopyFunc: func(w io.Writer) error {
+			g, err := os.Open(name)
+			if err != nil {
+				return err
+			}
+			if _, err := io.Copy(w, g); err != nil {
+				g.Close()
+				return err
+			}
+			return g.Close()
+		},
+	}
+	for _, s := range settings {
+		s(f)
+	}
+	if list == nil {
+		return []*file{f}
+	}
+	return append(list, f)
+}
+
+// Attach the document(s)
+
+func (m *MailBuilder) Attach(filename string, settings ...FileSettings) {
+	m.attachments = m.AppendFileToEmail(m.attachments, filename, settings)
+}
+
+// Embed the document(s)
+func (m *MailBuilder) Embed(filename string, settings ...FileSettings) {
+	m.embedded = m.AppendFileToEmail(m.embedded, filename, settings)
+}
+
+// Append headers from sendmail
+func (mb *MailBuilder) SetHeader(key, value string) {
+    mb.msg.Header[key] = []string{value}
 }
