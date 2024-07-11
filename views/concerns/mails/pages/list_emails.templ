@@ -1,0 +1,90 @@
+package mailsPages
+
+import (
+    "citadel/internal/models"
+    "citadel/views/layouts"
+    "citadel/views/ui"
+    "citadel/views/concerns/mails/components"
+    "citadel/views/util"
+    "time"
+)
+
+templ ListSentEmailsPage(emails []models.Email) {
+    @layouts.DashboardLayout(layouts.DashboardLayoutProps{Class: "!p-0"}) {
+        @mailsComponents.Tabs()
+        <div class="flex flex-col py-8 px-12">
+            <div class="flex space-x-4 items-center">
+                <h2 class="text-3xl text-gradient font-semibold">Sent Emails</h2>
+            </div>
+            <h3 class="mt-2 text-zinc-300 text-sm">View all emails sent from your domains.</h3>
+            <div class="mt-8 flow-root">
+                <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+                    <div class="inline-block min-w-full py-2 align-middle px-4 sm:px-6 lg:px-8">
+                        <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 rounded-lg border border-zinc-700">
+                            <table class="min-w-full divide-y divide-zinc-700">
+                                <thead class="bg-zinc-900">
+                                    <tr>
+                                        <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-white sm:pl-6">
+                                            Subject
+                                        </th>
+                                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-white">
+                                            Sender
+                                        </th>
+                                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-white">
+                                            Recipient
+                                        </th>
+                                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-white">
+                                            Sent At
+                                        </th>
+                                        <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-6">
+                                            <span class="sr-only">View</span>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-zinc-700 bg-white/2.5">
+                                    if len(emails) == 0 {
+                                        <tr>
+                                            <td class="py-4 pl-4 pr-3 text-sm font-medium text-zinc-300 sm:pl-6" colspan="5">
+                                                No emails sent yet.
+                                            </td>
+                                        </tr>
+                                    }
+                                    for _, email := range(emails) {
+                                        @emailTableItem(email)
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+}
+
+templ emailTableItem(email models.Email) {
+    <tr>
+        <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-zinc-300 sm:pl-6 max-w-[100vw]">
+            
+                class="underline text-zinc-300 hover:text-zinc-100 transition-colors"
+                href={ templ.URL(util.Route(ctx, "/mails/emails/"+email.ID)) }
+            >
+                { email.Subject }
+            </a>
+        </td>
+        <td class="whitespace-nowrap px-3 py-4 text-sm text-zinc-300">
+            { email.Sender }
+        </td>
+        <td class="whitespace-nowrap px-3 py-4 text-sm text-zinc-300">
+            { email.Recipient }
+        </td>
+        <td class="whitespace-nowrap px-3 py-4 text-sm text-zinc-300">
+            { email.CreatedAt.Format(time.RFC822) }
+        </td>
+        <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
+            <a href={ templ.URL(util.Route(ctx, "/mails/emails/"+email.ID)) } class="text-indigo-600 hover:text-indigo-900">
+                View<span class="sr-only">, { email.Subject }</span>
+            </a>
+        </td>
+    </tr>
+}
